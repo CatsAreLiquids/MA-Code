@@ -1,0 +1,22 @@
+Nodes:
+  - dataProduct
+  - Document
+  - measurement
+  - date
+relations:
+  - basedOnDocument:
+      - From: dataProduct
+      - To: Document
+      - Properties:
+          - version
+  - periodStart:
+      - From: dataProduct
+      - To: date
+  - periodEnd:
+      - From: dataProduct
+      - To: date
+  - basedOn:
+      - From: dataProduct
+      - To: dataProduct
+
+

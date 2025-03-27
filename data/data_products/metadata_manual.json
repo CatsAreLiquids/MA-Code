@@ -1,0 +1,50 @@
+{
+  "GHG_by_sector_and_country_DACH": {
+    "tags" : ["sectorwise","DACH","1970-2023","greenhouse gas emissions","Austria","Germany","Switzerland and Liechtenstein"],
+    "description" : "The file titled \"GHG_by_sector_and_country_DACH\" provides the greenhouse gas emissions for the gases Co2,GWP_100_AR5_CH4,GWP_100_AR5_F-gases and GWP_100_AR5_N2O from 1970 to 2023 for the DACH countries, namely Germany, Austria, Switzerland and Liechtenstein. The gas emission are seperated into individual industry sectors: Agriculture,Buildings,Fuel Exploitation,Industrial Combustion,Power Industry,Processes,Transport,Waste and provided in Mt CO2eq/yr.",
+    "min_year": 1970,
+    "max_year": 2023
+  },
+  "GHG_by_sector_and_country_EU27": {
+    "tags" : ["sectorwise","EU27","1970-2023","greenhouse gas emissions","San Marino","Holy See","Mt CO2eq/yr", "Andorra","Monaco"],
+    "description" : "The file titled \"GHG_by_sector_and_country_EU27\" provides the greenhouse gas emissions for the gases Co2,GWP_100_AR5_CH4,GWP_100_AR5_F-gases and GWP_100_AR5_N2O from 1970 to 2023 for the 27 memberstates of the eurpopean union, or EU27.  for Italy it contains data for San Marino and the Holy See, Spain contains data for Andorra while France contains data for Monaco. The gas emission are seperated into individual industry sectors: Agriculture,Buildings,Fuel Exploitation,Industrial Combustion,Power Industry,Processes,Transport,Waste and provided in Mt CO2eq/yr.",
+    "min_year": 1970,
+    "max_year": 2023
+  },
+  "GHG_per_capita_by_country_DACH": {
+    "tags" : ["per capita","DACH","1970-2023","greenhouse gas emissions","Austria","Germany","Switzerland and Liechtenstein"],
+    "description" : "The file titled \"GHG_per_capita_by_country_DACH\" provides the accumelated greenhouse gas emissions per capita from 1970 to 2023 for the DACH countries, namely Germany, Austria, Switzerland and Liechtenstein. The emissions are shown in CO2eq/cap/yr. Germany has concistently the highes emissions, followed by Austria and lastly Switzerland and Lichtenstein, all countries emission decrease from 1970 to 2023.",
+    "min_year": 1970,
+    "max_year": 2023
+  },
+  "GHG_per_capita_by_country_EU27": {
+    "tags" : ["per capita","EU27","1970-2023","greenhouse gas emissions","San Marino","Holy See","CO2eq/cap/yr","Andorra","Monaco"],
+    "description" : "The file titled \"GHG_per_capita_by_country_EU27\" provides the accumelated greenhouse gas emissions per capita from 1970 to 2023 for the 27 memberstates of the eurpopean union, or EU27. Some countries contain additionaly Regions that are not treaditionally in the EU27, for Italy it contains data for San Marino and the Holy See, Spain contains data for Andorra while France contains data for Monaco. The emissions are shown in CO2eq/cap/yr. Luxembourg has the highest per capita emission for the timespan, while Malta has the lowest ",
+    "min_year": 1970,
+    "max_year": 2023
+  },
+  "GHG_per_GDP_by_country_DACH": {
+    "tags" : ["per GDP","DACH","1970-2023","greenhouse gas emissions","Austria","Germany","Switzerland and Liechtenstein","CO2eq/kUSD/yr"],
+    "description" : "The file titled \"GHG_per_GDP_by_country_DACH\" provides the accumelated greenhouse gas emissions per GDP from 1970 to 2023 for the DACH countries, namely Germany, Austria, Switzerland and Liechtenstein. The emissions are shown in CO2eq/kUSD/yr. The highes emissions through out the whole time period are reported by Germany with Austria at the second place and lastly Switzerland. ALl countries emissions decrease from 1970 to 2023 with Germanys falling nearly to the level of Austrias.",
+    "min_year": 1970,
+    "max_year": 2023
+  },
+  "GHG_per_GDP_by_country_EU27": {
+    "tags" : ["per GDP","EU27","1970-2023","greenhouse gas emissions","San Marino","Holy See","CO2eq/kUSD/yr","Andorra","Monaco"],
+    "description" : "The file titled \"GHG_per_GDP_by_country_EU27\" provides the accumelated greenhouse gas emissions per GDP from 1970 to 2023 for the 27 memberstates of the eurpopean union, or EU27. Some countries contain additionaly Regions that are not treaditionally in the EU27, for Italy it contains data for San Marino and the Holy See, Spain contains data for Andorra while France contains data for Monaco. The emissions are shown in CO2eq/kUSD/yr. Estonia and Poland have the highes per GDP emissions starting out, in 1970, with values above 1. Italy and Sweden have the lowest.",
+    "min_year": 1970,
+    "max_year": 2023
+  },
+  "GHG_totals_by_country_DACH": {
+    "tags" : ["total emissions","DACH","1970-2023","greenhouse gas emissions","Austria","Germany","Switzerland and Liechtenstein","Mt CO2eq/yr"],
+    "description" : "The file titled \"GHG_totals_by_country_DACH\" provides the accumelated greenhouse gas emissions across all sector and all gas types from 1970 to 2023 for the DACH countries, namely Germany, Austria, Switzerland and Liechtenstein. The emissions are shown in Mt CO2eq/yr. Germany produces the higest emissions followed by Austria and Switzerland. While the overall trend for Germany and Switzerland is downwards Austria has increased its emission in the given time period.",
+    "min_year": 1970,
+    "max_year": 2023
+  },
+  "GHG_totals_by_country_EU27": {
+    "tags" : ["total emissions","EU27","1970-2023","greenhouse gas emissions","San Marino","Holy See","Mt CO2eq/yr","Andorra","Monaco"],
+    "description" : "The file titled \"GHG_totals_by_country_EU27\" provides the accumelated greenhouse gas emissions across all sector and all gas types from 1970 to 2023 for the 27 memberstates of the eurpopean union, or EU27. Some countries contain additionaly Regions that are not treaditionally in the EU27, for Italy it contains data for San Marino and the Holy See, Spain contains data for Andorra while France contains data for Monaco. The emissions are shown in Mt CO2eq/yr. Germany has by far the highest total emissions, while Malta and Cyprus have the lowest, both countries increase their total emissions from 1970 onward.",
+    "min_year": 1970,
+    "max_year": 2023
+  }
+}
