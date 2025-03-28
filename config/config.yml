@@ -3,6 +3,7 @@ Nodes:
   - Document
   - measurement
   - date
+  - tag
 relations:
   - basedOnDocument:
       - From: dataProduct
@@ -18,5 +19,9 @@ relations:
   - basedOn:
       - From: dataProduct
       - To: dataProduct
+  - hasTag:
+      - From: dataProduct
+      - To: tag
+
 
 

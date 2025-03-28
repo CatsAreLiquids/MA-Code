@@ -10,6 +10,7 @@ from pathlib import Path
 import time
 import ast
 
+
 def manual_tagger(df):
     columns = df.columns.tolist()
     columns = [x for x in columns if not x.isdigit()]
@@ -63,16 +64,17 @@ def generateText(titles, values, file_name):
 
 
 def formatResult(res, files):
-    tmp = zip(files,res.values())
+    tmp = zip(files, res.values())
     emptyDict = {}
 
-    for file,result in tmp:
-        text =result[0]
+    for file, result in tmp:
+        text = result[0]
         tags = ast.literal_eval(result[1])
         file_name = Path(file).stem
-        emptyDict[file_name] = {"description":text,"tags":tags[0],"min_year":tags[1],"max_year":tags[2]}
+        emptyDict[file_name] = {"description": text, "tags": tags[0], "min_year": tags[1], "max_year": tags[2]}
 
     return emptyDict
+
 
 if __name__ == "__main__":
 
@@ -86,8 +88,6 @@ if __name__ == "__main__":
     files = glob.glob("data/data_products/*.csv")
     res = {}
 
-
-
     for file in files:
         df = pd.read_csv(file, index_col=0)
         df = df.round(3)
@@ -99,10 +99,8 @@ if __name__ == "__main__":
 
         res[file_name] = [text, tags]
 
-
-    res= formatResult(res,files)
+    res = formatResult(res, files)
 
     json.dump(res, open("../data/data_products/metadata_automatic.json", 'w'))
 
 # TODO caching of input so we save on computing
-#TODO need to severly rework tagger cause filteriung doesnt work otherwise
