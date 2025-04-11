@@ -2,6 +2,7 @@ import yaml
 from pathlib import Path
 import pandas as pd
 import json
+from langchain_core.documents import Document
 
 import stores
 
@@ -59,7 +60,23 @@ def addProduct(data, metadata):
 
     return ""
 
+def add_doc(file, type):
+    db = stores.load_vector_store()
+    data = json.load(open(file))
+    docs = []
+    for key in data.keys():
+        tags = data[key]["tags"]
+        tags2 = ','.join(tags)
+        meta_dict = {"tags": tags, "tags2": tags2, "type": type, "file": key, "min_year": data[key]["min_year"],
+                     "max_year": data[key]["max_year"]}
+        docs.append(Document(page_content=data[key]["description"], metadata=meta_dict))
+        print(key)
+    db.add_documents(docs)
+
 if __name__ == "__main__":
-    data = "../data/data_products/GHG_by_sector_and_country_DACH.csv"
-    metadata = "../data/data_products/metadata_manual.json"
-    addProduct(data,metadata)
+    metadata = "../data/data_products/EDGAR_2024_GHG/metadata_automatic.json"
+    db = stores.load_vector_store()
+    db.delete_collection()
+    add_doc(metadata,"automatic")
+
+    db.similarity_search("Sum of Germanys emission form the 1990's onward")

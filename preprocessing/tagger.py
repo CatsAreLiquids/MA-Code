@@ -9,6 +9,7 @@ import glob
 from pathlib import Path
 import time
 import ast
+from pandas.api.types import is_datetime64_any_dtype as is_datetime
 
 
 def manual_tagger(df):
@@ -21,10 +22,17 @@ def manual_tagger(df):
     return [tag for tag_types in tags for tag in tag_types]
 
 
-def inferPeriod(frame):
-    keys = frame.columns.tolist()
-    keys = [int(key) for key in keys if re.match(r"[0-9]{4}", key)]
-    return "{min} - {max}".format(min=min(keys), max=max(keys))
+def inferPeriod(df):
+    min = df.index.min()
+    max = df.index.max()
+
+
+    val1 = is_datetime(min) & is_datetime(max)
+    val2 = (bool(re.search(r"[0-9]{4}", str(min))) & bool(re.search(r"[0-9]{4}", str(max))))
+    if val1 or val2:
+        return (min,max)
+    else:
+        return None
 
 
 def fromatInput(frame, max_row):
@@ -40,9 +48,9 @@ def fromatInput(frame, max_row):
 
 
 def generateTags(titles, values, file_name, tagNumber):
-    sys_prompt = PromptTemplate.from_template(json.load(open("../prompts.json"))['tagger_system_prompt'])
+    sys_prompt = PromptTemplate.from_template(json.load(open("./prompts.json"))['tagger_system_prompt'])
     sys_prompt = sys_prompt.format(count=tagNumber)
-    input_prompt = PromptTemplate.from_template(json.load(open("../prompts.json"))['data_input_prompt'])
+    input_prompt = PromptTemplate.from_template(json.load(open("./prompts.json"))['data_input_prompt'])
     input_prompt = input_prompt.format(titles=titles, values=values, file=file_name)
 
     messages = [
@@ -53,8 +61,8 @@ def generateTags(titles, values, file_name, tagNumber):
 
 
 def generateText(titles, values, file_name):
-    sys_prompt = json.load(open("../prompts.json"))['text_system_prompt']
-    input_prompt = PromptTemplate.from_template(json.load(open("../prompts.json"))['data_input_prompt'])
+    sys_prompt = json.load(open("./prompts.json"))['text_system_prompt']
+    input_prompt = PromptTemplate.from_template(json.load(open("./prompts.json"))['data_input_prompt'])
     input_prompt = input_prompt.format(titles=titles, values=values, file=file_name)
     messages = [
         ("system", sys_prompt),
@@ -71,6 +79,12 @@ def formatResult(res, files):
         text = result[0]
         tags = ast.literal_eval(result[1])
         file_name = Path(file).stem
+
+        if tags[1] =='nan' or tags[2] == 'nan':
+            min_max = inferPeriod(df)
+            if min_max:
+                tags[1],tags[2] = str(min_max[0]),str(min_max[1])
+
         emptyDict[file_name] = {"description": text, "tags": tags[0], "min_year": tags[1], "max_year": tags[2]}
 
     return emptyDict
@@ -86,9 +100,14 @@ if __name__ == "__main__":
     )
 
     files = glob.glob("data/data_products/*.csv")
+    files = [
+             "../data/data_products/EDGAR_2024_GHG/GHG_by_sector_and_country_CO2_Buildings.csv"]
+
+
     res = {}
 
     for file in files:
+        print(file)
         df = pd.read_csv(file, index_col=0)
         df = df.round(3)
         file_name = Path(file).stem
@@ -101,6 +120,7 @@ if __name__ == "__main__":
 
     res = formatResult(res, files)
 
-    json.dump(res, open("../data/data_products/metadata_automatic.json", 'w'))
+    #TODO check if files exists and tags exist
+    json.dump(res, open("../data/data_products/EDGAR_2024_GHG/metadata_automatic1.json", 'w'))
 
 # TODO caching of input so we save on computing

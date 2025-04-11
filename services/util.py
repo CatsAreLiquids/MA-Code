@@ -2,42 +2,59 @@ import pandas as pd
 import numpy as np
 
 
-def yearFilter(columns,filter_dict):
+def yearFilter(dates, filter_dict):
     # TODO fucks up if we have real dates problem for later
-    year_columns = [int(column) for column in columns if column.isdigit()]
-    if ('min_year' in filter_dict) & ('max_year' in filter_dict):
-        idx = np.where((np.asarray(year_columns) >= filter_dict['min_year']) &
-                                (np.asarray(year_columns) <= filter_dict['max_year']))
-    elif 'min_year' in filter_dict:
-        idx = np.where(np.asarray(year_columns) >= filter_dict['min_year'])
-    elif 'max_year' in filter_dict:
-        idx = np.where(np.asarray(year_columns) <= filter_dict['max_year'])
 
-    year_columns = [str(year_columns[i]) for i in idx[0]]
+    min_year = filter_dict.get('min_year')
+    max_year = filter_dict.get('max_year')
 
-    return year_columns
+    if (min_year is not None) & (max_year is not None):
+        idx = np.where((np.asarray(dates) >= int(min_year)) &
+                       (np.asarray(dates) <= int(max_year)))
+    elif min_year is not None:
+        idx = np.where(np.asarray(dates) >= int(min_year))
+    elif max_year is not None:
+        idx = np.where(np.asarray(dates) <= int(max_year))
+
+    return idx
 
 
-def applyFilter(df,filter_dict):
+def applyFilter(df, filter_dict):
     columns = df.columns.tolist()
-    attr_keys= [*filter_dict]
-    attr_keys = [key for key in attr_keys if key not in['min_year','max_year']]
+    attr_keys = [item for key, item in filter_dict.items() if key not in ['min_year', 'max_year','max_value','min_value']]
 
     if ('min_year' in filter_dict) or ('max_year' in filter_dict):
-        year_columns = yearFilter(columns,filter_dict)
-    else:
-        year_columns =[]
+        if 'date' in columns:
+            dates = df['date'].values.to_list()
+        else:
+            dates = df.index.values.tolist()
 
-    df = df[attr_keys+year_columns]
+        date_rows = yearFilter(dates, filter_dict)
+        df = df.iloc[date_rows]
 
+    if ('min_value' in filter_dict) or ('max_value' in filter_dict):
+        pass
+
+    df = df[attr_keys]
     return df
 
-def getSum(df):
-    #TODO need to do proper preprocessing to untangle data and not have multi dimensional data or figure out namiing schema
 
-    return None
+#TOdo the reset index is kinda ugly
+def getSum(df):
+    return df.sum().reset_index()
+
+def getMean(df):
+    return df.mean().reset_index()
+
+#TODO needs testing
+def getAbsoluteDiff(df):
+    return df.diff().reset_index()
+
+#periods= x allows to calculate via diffrent periods
+def getRelativeDiff(df):
+    return df.pct_change().reset_index()
 
 def placeholder(df):
-    print(df)
+
 
     return df
