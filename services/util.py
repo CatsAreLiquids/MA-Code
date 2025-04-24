@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+import ast
 
 
 def yearFilter(dates, filter_dict):
@@ -18,7 +19,23 @@ def yearFilter(dates, filter_dict):
 
     return idx
 
+#Specifically on cell level assumes compareble dta so ints etc
+def valueFilter(df,filter_dict):
+    min_value = ast.literal_eval(filter_dict.get('min_value'))
+    max_value = ast.literal_eval(filter_dict.get('max_value'))
 
+    if (min_value is not None) & (max_value is not None):
+        mask = df.ge(min_value) & df.le(max_value)
+    elif min_value is not None:
+        mask = df.ge(min_value)
+    elif max_value is not None:
+        mask = df.le(max_value)
+
+    df = df[mask]
+    df = df.dropna(how='all')
+    return df
+
+#TODO what todo if we reurn an empty df
 def applyFilter(df, filter_dict):
     columns = df.columns.tolist()
     attr_keys = [item for key, item in filter_dict.items() if key not in ['min_year', 'max_year','max_value','min_value']]
@@ -32,26 +49,28 @@ def applyFilter(df, filter_dict):
         date_rows = yearFilter(dates, filter_dict)
         df = df.iloc[date_rows]
 
-    if ('min_value' in filter_dict) or ('max_value' in filter_dict):
-        pass
-
     df = df[attr_keys]
+
+    if ('min_value' in filter_dict) or ('max_value' in filter_dict):
+        df = valueFilter(df,filter_dict)
+
     return df
 
 
-#TOdo the reset index is kinda ugly
-def getSum(df):
+#Todo the reset index is kinda ugly
+def getSum(df,rolling, period):
+
     return df.sum().reset_index()
 
-def getMean(df):
+def getMean(df,rolling, period):
     return df.mean().reset_index()
 
 #TODO needs testing
-def getAbsoluteDiff(df):
+def getAbsoluteDiff(df,rolling, period):
     return df.diff().reset_index()
 
 #periods= x allows to calculate via diffrent periods
-def getRelativeDiff(df):
+def getRelativeDiff(df,rolling, period):
     return df.pct_change().reset_index()
 
 def placeholder(df):

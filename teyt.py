@@ -4,7 +4,7 @@ import requests
 import json
 import io
 import numpy as np
-
+from uuid import uuid4
 productList =['EDGAR_2024_GHG']
 def parseResult(str):
     urls = re.findall(r"\]\s*\((.*?)\)", str)
@@ -56,14 +56,27 @@ txt = """
  - [Building Sector CO2 Emissions](http://127.0.0.1:5000/products/EDGAR_2024_GHG/filter?file=GHG_by_sector_and_country_CO2_Buildings&func=None&Country1=Germany)
 """
 
-val,url,titles = parseResult(txt)
-mes, urls =validateURL(url)
-df = parseData(urls)
-df = df.sum().reset_index()
-print(df)
 
-tmp = {"data": "{\"index\":{\"0\":\"Austria\",\"1\":\"Germany\"},\"0\":{\"0\":695.6886734905,\"1\":10506.3375055685}}"}
+def getSum(df, rolling, period):
+    if period not in ["none", "None"]:
+        print(np.asarray(df))
+        arr = np.asarray(df).reshape(-1,period)
+        print(arr)
+        return arr.sum(axis=0)
+    return df.sum().reset_index()
 
+#val,url,titles = parseResult(txt)
+#mes, urls =validateURL(url)
+#df = parseData(urls)
+#df = df.sum().reset_index()
+#print(df)
+
+tmp = {'col1': [1, 2,5,6], 'col2': [4, 3,1,4]}
+min = "2"
+max = "4"
 df = pd.DataFrame.from_dict(tmp)
 print(df)
+print(getSum(df,None,2))
+
+print(uuid4())
 

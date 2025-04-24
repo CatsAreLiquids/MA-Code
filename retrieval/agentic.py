@@ -84,73 +84,7 @@ def extractKeywords(query):
     response = llm.invoke(prompt.format(input=query))
     return response.content
 
-@tool
-def extendFilter(keywords):
-    """
-    provides additional keywords based on the input list,
-    :return: a comma seperated list of keywords: [keyword1,keyword2,keyword3,...]
-    """
 
-    # remove all numerical keywords first
-    keywords= [keyword for keyword in keywords if not isinstance(keyword, int)]
-    print(keywords)
-    # Note based on langchain multiquery prompt
-    prompt = ChatPromptTemplate.from_messages(
-        [
-            (
-                "system",
-                """
-                    You are an AI language model assistant. Your task is to generate alternative keywords for each keyword in the given list.
-                    Generating these keywords will help with filtering data annotated by multiple sources.
-                    The goal is it to provide extended filter keywords after we were unsuccsesfull with the first keywords.
-                    Therefore we need to boarden the scope of the keywords, in the sense that "Europe" is an alternative keyword for "Ireland"
-                    Provide the alternative keywords as a comma seperated list: ["keyword1","keyword2","keyword3"].
-                """
-            ),
-            ("user", keywords),
-        ]
-    )
-
-    llm = AzureChatOpenAI(
-        azure_endpoint=os.environ["GPT_EndPoint"],
-        openai_api_version=os.environ["GPT_APIversion"],
-    )
-
-    response = llm.invoke(prompt.format(input=keywords))
-    return response.content
-
-@tool
-def createFilter(query,keywords):
-    """
-        creates a filter for a retriever based on the provided user query and keyweords
-        :return: a list of filters [filter={'tags': {'$ilike': '%Germany%'},...]
-
-    """
-    sys_prompt = """You are an AI language model assistant. Your task is to generate a string filter  based on a user query and a list of given keywords.
-                With the example : 
-                user query : "I would like to have the generall CO2 emissions data of Germany for the years 2000 to 2010"
-                keywords: ["CO2 emissions", "Germany", 2000, 2010]
-                The result should look like:
-                [filter={'tags': {'$ilike': '%Germany%'},{'tags': {'$ilike': '%CO2 emissions%'}], 'min_year': {'$lte': 2000},'max_year': {'$gte': 2010} }}
-                Only use the following filters:
-                Text (case-insensitive like):'$ilike'
-                Logical (or):'$or',
-                Logical (and):'$and',
-                Greater than (>):'$gt',
-                Greater than or equal (>=):'$gte',
-                Less than (<):'$lt',
-                Less than or equal (<=):'$lte'
-                """
-    input_prompt= PromptTemplate.from_template("""
-    User Query:{query}
-                keywords: {keywords}
-    """)
-    input_prompt = input_prompt.format(query=query, keywords=keywords)
-    messages = [
-        ("system", sys_prompt),
-        ("human", input_prompt),
-    ]
-    return llm.invoke(messages)
 
 @tool
 def getDataProduct(filename,func, filter_dict):
@@ -172,6 +106,13 @@ def getDataProduct(filename,func, filter_dict):
     for key,value in filter_dict.items():
         filter_str += f"&{key}={value}"
 
+    func_str= ""
+    if func is not None:
+        for key, value in filter_dict.items():
+            func_str += f"&{key}={value}"
+    else:
+        func_str="None&rolling=False&period=None"
+
     #TODO need o fix this somehow the dict doesnt want to process
     url = f"{base_url}?file={filename}&func={func}{filter_str}"
     #print(url)
@@ -188,10 +129,16 @@ def matchFunction(query):
     #TODO would be really fancy if we can get to a point where stuf like relative growth per 5 year period
     #TODO also stuff  like average per substance is still difficult
     sys_prompt = """You are an AI language model assistant. Your task is to identify which mathematical problem a user wants to have solved.
+                    Return an array for the function, if it should be calculated with a rolling window and the period for that window
                     With the example : 
-                    
                     user query : "The sum of germanys emission for the 90's"
-                    response: "sum"
+                    response: {'func': 'sum', 'rolling': False, 'period': None}
+                    user query: "The Co2 data for Arubas building sector where the emissions are between 0.02 and 0.03"
+                    response: {'func': 'None', 'rolling': False, 'period': None}
+                    user query: "The average of Germanys C02 emissions with a 5 year period"
+                    response: {'func': 'average', 'rolling': False, 'period': 5}
+                    user query: "Sum of Germanys C02 emissions with a rolling 10 year period"
+                    response: {'func': 'Sum', 'rolling': True, 'period': 10}
                     
                     Acceptable functions are:
                     "sum": any additon 
@@ -199,8 +146,7 @@ def matchFunction(query):
                     "absolute change": the absolute change between each entry
                     "relative change": the relative change between each entry
                     
-                    If there is no function described in the user query return None
-                    If none of the acceptable output fits answer with "I am sorry I currently cant solve your problem. Please rephase your Query and try again"
+                    "
                 """
     input_prompt = PromptTemplate.from_template("""
         User Query:{query}
@@ -332,8 +278,11 @@ if __name__ == "__main__":
     #df = pd.read_csv('../data/data_products/' + "GHG_totals_by_country_DACH"+ '.csv')
 
     #applyFilter(df,fdict)
-    user = "The Co2 data for Arubas building sector where the emissions are between 0.02 and 0.03 "
-    #user= "HI how is the weather "
+    #user = "The Co2 data for Arubas building sector where the emissions are between 0.02 and 0.03 "
+    user= "Emissions Data for Austrias Argiculture and building Sector for the 1990er"
+    #user = "Sweden, Norveigen and Finnlands per capita Co2 emissions "
+    #user = "Sum of Germanys C02 emissions with a 5 year period"
+
     call = {'filename': 'GHG_totals_by_country', 'func': 'sum', 'filter': {'min_year': 1990}}
     #getDataProduct(call['filename'],call['func'],call['filter'])
     #print(extractFilter(user))

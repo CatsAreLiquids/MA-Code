@@ -121,6 +121,6 @@ if __name__ == "__main__":
     res = formatResult(res, files)
 
     #TODO check if files exists and tags exist
-    json.dump(res, open("../data/data_products/EDGAR_2024_GHG/metadata_automatic1.json", 'w'))
+    json.dump(res, open("../data/EDGAR_2024_GHG/metadata_automatic1.json", 'w'))
 
 # TODO caching of input so we save on computing

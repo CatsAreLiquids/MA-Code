@@ -19,6 +19,19 @@ func_dict = {'sum': util.getSum, "average": util.getMean, "absolute": util.getAb
 def home():
     return "Hello, this is a Flask Microservice"
 
+@app.route('/EDGAR_2024_GHG/catalog', methods=['GET'])
+def getCatalog():
+    file = request.args.get('file')
+    try:
+        with open("./configs/EDGAR_GHG_2024_per_capita_by_country.yml") as stream:
+            data = yaml.safe_load(stream)
+    except :
+        pass
+
+    return data
+
+
+
 
 @app.route('/products/EDGAR_2024_GHG', methods=['GET'])
 def getProduct():
@@ -32,22 +45,22 @@ def getProduct():
 def getSum():
     args = request.args
     filter_dict = {}
-
+    math_dict = {}
     for key, value in args.items():
         if key == 'file':
             file = value
-        elif key == 'func':
-            func = value
+        elif key in ['func','rolling','period']:
+            math_dict[key] = value
         else:
             filter_dict[key] = value
 
-    df = pd.read_csv('../data/data_products/EDGAR_2024_GHG/' + file + '.csv',index_col=[0])
+    df = pd.read_csv('../data/data_products/EDGAR_2024_GHG/' + file + '.csv',index_col=[0],header=[0])
     #TODO what happens if i dont have any filters
     df = util.applyFilter(df,filter_dict)
-
+    print(math_dict)
     #TODO mechanisim to defer data that cant done like this
-    if func not in ["none","None"]:
-        df = func_dict[func.lower()](df)
+    if math_dict['func'] not in ['none','None']:
+        df = func_dict[math_dict['func'].lower()](df,math_dict['rolling'],math_dict['period'] )
 
     return {'data':df.to_json()}
 

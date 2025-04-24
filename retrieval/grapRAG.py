@@ -15,6 +15,9 @@ load_dotenv()
 llm = AzureChatOpenAI(
     azure_endpoint=os.environ["GPT_EndPoint"],
     openai_api_version=os.environ["GPT_APIversion"],
+    model= os.environ["GPT_model_name"],
+    deployment_name=os.environ["GPT_deployment"],
+    temperature=0
 )
 
 llm_transformer = LLMGraphTransformer(llm=llm)

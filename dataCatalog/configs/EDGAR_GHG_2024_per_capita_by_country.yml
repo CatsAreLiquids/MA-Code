@@ -1,0 +1,239 @@
+
+name_readable: 'EDGAR Greenhouse Gases Emissions report 2024'
+id: '7d50730f-d9b6-48ee-ba2f-122dd8bcba3f'
+description: 'TODO'
+location: 'data_set/'
+column_names:
+- Aruba
+- Afghanistan
+- Angola
+- Anguilla
+- Albania
+- "Cura\xE7ao"
+- United Arab Emirates
+- Argentina
+- Armenia
+- Antigua and Barbuda
+- Australia
+- Austria
+- Azerbaijan
+- Burundi
+- Belgium
+- Benin
+- Burkina Faso
+- Bangladesh
+- Bulgaria
+- Bahrain
+- Bahamas
+- Bosnia and Herzegovina
+- Belarus
+- Belize
+- Bermuda
+- Bolivia
+- Brazil
+- Barbados
+- Brunei
+- Bhutan
+- Botswana
+- Central African Republic
+- Canada
+- Switzerland and Liechtenstein
+- Chile
+- China
+- "C\xF4te d\u2019Ivoire"
+- Cameroon
+- Democratic Republic of the Congo
+- Congo
+- Cook Islands
+- Colombia
+- Comoros
+- Cabo Verde
+- Costa Rica
+- Cuba
+- Cayman Islands
+- Cyprus
+- Czechia
+- Germany
+- Djibouti
+- Dominica
+- Denmark
+- Dominican Republic
+- Algeria
+- Ecuador
+- Egypt
+- Eritrea
+- Western Sahara
+- Spain and Andorra
+- Estonia
+- Ethiopia
+- Finland
+- Fiji
+- Falkland Islands
+- France and Monaco
+- Faroes
+- Gabon
+- United Kingdom
+- Georgia
+- Ghana
+- Gibraltar
+- Guinea
+- Guadeloupe
+- The Gambia
+- Guinea-Bissau
+- Equatorial Guinea
+- Greece
+- Grenada
+- Greenland
+- Guatemala
+- French Guiana
+- Guyana
+- Hong Kong
+- Honduras
+- Croatia
+- Haiti
+- Hungary
+- Indonesia
+- India
+- Ireland
+- Iran
+- Iraq
+- Iceland
+- Israel and Palestine, State of
+- Italy, San Marino and the Holy See
+- Jamaica
+- Jordan
+- Japan
+- Kazakhstan
+- Kenya
+- Kyrgyzstan
+- Cambodia
+- Kiribati
+- Saint Kitts and Nevis
+- South Korea
+- Kuwait
+- Laos
+- Lebanon
+- Liberia
+- Libya
+- Saint Lucia
+- Sri Lanka
+- Lesotho
+- Lithuania
+- Luxembourg
+- Latvia
+- Macao
+- Morocco
+- Moldova
+- Madagascar
+- Maldives
+- Mexico
+- North Macedonia
+- Mali
+- Malta
+- Myanmar/Burma
+- Mongolia
+- Mozambique
+- Mauritania
+- Martinique
+- Mauritius
+- Malawi
+- Malaysia
+- Namibia
+- New Caledonia
+- Niger
+- Nigeria
+- Nicaragua
+- Netherlands
+- Norway
+- Nepal
+- New Zealand
+- Oman
+- Pakistan
+- Panama
+- Peru
+- Philippines
+- Palau
+- Papua New Guinea
+- Poland
+- Puerto Rico
+- North Korea
+- Portugal
+- Paraguay
+- French Polynesia
+- Qatar
+- "R\xE9union"
+- Romania
+- Russia
+- Rwanda
+- Saudi Arabia
+- Serbia and Montenegro
+- Sudan and South Sudan
+- Senegal
+- Singapore
+- Saint Helena, Ascension and Tristan da Cunha
+- Solomon Islands
+- Sierra Leone
+- El Salvador
+- Somalia
+- Saint Pierre and Miquelon
+- "S\xE3o Tom\xE9 and Pr\xEDncipe"
+- Suriname
+- Slovakia
+- Slovenia
+- Sweden
+- Eswatini
+- Seychelles
+- Syria
+- Turks and Caicos Islands
+- Chad
+- Togo
+- Thailand
+- Tajikistan
+- Turkmenistan
+- Timor-Leste
+- Tonga
+- Trinidad and Tobago
+- Tunisia
+- "T\xFCrkiye"
+- Taiwan
+- Tanzania
+- Uganda
+- Ukraine
+- Uruguay
+- United States
+- Uzbekistan
+- Saint Vincent and the Grenadines
+- Venezuela
+- British Virgin Islands
+- Viet Nam
+- Vanuatu
+- Samoa
+- Yemen
+- South Africa
+- Zambia
+- Zimbabwe
+- EU27
+- GLOBAL TOTAL
+product_names:
+    - 'sum'
+    - 'avg'
+products:
+    -
+        name: 'sum'
+        id: null
+        description: 'TODO'
+        column_names:
+          - '1'
+        row_names:
+          - '1'
+        base_api: "http://127.0.0.1:5000/EDGAR_2024_GHG/GHG_totals_by_country/sum"
+    -
+        name: 'avg'
+        id: null
+        description: 'TODO'
+        column_names:
+          - '1'
+        row_names:
+          - '1'
+        base_api: "http://127.0.0.1:5000/EDGAR_2024_GHG/GHG_totals_by_country/avg"
+
