@@ -13,11 +13,32 @@ import pprint
 
 import tools as agent_tools
 
+from langchain_postgres.vectorstores import PGVector
+from langchain.tools.retriever import create_retriever_tool
+
+embeddings = AzureOpenAIEmbeddings(
+    model="text-embedding-ada-002",
+    azure_endpoint=os.getenv("TextEmb_EndPoint")
+)
+
 load_dotenv()
 default_chat = AzureChatOpenAI(
-        azure_endpoint=os.environ["GPT_EndPoint"],
-        openai_api_version=os.environ["GPT_APIversion"],
-    )
+    azure_endpoint=os.environ["GPT_EndPoint"],
+    openai_api_version=os.environ["GPT_APIversion"],
+    model=os.environ["GPT_model_name"],
+    deployment_name=os.environ["GPT_deployment"],
+    temperature=0
+)
+
+connection = "postgresql+psycopg://langchain:langchain@localhost:6024/langchain"  # Uses psycopg3!
+collection_name = "my_docs"
+
+vector_store = PGVector(
+    embeddings=embeddings,
+    collection_name=collection_name,
+    connection=connection,
+    use_jsonb=True,
+)
 
 class AgentState(TypedDict):
     # The add_messages function defines how an update should be processed
@@ -39,12 +60,19 @@ def agent(state):
     print("---CALL AGENT---")
     messages = state["messages"]
     model = default_chat
-    model = model.bind_tools(agent_tools.getTools())
+    tools = agent_tools.getTools()
+    model = model.bind_tools(tools.append(retriever_tool))
     response = model.invoke(messages)
     # We return a list, because this will get added to the existing list
     return {"messages": [response]}
 
 
+
+retriever_tool = create_retriever_tool(
+        vector_store.as_retriever(),
+        "data_retriever",
+        "Searches and returns Data files about the greenhouse gas emissions of diffrent countires.",
+    )
 
 workflow = StateGraph(AgentState)
 workflow.add_node("agent", agent)
@@ -53,7 +81,9 @@ tool_list = agent_tools.getTools()
 #retrieve = ToolNode([agent_tools.retrieverTool])
 #workflow.add_node("retrieve", retrieve)
 
-tools_ = ToolNode([agent_tools.extendFilter,agent_tools.extractKeywords,agent_tools.createFilter,agent_tools.currentDate,agent_tools.getDataProduct])
+tools_ = ToolNode([agent_tools.extractFilter,agent_tools.matchFunction,
+                   agent_tools.getDataProduct,agent_tools.getCatalogItem,
+                   agent_tools.extractKeywords,retriever_tool])
 tools_ = ToolNode(tool_list)
 workflow.add_node("tools", tools_)
 

@@ -1,9 +1,7 @@
 import pandas as pd
-import requests
 import os
-from flask import Flask, jsonify, request
-import ast
-
+from flask import Flask, request
+import yaml
 import util
 
 from retrieval import agentic
@@ -14,21 +12,21 @@ port = int(os.environ.get('PORT', 5000))
 func_dict = {'sum': util.getSum, "average": util.getMean, "absolute": util.getAbsoluteDiff,
              "relative": util.getRelativeDiff}
 
+agent = agentic.init_agent()
 
 @app.route("/")
 def home():
     return "Hello, this is a Flask Microservice"
 
-@app.route('/EDGAR_2024_GHG/catalog', methods=['GET'])
+@app.route('/catalog/EDGAR_2024_GHG', methods=['GET'])
 def getCatalog():
     file = request.args.get('file')
     try:
-        with open("./configs/EDGAR_GHG_2024_per_capita_by_country.yml") as stream:
-            data = yaml.safe_load(stream)
-    except :
-        pass
+        with open("../dataCatalog/configs/"+file+".yml") as stream:
+            return yaml.safe_load(stream)
+    except FileNotFoundError :
+       return "Could not find a catalog item asociated to your request"
 
-    return data
 
 
 
@@ -36,12 +34,14 @@ def getCatalog():
 @app.route('/products/EDGAR_2024_GHG', methods=['GET'])
 def getProduct():
     file = request.args.get('file')
-    df = pd.read_csv('../data/data_products/EDGAR_2024_GHG/' + file + '.csv')
+    #read from data catalog
+    df = pd.read_csv('../data/EDGAR_2024_GHG/' + file + '.csv')
 
     return {'data':df.to_json()}
 
 
-@app.route('/products/EDGAR_2024_GHG/filter', methods=['GET'])
+@app.route('/products/EDGAR_2024_GHG/sum', methods=['GET'])
+#todo redo this for row wise column wise
 def getSum():
     args = request.args
     filter_dict = {}
@@ -54,7 +54,7 @@ def getSum():
         else:
             filter_dict[key] = value
 
-    df = pd.read_csv('../data/data_products/EDGAR_2024_GHG/' + file + '.csv',index_col=[0],header=[0])
+    df = pd.read_csv('../data//EDGAR_2024_GHG/' + file + '.csv',index_col=[0],header=[0])
     #TODO what happens if i dont have any filters
     df = util.applyFilter(df,filter_dict)
     print(math_dict)
@@ -68,9 +68,10 @@ def getSum():
 @app.route('/chat', methods=['GET'])
 def forward_agent():
     message = request.args.get('message')
+    id = request.args.get('id')
     if message is None:
         return "Please provide input"
-    agent_result = agentic.remoteChat(message)
+    agent_result = agent.invoke({"input": message})
     res_dict = agentic.parseResult(agent_result['output'])
 
     if res_dict['success']:

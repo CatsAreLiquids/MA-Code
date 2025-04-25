@@ -15,10 +15,10 @@ def product_to_config(dataset_name, info, row_wise: bool, column_wise: bool):
         print('Could not find the data product please make sure it is at the correct location')
         return
 
-    location = "../data/data_products/EDGAR_2024_GHG/" + dataset_name + ".csv"
+    location = "../data/EDGAR_2024_GHG/" + dataset_name + ".csv"
     df = pd.read_csv(location,index_col=0)
 
-    yml_dict = {'name': dataset_name, 'id': uuid4(), 'location': location, 'description': get_description(dataset_name)}
+    yml_dict = {'name': dataset_name, 'id': str(uuid4()), 'location': location, 'description': get_description(dataset_name)}
 
     if row_wise:
         yml_dict['row_names'] = df.index.to_list()
@@ -35,6 +35,7 @@ def product_to_config(dataset_name, info, row_wise: bool, column_wise: bool):
     else:
         yml_dict['name_readable'] =[]
 
+
     products, product_names = addProducts(info)
     products, product_names = addBaseProducts(products, product_names,dataset_name)
 
@@ -47,7 +48,7 @@ def product_to_config(dataset_name, info, row_wise: bool, column_wise: bool):
 
 def addBaseProducts(products, product_names, dataset_name):
     for prod in base_products:
-        url = "http://127.0.0.1:5000/EDGAR_2024_GHG/" + dataset_name + "/" + prod
+        url = "http://127.0.0.1:5000/products/EDGAR_2024_GHG/" + prod
         products.append({'name': prod, 'description': prod, 'base_api': url})
         product_names.append(prod)
 
@@ -94,7 +95,7 @@ def _config_exists(dataset_name):
 
 def _products_exists(dataset_name):
     try:
-        df = pd.read_csv("../data/data_products/EDGAR_2024_GHG/" + dataset_name + ".csv")
+        df = pd.read_csv("../data/EDGAR_2024_GHG/" + dataset_name + ".csv")
         return True
     except FileNotFoundError:
         return False
@@ -102,7 +103,7 @@ def _products_exists(dataset_name):
 
 def get_description(dataset_name):
     try:
-        return json.load(open("../data/EDGAR_2024_GHG/metadata_automatic.json"))[dataset_name][
+        return json.load(open("../data/data_products/metadata_automatic.json"))[dataset_name][
             "description"]
     except:
         print(
@@ -111,10 +112,10 @@ def get_description(dataset_name):
 
 
 if __name__ == "__main__":
-    file = 'GHG_per_GDP_by_country'
+    file = 'GHG_totals_by_country'
 
-    test = {'products': [{'name': 'test', 'description': 'test', 'base_api': 'test'}]}
-    product_to_config('GHG_per_GDP_by_country',test, False, True)
+    info = {'products': [{'name': 'test', 'description': 'test', 'base_api': 'test'}]}
+    product_to_config(file,info, row_wise=False, column_wise=True)
 
-    df = pd.read_csv("../data/data_products/EDGAR_2024_GHG/" + file + ".csv")
-    print(df.columns.to_list())
+    #df = pd.read_csv("../data/EDGAR_2024_GHG/" + file + ".csv")
+    #print(df.columns.to_list())

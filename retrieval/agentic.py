@@ -10,7 +10,7 @@ from langchain.agents import initialize_agent, Tool, AgentType
 from langchain.chains import RetrievalQA
 
 from langchain_postgres.vectorstores import PGVector
-#import RAG
+# import RAG
 from langchain_core.prompts import PromptTemplate
 from langchain.agents import AgentExecutor, create_tool_calling_agent
 from langchain_core.prompts import ChatPromptTemplate
@@ -23,11 +23,12 @@ import numpy as np
 import pandas as pd
 from pydantic import BaseModel, Field
 import re
+import yaml
+
 
 class ResponseFormat(BaseModel):
     """Respond to the user in this format."""
     API: float = Field(description="LINK to find the data at")
-
 
 
 load_dotenv()
@@ -39,7 +40,7 @@ embeddings = AzureOpenAIEmbeddings(
 llm = AzureChatOpenAI(
     azure_endpoint=os.environ["GPT_EndPoint"],
     openai_api_version=os.environ["GPT_APIversion"],
-    model= os.environ["GPT_model_name"],
+    model=os.environ["GPT_model_name"],
     deployment_name=os.environ["GPT_deployment"],
     temperature=0
 )
@@ -53,7 +54,8 @@ vector_store = PGVector(
     use_jsonb=True,
 )
 
-productList =['EDGAR_2024_GHG']
+productList = ['EDGAR_2024_GHG']
+
 
 @tool
 def currentDate():
@@ -61,6 +63,7 @@ def currentDate():
     :return: the currentDate in the "YYYY-MM-DD" format
     """
     return date.today()
+
 
 @tool
 def extractKeywords(query):
@@ -85,78 +88,79 @@ def extractKeywords(query):
     return response.content
 
 
+@tool
+def getCatalogItem(file):
+    """
+        Retrieves the data catalog entry for specific data product
+        file: the file name of a specific data product
+        :return: dict containing all information about the data product
+    """
+    try:
+        with open("../dataCatalog/configs/" + file +".yml") as stream:
+            return yaml.safe_load(stream)
+    except FileNotFoundError :
+        return "could not find catalog Item stop execution"
+
 
 @tool
-def getDataProduct(filename,func, filter_dict):
+def getDataProduct(base_api,filename, func, filter_dict):
     """
-    Creates a link to the from user requested data
-    filename: data file that contains the from user requested data
+    Returns the full url including filters and base api for the user query
+    base_api: a url for a specific data product
+    filename: specific data to load
     func: any additional computations requested by the user set by the matchFunction tool
     filter_dict: specific filter based on the users input and created with the extractFilter tool
 
     :return: a url
     """
 
-    if filter_dict is None:
-        base_url = "http://127.0.0.1:5000/products"
-    else:
-        base_url = "http://127.0.0.1:5000/products/EDGAR_2024_GHG/filter"
+
 
     filter_str = ""
-    for key,value in filter_dict.items():
+    for key, value in filter_dict.items():
         filter_str += f"&{key}={value}"
 
-    func_str= ""
+    func_str = ""
     if func is not None:
         for key, value in filter_dict.items():
             func_str += f"&{key}={value}"
     else:
-        func_str="None&rolling=False&period=None"
+        func_str = "None&rolling=False&period=None"
 
-    #TODO need o fix this somehow the dict doesnt want to process
-    url = f"{base_url}?file={filename}&func={func}{filter_str}"
-    #print(url)
-    #r = requests.get(url)
-    #data = r.json()
+    # TODO need o fix this somehow the dict doesnt want to process
+    url = f"{base_api}?file={filename}&func={func}{filter_str}"
+
     return url
 
+
 @tool
-def matchFunction(query):
+def matchFunction(query, catalog_dict):
     """
-        matches the user query to the requiered mathamatical functions
-        :return: a string containing the function type
+        Matches a user query to the fitting data product described in the data catalog
+        query: user query
+        catalog_dict: a data catalog item retrieved with getCatalogItem
+        :return: a url of a specific dataproduct
     """
-    #TODO would be really fancy if we can get to a point where stuf like relative growth per 5 year period
-    #TODO also stuff  like average per substance is still difficult
-    sys_prompt = """You are an AI language model assistant. Your task is to identify which mathematical problem a user wants to have solved.
-                    Return an array for the function, if it should be calculated with a rolling window and the period for that window
-                    With the example : 
-                    user query : "The sum of germanys emission for the 90's"
-                    response: {'func': 'sum', 'rolling': False, 'period': None}
-                    user query: "The Co2 data for Arubas building sector where the emissions are between 0.02 and 0.03"
-                    response: {'func': 'None', 'rolling': False, 'period': None}
-                    user query: "The average of Germanys C02 emissions with a 5 year period"
-                    response: {'func': 'average', 'rolling': False, 'period': 5}
-                    user query: "Sum of Germanys C02 emissions with a rolling 10 year period"
-                    response: {'func': 'Sum', 'rolling': True, 'period': 10}
-                    
-                    Acceptable functions are:
-                    "sum": any additon 
-                    "average": average across diffrent characteristics
-                    "absolute change": the absolute change between each entry
-                    "relative change": the relative change between each entry
-                    
-                    "
+    # TODO would be really fancy if we can get to a point where stuf like relative growth per 5 year period
+    # TODO also stuff  like average per substance is still difficult
+    sys_prompt = """ Your task is to check weather the the query a user descibes can be solved with any of the apis provided.
+                You only provide the base api or say "no fitting data product found please rephrase your query"
+                For example
+                query: Sum of Germanys C02 emissions with a 5 year period
+                catalog_dict {products:[{"name":"sum","description":"calculates the sum of certein values","base_api":"http://127.0.0.1:5000/EDGAR_2024_GHG/product/sum"}
+                return http://127.0.0.1:5000/EDGAR_2024_GHG/product/sum
                 """
     input_prompt = PromptTemplate.from_template("""
         User Query:{query}
+        catalog dict:{catalog_dict}
         """)
-    input_prompt = input_prompt.format(query=query)
+    input_prompt = input_prompt.format(query=query,catalog_dict=catalog_dict)
     messages = [
         ("system", sys_prompt),
         ("human", input_prompt),
     ]
     return llm.invoke(messages)
+
 
 @tool
 def extractFilter(query):
@@ -184,15 +188,46 @@ def extractFilter(query):
     ]
     return llm.invoke(messages)
 
+def init_agent():
+    agent_prompt = "You are a helpful assistant providing users with their requested data via providing opnly the link the data can be found at. "
+    agent_prompt = """You are a helpful assistant providing users with their requested data via providing a url.
+                        Additionnaly provide a variable named multiple=True if multiple products are needed to answer the question, otherwise multiple=False 
+                        The output should look like:
+                         Url: url 
+                         multiple"""
+
+    prompt = ChatPromptTemplate.from_messages(
+        [
+            ("system", agent_prompt),
+            #MessagesPlaceholder("chat_history", optional=True),
+            ("human", "{input}"),
+
+            # Placeholders fill up a **list** of messages
+            ("placeholder", "{agent_scratchpad}"),
+        ]
+    )
+
+    retriever_tool = create_retriever_tool(
+        vector_store.as_retriever(),
+        "data_retriever",
+        "Searches and returns Data files about the greenhouse gas emissions of diffrent countires.",
+    )
+    #memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
+    tools = [retriever_tool, getDataProduct, matchFunction, extractFilter]
+
+    agent = create_tool_calling_agent(llm, tools, prompt)
+    agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=False, response_format=ResponseFormat)
+
+    return agent_executor
+
 def remoteChat(message):
-    #TODO fix agent output
-    agent_prompt= "You are a helpful assistant providing users with their requested data via providing opnly the link the data can be found at. "
-    agent_prompt= """You are a helpful assistant providing users with their requested data via providing a url.
+    # TODO fix agent output
+    agent_prompt = "You are a helpful assistant providing users with their requested data via providing opnly the link the data can be found at. "
+    agent_prompt = """You are a helpful assistant providing users with their requested data via providing a url.
                     Additionnaly provide a variable named multiple=True if multiple products are needed to answer the question, otherwise multiple=False 
                     The output should look like:
                      Url: url 
                      multiple"""
-
 
     prompt = ChatPromptTemplate.from_messages(
         [
@@ -204,7 +239,6 @@ def remoteChat(message):
         ]
     )
 
-
     retriever_tool = create_retriever_tool(
         vector_store.as_retriever(),
         "data_retriever",
@@ -214,20 +248,22 @@ def remoteChat(message):
     tools = [retriever_tool, getDataProduct, matchFunction, extractFilter]
 
     agent = create_tool_calling_agent(llm, tools, prompt)
-    agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=False,response_format=ResponseFormat)
+    agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=False, response_format=ResponseFormat)
 
-    #TODO async invocation for better interaction but slightly of topic and more quality of life
+    # TODO async invocation for better interaction but slightly of topic and more quality of life
     return agent_executor.invoke({"input": message})
 
-#TODO need to keep the titles of the data
+
+# TODO need to keep the titles of the data
 def parseResult(str):
     urls = re.findall(r"\]\s*\((.*?)\)", str)
     titles = re.findall(r"\[(.*?)\]", str)
 
     if urls:
-        return {'success':True, 'urls':urls,'data_names': titles,'message':'I found your data'}
+        return {'success': True, 'urls': urls, 'data_names': titles, 'message': 'I found your data'}
     else:
-        return {'success':False, 'urls':None,'data_names': None,'message':str}
+        return {'success': False, 'urls': None, 'data_names': None, 'message': str}
+
 
 # Note works since we currently only use the products string needs adjustemnt if I extend API
 def validateURL(urls):
@@ -250,16 +286,14 @@ def validateURL(urls):
 
 
 if __name__ == "__main__":
-
     prompt = ChatPromptTemplate.from_messages(
         [
-            ("system", "You are a helpful assistant providing users with their requested data via providing opnly the link the data can be found at"),
+            ("system",
+             "You are a helpful assistant providing users with their requested data via providing opnly the link the data can be found at"),
             ("human", "{input}"),
-            # Placeholders fill up a **list** of messages
             ("placeholder", "{agent_scratchpad}"),
         ]
     )
-
 
     retriever_tool = create_retriever_tool(
         vector_store.as_retriever(),
@@ -267,30 +301,28 @@ if __name__ == "__main__":
         "Searches and returns Data files about the greenhouse gas emissions of diffrent countires. It  ",
     )
 
-    tools = [retriever_tool,getDataProduct,matchFunction,extractFilter]
+    tools = [retriever_tool, getDataProduct, matchFunction, extractFilter, getCatalogItem]
 
     agent = create_tool_calling_agent(llm, tools, prompt)
-    agent_executor = create_react_agent(model= llm, tools=tools,response_format=ResponseFormat)
-    agent_executor = AgentExecutor(agent=agent, tools=tools,verbose=True,response_format=ResponseFormat)
+    agent_executor = create_react_agent(model=llm, tools=tools, response_format=ResponseFormat)
+    agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=True, response_format=ResponseFormat)
 
-    #fdict = {"Country": "Germany", "min_year": 1990, "max_year": 1999}
-    #func = "sum"
-    #df = pd.read_csv('../data/data_products/' + "GHG_totals_by_country_DACH"+ '.csv')
+    # fdict = {"Country": "Germany", "min_year": 1990, "max_year": 1999}
+    # func = "sum"
+    # df = pd.read_csv('../data/data_products/' + "GHG_totals_by_country_DACH"+ '.csv')
 
-    #applyFilter(df,fdict)
-    #user = "The Co2 data for Arubas building sector where the emissions are between 0.02 and 0.03 "
-    user= "Emissions Data for Austrias Argiculture and building Sector for the 1990er"
-    #user = "Sweden, Norveigen and Finnlands per capita Co2 emissions "
-    #user = "Sum of Germanys C02 emissions with a 5 year period"
+    # applyFilter(df,fdict)
+    # user = "The Co2 data for Arubas building sector where the emissions are between 0.02 and 0.03 "
+    # user= "Emissions Data for Austrias Argiculture and building Sector for the 1990er"
+    # user = "Sweden, Norveigen and Finnlands per capita Co2 emissions "
+    user = "Sum of Germanys C02 emissions with a 5 year period"
 
     call = {'filename': 'GHG_totals_by_country', 'func': 'sum', 'filter': {'min_year': 1990}}
-    #getDataProduct(call['filename'],call['func'],call['filter'])
-    #print(extractFilter(user))
-    #input = {"messages": [("user", "Sum of Germanys emission form the 1990's onward")]}
+    # getDataProduct(call['filename'],call['func'],call['filter'])
+    # print(extractFilter(user))
+    # input = {"messages": [("user", "Sum of Germanys emission form the 1990's onward")]}
     input = {"input": user}
     agent_result = agent_executor.invoke(input)
     print(agent_result)
-    #response = parseResult(agent_result['output'])
-    #print(response)
-
-
+    # response = parseResult(agent_result['output'])
+    # print(response)

@@ -9,6 +9,7 @@ import pandas as df
 import io
 
 import util
+from uuid import uuid4
 
 def parseData(urls,titles):
     content = []
@@ -39,6 +40,8 @@ def parseData(urls,titles):
     else:
         st.dataframe(df)
 
+def formatHistory():
+    pass
 
 #TODO
     # get chat streaming ready
@@ -48,6 +51,7 @@ st.title("Test Interface")
 bot = st.chat_message("assistant")
 
 base_url = "http://127.0.0.1:5000/chat"
+conversation_id = str(uuid4())
 
 # Initialize chat history
 if "messages" not in st.session_state:
@@ -67,7 +71,7 @@ if prompt:
         st.markdown(prompt)
     st.session_state.messages.append({"role": "user", "content": prompt})
 
-    url = f"{base_url}?message={prompt}"
+    url = f"{base_url}?message={prompt}&id={conversation_id}"
     response = requests.get(url)
     content = json.loads(response.text)
 

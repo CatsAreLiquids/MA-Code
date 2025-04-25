@@ -97,11 +97,13 @@ if __name__ == "__main__":
     llm = AzureChatOpenAI(
         azure_endpoint=os.environ["GPT_EndPoint"],
         openai_api_version=os.environ["GPT_APIversion"],
+        model=os.environ["GPT_model_name"],
+        deployment_name=os.environ["GPT_deployment"],
+        temperature=0
     )
 
-    files = glob.glob("data/data_products/*.csv")
-    files = [
-             "../data/data_products/EDGAR_2024_GHG/GHG_by_sector_and_country_CO2_Buildings.csv"]
+    files = glob.glob("../data/EDGAR_2024_GHG/*.csv")
+    #files = ["../data/data_products/EDGAR_2024_GHG/GHG_by_sector_and_country_CO2_Buildings.csv"]
 
 
     res = {}
@@ -121,6 +123,6 @@ if __name__ == "__main__":
     res = formatResult(res, files)
 
     #TODO check if files exists and tags exist
-    json.dump(res, open("../data/EDGAR_2024_GHG/metadata_automatic1.json", 'w'))
+    json.dump(res, open("../data/EDGAR_2024_GHG/metadata_automatic.json", 'w'))
 
 # TODO caching of input so we save on computing

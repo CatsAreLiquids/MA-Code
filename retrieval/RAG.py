@@ -22,6 +22,8 @@ from langchain.chains.query_constructor.ir import (
     StructuredQuery,
 )
 from typing import Optional, List
+import uuid
+
 
 
 class Search(BaseModel):
@@ -30,14 +32,13 @@ class Search(BaseModel):
     location: Optional[str]
 
 
-def add_doc(db, file, type):
+def add_docs(db, file, type):
     data = json.load(open(file))
     docs = []
     for key in data.keys():
         tags = data[key]["tags"]
         tags2 = ','.join(tags)
         meta_dict = {"tags": tags}
-        meta_dict["tags2"] = tags2
         meta_dict["type"] = type
         meta_dict["file"] = key
         meta_dict["min_year"] = data[key]["min_year"]
@@ -45,6 +46,19 @@ def add_doc(db, file, type):
         docs.append(Document(page_content=data[key]["description"], metadata=meta_dict))
     db.add_documents(docs)
 
+def add_doc(db, file, type):
+    data = json.load(open("../data/EDGAR_2024_GHG/metadata_automatic.json"))[file]
+
+    tags = data["tags"]
+    meta_dict = {"tags": tags,
+                 "type": type,
+                 "file": file + ".csv",
+                 "min_year": data["min_year"],
+                 "max_year": data["max_year"],
+                 "id":str(uuid.uuid4())}
+
+    doc = Document(page_content=data["description"], metadata=meta_dict)
+    db.add_documents([doc])
 
 def retrieve(vector_store, llm):
     retriever = vector_store.as_retriever()
@@ -97,6 +111,9 @@ if __name__ == "__main__":
     llm = AzureChatOpenAI(
         azure_endpoint=os.environ["GPT_EndPoint"],
         openai_api_version=os.environ["GPT_APIversion"],
+        model=os.environ["GPT_model_name"],
+        deployment_name=os.environ["GPT_deployment"],
+        temperature=0
     )
 
     vector_store = PGVector(
@@ -107,17 +124,17 @@ if __name__ == "__main__":
     )
 
     # vector_store.add_documents(docs, ids=[doc.metadata["id"] for doc in docs])
-    #add_doc(vector_store,"./data/data_products/metadata_automatic.json","automatic")
+    #add_doc(vector_store,"GHG_totals_by_country","automatic")
     #add_doc(vector_store, "./data/data_products/metadata_manual.json","manual")
-    # vector_store.delete_collection()
+    #vector_store.delete_collection()
     # filter = {"id": {"$in": [1, 5, 2, 9]}, "location": {"$in": ["pond", "market"]}}
 
     search_query = Search(query="RAG", id=[1, 5, 2, 9], location="pond")
     comparisons = construct_comparisons(search_query)
     comps = []
 
-    print(vector_store.similarity_search("ducks", k=4, filter={'tags': {'$ilike': '%San Marino%'}, 'tags': {'$ilike': '%greenhouse gas emissions%'}, 'min_year': {'$lte': 1984}, 'max_year': {'$gte': 1984} }))
+    #print(vector_store.similarity_search("ducks", k=4, filter={'tags': {'$ilike': '%San Marino%'}, 'tags': {'$ilike': '%greenhouse gas emissions%'}, 'min_year': {'$lte': 1984}, 'max_year': {'$gte': 1984} }))
     # 'min_year': {'$gte': [1984]}, 'max_year': {'$lte': [1984]}
     #"tags": {"$ilike": '%San Marino%'}
     rag_chain = retrieve(vector_store, llm)
-    print(rag_chain.invoke("Where can I find the Co2 output per GDP for Germany"))
+    print(vector_store.similarity_search("test", k = 30))
