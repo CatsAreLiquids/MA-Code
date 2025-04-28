@@ -1,13 +1,7 @@
-from langchain_core.messages import HumanMessage
 from langchain_openai import AzureOpenAIEmbeddings, AzureChatOpenAI
-from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain.agents import tool
 import os
 from dotenv import load_dotenv
-import json
-from langchain.agents import initialize_agent, Tool, AgentType
-
-from langchain.chains import RetrievalQA
 
 from langchain_postgres.vectorstores import PGVector
 # import RAG
@@ -15,18 +9,8 @@ from langchain_core.prompts import PromptTemplate
 from langchain.agents import AgentExecutor, create_tool_calling_agent
 from langchain_core.prompts import ChatPromptTemplate
 from langchain.tools.retriever import create_retriever_tool
-from langgraph.prebuilt import create_react_agent
 
-from datetime import date
-import requests
-import numpy as np
-import pandas as pd
-from pydantic import BaseModel, Field
-import re
-import yaml
-
-from sharedTool import getCatalogItem
-
+from Agent.sharedTool import getCatalogItem
 
 load_dotenv()
 
@@ -51,8 +35,9 @@ vector_store = PGVector(
     use_jsonb=True,
 )
 
+
 @tool
-def getDataProduct(base_api,filename, func, filter_dict):
+def getDataProduct(base_api, filename, func, filter_dict):
     """
     Returns the full url including filters and base api for the user query
     base_api: a url for a specific data product
@@ -79,15 +64,38 @@ def getDataProduct(base_api,filename, func, filter_dict):
 
     return url
 
-def init_agent():
+@tool
+def extractKeywords(query):
+    """
+    Function to extract keywords out of a user message
+    :return: a comma seperated list of keywords: [keyword1,keyword2,keyword3,...]
+    """
     prompt = ChatPromptTemplate.from_messages(
-            [
-                ("system",
-                 "Your task is to help identify the correct api for a user based on their query"),
-                ("human", "{input}"),
-                ("placeholder", "{agent_scratchpad}"),
-            ]
-        )
+        [
+            (
+                "system",
+                json.load(open("../prompts.json"))['tools']["extractKeywords"]
+            ),
+            ("user", query),
+        ]
+    )
+    response = llm.invoke(prompt.format(input=query))
+    return response.content
+
+
+def init_agent():
+    sys_prompt = """ Your task is to help identify the correct url and data product for a user based on their query
+                    Only provide one url at a time together withe the name of the data product.
+                    The output should be a valid json formatted as follwos:
+                    {{"name":"name","url":"http://127.0.0.1:5000/exampleUrl"}}
+    """
+    prompt = ChatPromptTemplate.from_messages(
+        [
+            ("system", sys_prompt),
+            ("human", "{input}"),
+            ("placeholder", "{agent_scratchpad}"),
+        ]
+    )
 
     retriever_tool = create_retriever_tool(
         vector_store.as_retriever(),
@@ -100,35 +108,3 @@ def init_agent():
     agent = create_tool_calling_agent(llm, tools, prompt)
 
     return AgentExecutor(agent=agent, tools=tools, verbose=True)
-
-
-@tool
-def extractFilter(query, catalog_dict):
-    """
-    Creates a dict including filter atrributes and values for the getDataProduct tool
-    query: the original user query
-    catalog_dict: a dict containing information abpout the data product, can be retrieved with getCatalogItem
-    :return: a dict with the corresponding filters such as dict={'Country1':'Austria','Country2':'Germany','min_year':1990,'max_year':1999}
-    """
-    sys_prompt = """Your task is to identify a filterable attribuites in a user query and find how they can be answerd with the data columns present in the data .
-                    Only return uniquly identifiable filters such as year spans or countries, aviod unclear filter like "co2 emissions"
-                    Return all filter in a dict 
-                    Example 
-                    user query : "I would like to have the generall CO2 emissions data of Germany and Austria for the years 2000 to 2010"
-                    response: {'Country1':'Austria','Country2':'Germany',"min_year":2000,"max_year":2010}
-                    user query : "The Co2 data for Arubas building sector where the emissions are between 0.02 and 0.03"
-                    response: {'Country1': 'Aruba', 'min_value': 0.02, 'max_value': 0.03}
-                    user query : "Customer sales data of women over 38 paying by credit card"
-                    response: {'gender': 'Women', 'age': 38, 'pyament': credit card}
-
-                    """
-    input_prompt = PromptTemplate.from_template("""
-            User Query:{query}
-            Catalog Dict:{catalog_dict}
-            """)
-    input_prompt = input_prompt.format(query=query, catalog_dict=catalog_dict)
-    messages = [
-        ("system", sys_prompt),
-        ("human", input_prompt),
-    ]
-    return llm.invoke(messages)

@@ -1,22 +1,7 @@
-from langchain_core.messages import HumanMessage
-from langchain_openai import AzureOpenAIEmbeddings, AzureChatOpenAI
-from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
-from langchain.agents import tool
 import os
 from dotenv import load_dotenv
 import json
-from langchain.agents import initialize_agent, Tool, AgentType
-
-from langchain.chains import RetrievalQA
-
-from langchain_postgres.vectorstores import PGVector
-# import RAG
-from langchain_core.prompts import PromptTemplate
-from langchain.agents import AgentExecutor, create_tool_calling_agent
-from langchain_core.prompts import ChatPromptTemplate
-from langchain.tools.retriever import create_retriever_tool
-from langgraph.prebuilt import create_react_agent
-
+import requests
 from datetime import date
 import requests
 import numpy as np
@@ -24,6 +9,8 @@ import pandas as pd
 from pydantic import BaseModel, Field
 import re
 import yaml
+import io
+
 
 # TODO need to keep the titles of the data
 def parseResult(str):
@@ -54,3 +41,13 @@ def validateURL(urls):
         return ("Some generated Urls are invalid please review the data and try rephrasing", valid)
     else:
         return ("I found the data you were looking for please wait while I load it ", valid)
+
+
+def parseRetrieval():
+    pass
+
+
+def getData(url):
+    response = requests.get(url)
+    content = json.loads(response.text)
+    return pd.read_json(io.StringIO(content['data']))

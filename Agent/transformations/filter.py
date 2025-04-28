@@ -1,3 +1,5 @@
+
+
 def yearFilter(dates, filter_dict):
     # TODO fucks up if we have real dates problem for later
 
@@ -14,8 +16,9 @@ def yearFilter(dates, filter_dict):
 
     return idx
 
-#Specifically on cell level assumes compareble dta so ints etc
-def valueFilter(df,filter_dict):
+
+# Specifically on cell level assumes compareble dta so ints etc
+def valueFilter(df, filter_dict):
     min_value = ast.literal_eval(filter_dict.get('min_value'))
     max_value = ast.literal_eval(filter_dict.get('max_value'))
 
@@ -30,10 +33,12 @@ def valueFilter(df,filter_dict):
     df = df.dropna(how='all')
     return df
 
-#TODO what todo if we reurn an empty df
+
+# TODO what todo if we reurn an empty df
 def applyFilter(df, filter_dict):
     columns = df.columns.tolist()
-    attr_keys = [item for key, item in filter_dict.items() if key not in ['min_year', 'max_year','max_value','min_value']]
+    attr_keys = [item for key, item in filter_dict.items() if
+                 key not in ['min_year', 'max_year', 'max_value', 'min_value']]
 
     if ('min_year' in filter_dict) or ('max_year' in filter_dict):
         if 'date' in columns:
@@ -47,6 +52,10 @@ def applyFilter(df, filter_dict):
     df = df[attr_keys]
 
     if ('min_value' in filter_dict) or ('max_value' in filter_dict):
-        df = valueFilter(df,filter_dict)
+        df = valueFilter(df, filter_dict)
 
+    return df
+
+
+def placeholder(df,values):
     return df

@@ -57,7 +57,7 @@ def getCatalogItem(file):
     """
     #TODO this should be a call to the microservice
     try:
-        with open("../../dataCatalog/configs/catalog.yml") as stream:
+        with open("../dataCatalog/configs/catalog.yml") as stream:
             catalog = yaml.safe_load(stream)
     except FileNotFoundError:
         return "could not find the main catalog"
