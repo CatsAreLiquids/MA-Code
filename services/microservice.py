@@ -10,59 +10,70 @@ app = Flask(__name__)
 port = int(os.environ.get('PORT', 5000))
 
 func_dict = {'sum': util.getSum, "average": util.getMean, "absolute": util.getAbsoluteDiff,
-             "relative": util.getRelativeDiff}
+             "relative": util.getRelativeDiff, 'ids': util.getIDs}
 
 agent = agentic.init_agent()
 
-@app.route("/")
-def home():
-    return "Hello, this is a Flask Microservice"
+
+@app.route('/catalog', methods=['GET'])
+def getCatalog():
+    try:
+        with open("../dataCatalog/configs/catalog.yml") as stream:
+            return yaml.safe_load(stream)
+    except FileNotFoundError:
+        return "Main catalog is not findable"
+
 
 @app.route('/catalog/EDGAR_2024_GHG', methods=['GET'])
 def getCatalog():
     file = request.args.get('file')
     try:
-        with open("../dataCatalog/configs/"+file+".yml") as stream:
+        with open("../dataCatalog/configs/" + file + ".yml") as stream:
             return yaml.safe_load(stream)
-    except FileNotFoundError :
-       return "Could not find a catalog item asociated to your request"
+    except FileNotFoundError:
+        return "Could not find a catalog item asociated to your request"
 
 
-
+@app.route('/catalog/Sales_Data', methods=['GET'])
+def getCatalog():
+    file = request.args.get('file')
+    try:
+        with open("../dataCatalog/configs/" + file + ".yml") as stream:
+            return yaml.safe_load(stream)
+    except FileNotFoundError:
+        return "Could not find a catalog item asociated to your request"
 
 
 @app.route('/products/EDGAR_2024_GHG', methods=['GET'])
 def getProduct():
     file = request.args.get('file')
-    #read from data catalog
+    # read from data catalog
     df = pd.read_csv('../data/EDGAR_2024_GHG/' + file + '.csv')
+    return {'data': df.to_json()}
 
-    return {'data':df.to_json()}
+
+@app.route('/products/EDGAR_2024_GHG/GHG_by_sector_and_country', methods=['GET'])
+def getProduct():
+    file = request.args.get('file')
+    # read from data catalog
+    df = pd.read_csv('../data/EDGAR_2024_GHG/GHG_by_sector_and_country.csv')
+    return {'data': df.to_json()}
 
 
-@app.route('/products/EDGAR_2024_GHG/sum', methods=['GET'])
-#todo redo this for row wise column wise
-def getSum():
-    args = request.args
-    filter_dict = {}
-    math_dict = {}
-    for key, value in args.items():
-        if key == 'file':
-            file = value
-        elif key in ['func','rolling','period']:
-            math_dict[key] = value
-        else:
-            filter_dict[key] = value
+@app.route('/products/EDGAR_2024_GHG/LULUCF_macroregions', methods=['GET'])
+def getProduct():
+    df = pd.read_csv('../data/EDGAR_2024_GHG/LULUCF_macroregions.csv')
+    return {'data': df.to_json()}
 
-    df = pd.read_csv('../data//EDGAR_2024_GHG/' + file + '.csv',index_col=[0],header=[0])
-    #TODO what happens if i dont have any filters
-    df = util.applyFilter(df,filter_dict)
-    print(math_dict)
-    #TODO mechanisim to defer data that cant done like this
-    if math_dict['func'] not in ['none','None']:
-        df = func_dict[math_dict['func'].lower()](df,math_dict['rolling'],math_dict['period'] )
+@app.route('/products/Sales_Data/customer_data_23', methods=['GET'])
+def getProduct():
+    df = pd.read_csv('../data/Sales_Data/customer_data_23.csv')
+    return {'data': df.to_json()}
 
-    return {'data':df.to_json()}
+@app.route('/products/Sales_Data/sales_data_23', methods=['GET'])
+def getProduct():
+    df = pd.read_csv('../data/Sales_Data/sales_data_23.csv')
+    return {'data': df.to_json()}
 
 
 @app.route('/chat', methods=['GET'])
@@ -75,10 +86,10 @@ def forward_agent():
     res_dict = agentic.parseResult(agent_result['output'])
 
     if res_dict['success']:
-        res_dict['message'],res_dict['urls'] = agentic.validateURL(res_dict['urls'])
+        res_dict['message'], res_dict['urls'] = agentic.validateURL(res_dict['urls'])
 
-    return {'success':res_dict['success'], 'urls':res_dict['urls'],
-            'message':res_dict['message'],'data_name':res_dict['data_names']}
+    return {'success': res_dict['success'], 'urls': res_dict['urls'],
+            'message': res_dict['message'], 'data_name': res_dict['data_names']}
 
 
 if __name__ == "__main__":

@@ -102,7 +102,7 @@ if __name__ == "__main__":
         temperature=0
     )
 
-    files = glob.glob("../data/EDGAR_2024_GHG/*.csv")
+    files = glob.glob("../data/Sales_Data/*.csv")
     #files = ["../data/data_products/EDGAR_2024_GHG/GHG_by_sector_and_country_CO2_Buildings.csv"]
 
 
@@ -123,6 +123,6 @@ if __name__ == "__main__":
     res = formatResult(res, files)
 
     #TODO check if files exists and tags exist
-    json.dump(res, open("../data/EDGAR_2024_GHG/metadata_automatic.json", 'w'))
+    json.dump(res, open("../data/Sales_Data/metadata_automatic.json", 'w'))
 
 # TODO caching of input so we save on computing

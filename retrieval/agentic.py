@@ -95,11 +95,24 @@ def getCatalogItem(file):
         file: the file name of a specific data product
         :return: dict containing all information about the data product
     """
+    #TODO this should be a call to the microservice
     try:
-        with open("../dataCatalog/configs/" + file +".yml") as stream:
-            return yaml.safe_load(stream)
-    except FileNotFoundError :
-        return "could not find catalog Item stop execution"
+        with open("../dataCatalog/configs/catalog.yml") as stream:
+            catalog = yaml.safe_load(stream)
+    except FileNotFoundError:
+        return "could not find the main catalog"
+
+    for collection in catalog:
+        if file in collection['products']:
+            try:
+                with open("../dataCatalog/configs/" + collection['name'] + ".yml") as stream:
+                    collection_dict = yaml.safe_load(stream)
+                    for product in collection_dict['products']:
+                        if product['name'] == file:
+                            return product
+
+            except FileNotFoundError:
+                return "could not find the specific collection catalog"
 
 
 @tool
@@ -113,8 +126,6 @@ def getDataProduct(base_api,filename, func, filter_dict):
 
     :return: a url
     """
-
-
 
     filter_str = ""
     for key, value in filter_dict.items():
@@ -163,13 +174,14 @@ def matchFunction(query, catalog_dict):
 
 
 @tool
-def extractFilter(query):
+def extractFilter(query,catalog_dict):
     """
     Creates a dict including filter atrributes and values for the getDataProduct tool
     query: the original user query
+    catalog_dict: a dict containing information abpout the data product, can be retrieved with getCatalogItem
     :return: a dict with the corresponding filters such as dict={'Country1':'Austria','Country2':'Germany','min_year':1990,'max_year':1999}
     """
-    sys_prompt = """You are a helpful assistent used to extract filters out of a user message.
+    sys_prompt = """Your task is to identify a filterable attribuites in a user query and find how they can be answerd with the data columns present in the data .
                     Only return uniquly identifiable filters such as year spans or countries, aviod unclear filter like "co2 emissions"
                     Return all filter in a dict 
                     Example 
@@ -177,11 +189,15 @@ def extractFilter(query):
                     response: {'Country1':'Austria','Country2':'Germany',"min_year":2000,"max_year":2010}
                     user query : "The Co2 data for Arubas building sector where the emissions are between 0.02 and 0.03"
                     response: {'Country1': 'Aruba', 'min_value': 0.02, 'max_value': 0.03}
+                    user query : "Customer sales data of women over 38 paying by credit card"
+                    response: {'gender': 'Women', 'age': 38, 'pyament': credit card}
+                    
                     """
     input_prompt = PromptTemplate.from_template("""
             User Query:{query}
+            Catalog Dict:{catalog_dict}
             """)
-    input_prompt = input_prompt.format(query=query)
+    input_prompt = input_prompt.format(query=query,catalog_dict=catalog_dict)
     messages = [
         ("system", sys_prompt),
         ("human", input_prompt),
@@ -222,12 +238,13 @@ def init_agent():
 
 def remoteChat(message):
     # TODO fix agent output
-    agent_prompt = "You are a helpful assistant providing users with their requested data via providing opnly the link the data can be found at. "
     agent_prompt = """You are a helpful assistant providing users with their requested data via providing a url.
-                    Additionnaly provide a variable named multiple=True if multiple products are needed to answer the question, otherwise multiple=False 
-                    The output should look like:
-                     Url: url 
-                     multiple"""
+                        Additionnaly provide a variable named multiple=True if multiple products are needed to answer the question, otherwise multiple=False 
+                        The output should look like:
+                         Url: url 
+                         multiple"""
+    agent_prompt = "You are a helpful assistant providing users with their requested data via providing opnly the link the data can be found at. "
+
 
     prompt = ChatPromptTemplate.from_messages(
         [
@@ -298,13 +315,13 @@ if __name__ == "__main__":
     retriever_tool = create_retriever_tool(
         vector_store.as_retriever(),
         "data_retriever",
-        "Searches and returns Data files about the greenhouse gas emissions of diffrent countires. It  ",
+        "Searches and returns Data files aboout diffrent statistics ",
     )
 
-    tools = [retriever_tool, getDataProduct, matchFunction, extractFilter, getCatalogItem]
+    retrieval_tools = [retriever_tool, getDataProduct, getCatalogItem]
 
-    agent = create_tool_calling_agent(llm, tools, prompt)
-    agent_executor = create_react_agent(model=llm, tools=tools, response_format=ResponseFormat)
+    retrieval_agent = create_tool_calling_agent(llm, retrieval_tools, prompt)
+    agent_executor = create_react_agent(model=llm, tools=retrieval_tools, response_format=ResponseFormat)
     agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=True, response_format=ResponseFormat)
 
     # fdict = {"Country": "Germany", "min_year": 1990, "max_year": 1999}
@@ -314,15 +331,17 @@ if __name__ == "__main__":
     # applyFilter(df,fdict)
     # user = "The Co2 data for Arubas building sector where the emissions are between 0.02 and 0.03 "
     # user= "Emissions Data for Austrias Argiculture and building Sector for the 1990er"
-    # user = "Sweden, Norveigen and Finnlands per capita Co2 emissions "
-    user = "Sum of Germanys C02 emissions with a 5 year period"
+    #user = "Sweden, Norveigen and Finnlands per capita Co2 emissions "
+    user = "All females customers who paid with Credit Card and are at least 38 years old"
+    #user= "Germanies emisson for the 2000s"
 
     call = {'filename': 'GHG_totals_by_country', 'func': 'sum', 'filter': {'min_year': 1990}}
     # getDataProduct(call['filename'],call['func'],call['filter'])
-    # print(extractFilter(user))
+    #print(extractFilter(user))
     # input = {"messages": [("user", "Sum of Germanys emission form the 1990's onward")]}
     input = {"input": user}
     agent_result = agent_executor.invoke(input)
     print(agent_result)
-    # response = parseResult(agent_result['output'])
-    # print(response)
+
+
+

@@ -125,16 +125,17 @@ if __name__ == "__main__":
 
     # vector_store.add_documents(docs, ids=[doc.metadata["id"] for doc in docs])
     #add_doc(vector_store,"GHG_totals_by_country","automatic")
-    #add_doc(vector_store, "./data/data_products/metadata_manual.json","manual")
+    #add_docs(vector_store, "../data/Sales_Data/metadata_automatic.json","automatic")
     #vector_store.delete_collection()
     # filter = {"id": {"$in": [1, 5, 2, 9]}, "location": {"$in": ["pond", "market"]}}
 
-    search_query = Search(query="RAG", id=[1, 5, 2, 9], location="pond")
-    comparisons = construct_comparisons(search_query)
-    comps = []
+
 
     #print(vector_store.similarity_search("ducks", k=4, filter={'tags': {'$ilike': '%San Marino%'}, 'tags': {'$ilike': '%greenhouse gas emissions%'}, 'min_year': {'$lte': 1984}, 'max_year': {'$gte': 1984} }))
     # 'min_year': {'$gte': [1984]}, 'max_year': {'$lte': [1984]}
     #"tags": {"$ilike": '%San Marino%'}
     rag_chain = retrieve(vector_store, llm)
-    print(vector_store.similarity_search("test", k = 30))
+    res= vector_store.similarity_search("test", k = 30,)
+    for i in res:
+        print(i)
+    #vector_store.delete(['d935e880-2bf6-45ff-b642-8e1521591331'])

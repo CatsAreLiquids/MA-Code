@@ -1,0 +1,11 @@
+{
+  "customer_data_23": {
+    "description": "The dataset \"customer_data_23\" contains information about customers, specifically focusing on their gender, age, and payment method. This data can be useful for analyzing customer demographics and payment preferences.",
+    "tags": ["gender", "age", "payment_method", "customer demographics", "financial transactions", "age group", "payment preferences"],
+    "min_year": "2023",
+    "max_year": "2023"},
+  "sales_data_23": {
+    "description": "The dataset titled \"sales_data_23\" contains sales transaction records from various shopping malls, providing insights into consumer behavior and sales trends in early 2023.",
+    "tags": ["sales", "customer_data", "retail", "2023", "Toys", "Clothing", "quantity_and_price"],
+    "min_year": "2023",
+    "max_year": "2023"}}
