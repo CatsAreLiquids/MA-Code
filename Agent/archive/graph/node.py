@@ -77,7 +77,7 @@ def extractKeywords(state):
         [
             (
                 "system",
-                json.load(open("../prompts.json"))['tools']["extractKeywords"]
+                json.load(open("../../prompts.json"))['tools']["extractKeywords"]
             ),
             ("user", query),
         ]

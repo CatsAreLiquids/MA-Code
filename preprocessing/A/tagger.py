@@ -48,9 +48,9 @@ def fromatInput(frame, max_row):
 
 
 def generateTags(titles, values, file_name, tagNumber):
-    sys_prompt = PromptTemplate.from_template(json.load(open("./prompts.json"))['tagger_system_prompt'])
+    sys_prompt = PromptTemplate.from_template(json.load(open("prompts.json"))['tagger_system_prompt'])
     sys_prompt = sys_prompt.format(count=tagNumber)
-    input_prompt = PromptTemplate.from_template(json.load(open("./prompts.json"))['data_input_prompt'])
+    input_prompt = PromptTemplate.from_template(json.load(open("prompts.json"))['data_input_prompt'])
     input_prompt = input_prompt.format(titles=titles, values=values, file=file_name)
 
     messages = [
@@ -61,8 +61,8 @@ def generateTags(titles, values, file_name, tagNumber):
 
 
 def generateText(titles, values, file_name):
-    sys_prompt = json.load(open("./prompts.json"))['text_system_prompt']
-    input_prompt = PromptTemplate.from_template(json.load(open("./prompts.json"))['data_input_prompt'])
+    sys_prompt = json.load(open("prompts.json"))['text_system_prompt']
+    input_prompt = PromptTemplate.from_template(json.load(open("prompts.json"))['data_input_prompt'])
     input_prompt = input_prompt.format(titles=titles, values=values, file=file_name)
     messages = [
         ("system", sys_prompt),
@@ -123,6 +123,6 @@ if __name__ == "__main__":
     res = formatResult(res, files)
 
     #TODO check if files exists and tags exist
-    json.dump(res, open("../data/Sales_Data/metadata_automatic.json", 'w'))
+    json.dump(res, open("../../data/Sales_Data/metadata_automatic.json", 'w'))
 
 # TODO caching of input so we save on computing

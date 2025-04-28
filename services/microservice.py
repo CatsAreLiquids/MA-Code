@@ -4,7 +4,7 @@ from flask import Flask, request
 import yaml
 import util
 
-from retrieval import agentic
+from agent import test
 
 app = Flask(__name__)
 port = int(os.environ.get('PORT', 5000))

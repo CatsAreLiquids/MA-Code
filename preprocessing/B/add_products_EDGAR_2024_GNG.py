@@ -20,7 +20,7 @@ def CreateEntities(schema,data):
     pass
 
 def addMetadata(meta_json):
-    with open("../config/config.yml", 'r') as f:
+    with open("../../config/config.yml", 'r') as f:
         general_schema= yaml.load(f,Loader=yaml.FullLoader)
     print(meta_json)
     print(general_schema)
@@ -42,7 +42,7 @@ def addProduct(data, metadata):
 
     mdata = json.load(open(metadata))
 
-    with open("../config/config.yml", 'r') as f:
+    with open("../../config/config.yml", 'r') as f:
         general_schema= yaml.load(f,Loader=yaml.FullLoader)
 
     meta_dict = {"tags": mdata["tags"],

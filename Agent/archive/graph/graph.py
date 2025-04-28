@@ -102,8 +102,8 @@ workflow.add_node("agent", agent)  # agent
 workflow.add_node("getProduct", getDataProduct)
 workflow.add_node("getCatalog", getCatalogItem)
 #retrieve = ToolNode([retriever_tool])
-workflow.add_node("retrieve", retrieve)  # retrieval
-#workflow.add_node("extractKeywords", extractKeywords)  # retrieval
+workflow.add_node("retrieve", retrieve)
+#workflow.add_node("extractKeywords", extractKeywords)
 
 
 # Call agent node to decide to retrieve or not
