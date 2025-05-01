@@ -77,12 +77,13 @@ def extractFilter(query, catalog_dict):
                     Return all filter in a dict 
                     Example 
                     user query : "I would like to have the generall CO2 emissions data of Germany and Austria for the years 2000 to 2010"
-                    response: {'Country1':'Austria','Country2':'Germany',"min_year":2000,"max_year":2010}
-                    user query : "The Co2 data for Arubas building sector where the emissions are between 0.02 and 0.03"
-                    response: {'Country1': 'Aruba', 'min_value': 0.02, 'max_value': 0.03}
+                    response: {'Country':['Austria','Germany'],"year":{"min":2000,"max":2010} }
+                    user query : "The Co2 data for Aruba where the emissions are between 0.02 and 0.03, from 1990 onward"
+                    response: {'Country': 'Aruba', "value":{'min': 0.02, 'max': 0.03} "year":{'min':1990} }
                     user query : "Customer sales data of women over 38 paying by credit card"
-                    response: {'gender': 'Women', 'age': 38, 'pyament': credit card}
-
+                    response: {'gender': 'Women', 'age':{'min':38,'max':38} , 'pyament': "credit card"}
+                    user query : "Customers who have not payed with creddit card"
+                    response: {'gender': 'Women' , 'pyament': {'not':"credit card"}}
                     """
     input_prompt = PromptTemplate.from_template("""
             User Query:{query}
@@ -99,7 +100,8 @@ def init_agent():
     sys_prompt = """ Based on a user query identifiy the nercerssary steps and fucntions to transform data accordingly.
                     You only need to identify which functions need to be used and with which parameters. Use the available tools
                     The output should be a string containing a list of valid of python dictionaires, each dict containing one execution step and the necerssary values:
-                    [{{"function":"filter","values":{{"Country1":"Austria","Country2":"Germany","min_year":2000,"max_year":2010}}}},{{"name":"sum"}}]
+                    User query: "All females customers who paid with Credit Card and are at least 38 years old"
+                    response [{{"function":"filter","values":{{"gender":"Female","age":{{"min":38,"max":38}} }} }},{{"function":"getRows","values":{{"customer_id":"None"}} }}]
                     Do not return a json
         """
     prompt = ChatPromptTemplate.from_messages(
@@ -116,5 +118,3 @@ def init_agent():
     agent = create_tool_calling_agent(llm, tools, prompt)
 
     return AgentExecutor(agent=agent, tools=tools, verbose=True)
-
-#print(extractKeywords("All females customers who paid with Credit Card and are at least 38 years old"))

@@ -1,6 +1,6 @@
 
 
-def getSum(df, values=None):
+def getSum(df, filter_dict):
     return df.sum()
 
 def mean(df):
