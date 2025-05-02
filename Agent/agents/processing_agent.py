@@ -11,7 +11,7 @@ from langchain.agents import AgentExecutor, create_tool_calling_agent
 from langchain_core.prompts import ChatPromptTemplate
 
 from Agent.sharedTool import getCatalogItem
-
+import yaml
 
 load_dotenv()
 
@@ -64,6 +64,58 @@ def matchFunction(query, catalog_dict):
     ]
     return llm.invoke(messages)
 
+def _getProductColumns(file):
+    """
+        Retrieves columns available in a data product
+        file: the file name of a specific data product
+        :return: list of all available rows
+    """
+    # TODO this should be a call to the microservice
+    try:
+        with open("../dataCatalog/configs/catalog.yml") as stream:
+            catalog = yaml.safe_load(stream)
+    except FileNotFoundError:
+        return "could not find the main catalog"
+
+    for collection in catalog:
+        if file in collection['products']:
+            try:
+                with open("../dataCatalog/configs/" + collection['name'] + ".yml") as stream:
+                    collection_dict = yaml.safe_load(stream)
+                    for product in collection_dict['products']:
+                        if product['name'] == file:
+                            return product['columns']
+
+            except FileNotFoundError:
+                return "could not find the specific collection catalog"
+
+
+@tool
+def verfiyPlan(dataProduct, plan):
+    """
+    Verifies that the execution plan and the coressponding data product match, i.e. weather the data referenced in the execution plan is represented in the data product
+    dataProduct: name of the data product (retrieved with identifyDataProduct )
+    plan: an execution plan created with the createExecutionPlan tool
+    :return: bool, description
+    """
+
+    cols = _getProductColumns(dataProduct)
+    missing_cols = []
+    res = True
+    msg = "All columns found"
+
+    for elem in plan:
+        if plan['elem']  == "filter":
+            for key in elem['values'].keys():
+                if key not in cols:
+                    missing_cols.append(key)
+
+    if missing_cols:
+        res = False
+        msg = f"could not find the columns {missing_cols}"
+
+
+    return res,msg
 @tool
 def extractFilter(query, catalog_dict):
     """
@@ -102,7 +154,7 @@ def init_agent():
                     The output should be a string containing a list of valid of python dictionaires, each dict containing one execution step and the necerssary values:
                     User query: "All females customers who paid with Credit Card and are at least 38 years old"
                     response [{{"function":"filter","values":{{"gender":"Female","age":{{"min":38,"max":38}} }} }},{{"function":"getRows","values":{{"customer_id":"None"}} }}]
-                    Do not return a json
+                    do  not return a json
         """
     prompt = ChatPromptTemplate.from_messages(
             [
@@ -113,7 +165,7 @@ def init_agent():
         )
 
 
-    tools = [matchFunction, extractFilter, getCatalogItem]
+    tools = [matchFunction, extractFilter, getCatalogItem,verfiyPlan]
 
     agent = create_tool_calling_agent(llm, tools, prompt)
 

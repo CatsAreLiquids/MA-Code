@@ -14,6 +14,7 @@ from langchain_core.prompts import ChatPromptTemplate
 from dotenv import load_dotenv
 from langchain_openai import AzureOpenAIEmbeddings, AzureChatOpenAI
 from langchain.agents import tool
+import yaml
 load_dotenv()
 
 embeddings = AzureOpenAIEmbeddings(
@@ -38,8 +39,47 @@ vector_store = PGVector(
 )
 
 aggregations = {'sum': aggregation.getSum, "mean": aggregation.mean}
-filters = {'getRows': filter.getRows,'filter':filter.applyFilter,'combine':filter.combineProducts}
+filters = {'getRows': filter.getRows, 'filter': filter.applyFilter, 'combine': filter.combineProducts}
 
+
+@tool
+def formatOutput():
+    """
+
+    :return:
+    """
+    pass
+
+
+def breakDownQuery(query):
+    """
+    Breaks down a user query into multiple steps
+    :param query: user query
+    :return: list of steps
+    """
+    sys_prompt = """ Your task is to identify the seperate steps and data products necerssary to answer a user query. 
+                    To complete this goal break every user query into multiple steps if multiple data products are necerssary.
+                    For this combine the results of the createExecutionPlan and identifyDataProduct tool to create find each necerssary data product as well as a execution plan for it.
+                    If more than one data product is needed use the combine structure otherwise use execute.
+
+
+                    The result should be a valid json
+
+                    Examples for the result are:
+                    user query: "All females customers who paid with Credit Card and are at least 38 years old"
+                    result: {{"execute":{{"p1":({{"name": "sales_data_23", "url": "http://127.0.0.1:5000/products/Sales_Data/sales_data_23"}},[{{"function":"filter","values":{{"gender":"Female","age":{{"min":38}} }} }},{{"function":"getRows","values":{{"customer_id":"None"}} }}])}} }}
+                    user query: "Total cost per category bought by women over 38 who paid with credit card"
+                    result: {{"combine":{{"p1":({{"name": "sales_data_23", "url": "http://127.0.0.1:5000/products/Sales_Data/sales_data_23"}},[{{"function":"sum","values":{{"group_by":"category"}} }} ]),"p2":({{"name": "customer_data_23", "url": "http://127.0.0.1:5000/products/Sales_Data/customer_data_23"}},[{{"function":"filter","values":{{"gender":"Female","age":{{"min":38}} }} }} , {{"function":"getRows","values":{{"customer_id":"None"}} }}] )}},'column':"customer_id",'type':'select','values':["C109593"]}}
+
+                    Do only return the result and do not explain it
+        """
+    prompt = ChatPromptTemplate.from_messages(
+        [
+            ("system", sys_prompt),
+            ("human", "input"),
+            ("placeholder", "{agent_scratchpad}"),
+        ]
+    )
 
 
 @tool
@@ -71,6 +111,7 @@ def createExecutionPlan(query, dataProduct):
 
     return agent_result
 
+
 def _getDataProduct(agent_result):
     """
     :param agent_result:
@@ -81,19 +122,38 @@ def _getDataProduct(agent_result):
     except:
         return "could not access data product is the URL correct ?"
 
-def executeQuery():
-    pass
 
-def tmp(exc_pattern,url):
-    """
-    :param exc_pattern:
-    :param url:
-    :return:
-    """
-    df = _getDataProduct()
+def _combineProducts(first, second, column, type, value):
+    if type == "select":
+        first = first[first[column].isin(value)]
+    if type == "join":
+        first = first.join(second, on=column)
+        if value is not None:
+            first = first[first[column].isin(value)]
+    return first
+
+
+def execute(plan):
+    if 'combine' in plan:
+        df = _getDataProduct(plan['combine']['p1'][0])
+        df = _executeBlocks(df, plan['combine']['p1'][1])
+
+        df2 = _getDataProduct(plan['combine']['p2'][0])
+        df2 = _executeBlocks(df2, plan['combine']['p2'][1])
+
+        df = _combineProducts(df, df2, plan['column'], plan['type'], plan['values'])
+
+    else:
+        df = _getDataProduct(plan['execute']['p1'][0])
+        df = _executeBlocks(df, plan['execute']['p1'][1])
+
+    return df
+
+
+def _executeBlocks(df, plan):
     try:
-        agent_result = ast.literal_eval(agent_result)
-        for elem in agent_result:
+        plan = ast.literal_eval(plan)
+        for elem in plan:
             if 'values' in elem:
                 values = elem['values']
             else:
@@ -101,6 +161,9 @@ def tmp(exc_pattern,url):
             df = applyFunction(df, elem['function'], values)
     except:
         pass
+
+    return df
+
 
 def applyFunction(df, function, values):
     if function in aggregations:
@@ -115,7 +178,7 @@ def applyFunction(df, function, values):
 # user= "Emissions Data for Austrias Argiculture and building Sector for the 1990er"
 # user = "Sweden, Norveigen and Finnlands per capita Co2 emissions "
 user = "All females customers who paid with Credit Card and are at least 38 years old"
-user = "Total cost per category bought by women over 38 who paid with credit card"
+user = "From the sales data i would like to know the total amount of money spent per category of available items, of women over 38"
 # user= "Germanies emisson for the 2000s"
 
 """
@@ -144,22 +207,45 @@ except:
 
 sys_prompt = """ Your task is to identify the seperate steps and data products necerssary to answer a user query. 
                 To complete this goal break every user query into multiple steps if multiple data products are necerssary.
-                you have access to 
-
+                For this combine the results of the createExecutionPlan and identifyDataProduct tool to create find each necerssary data product as well as a execution plan for it.
+                If more than one data product is needed use the combine structure otherwise use execute.
+                
+                
+                The result should be a valid json
+                
+                Examples for the result are:
+                user query: "All females customers who paid with Credit Card and are at least 38 years old"
+                result: {{"execute":{{"p1":({{"name": "sales_data_23", "url": "http://127.0.0.1:5000/products/Sales_Data/sales_data_23"}},[{{"function":"filter","values":{{"gender":"Female","age":{{"min":38}} }} }},{{"function":"getRows","values":{{"customer_id":"None"}} }}])}} }}
+                user query: "Total cost per category bought by women over 38 who paid with credit card"
+                result: {{"combine":{{"p1":({{"name": "sales_data_23", "url": "http://127.0.0.1:5000/products/Sales_Data/sales_data_23"}},[{{"function":"sum","values":{{"group_by":"category"}} }} ]),"p2":({{"name": "customer_data_23", "url": "http://127.0.0.1:5000/products/Sales_Data/customer_data_23"}},[{{"function":"filter","values":{{"gender":"Female","age":{{"min":38}} }} }} , {{"function":"getRows","values":{{"customer_id":"None"}} }}] )}},'column':"customer_id",'type':'select','values':["C109593"]}}
+                
+                Do only return the result and do not explain it
     """
 prompt = ChatPromptTemplate.from_messages(
     [
         ("system", sys_prompt),
-        ("human", "{input}"),
+        ("human", "input"),
         ("placeholder", "{agent_scratchpad}"),
     ]
 )
 
-tools = [identifyDataProduct,createExecutionPlan]
+tools = [identifyDataProduct, createExecutionPlan]
 
 agent = create_tool_calling_agent(llm, tools, prompt)
 
-planning_agent = AgentExecutor(agent=agent,tools=tools, verbose=True)
+planning_agent = AgentExecutor(agent=agent, tools=tools, verbose=True)
 
 agent_result = planning_agent.invoke({"input": user})['output']
-print(agent_result)
+
+agent_result = ast.literal_eval(agent_result)
+print(execute(agent_result))
+r1 = "sales_data_23"
+p2 = [{'function': 'filter', 'values': {'gender': 'Female', 'age': {'min': 38}, 'payment': 'Credit Card'}},
+      {'function': 'getRows', 'values': {'customer_id': 'None'}}]
+
+#print(verfiyPlan(r1, p2))
+
+# alt = {'execute':{'p1':(r1,one)}}
+# plan = {'execute':{'p1':{'product':{'name': 'sales_data_23', 'url': 'http://127.0.0.1:5000/products/Sales_Data/sales_data_23'},[{"function":"filter","values":{"gender":"Female","age":{"min":38},"payment":"Credit Card"}},{"function":"getRows","values":{"customer_id":"None"}}])}}
+# print(execute(plan))
+# print(execute(alt))

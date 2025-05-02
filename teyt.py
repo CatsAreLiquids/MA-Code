@@ -41,21 +41,35 @@ def _executeBlocks(df,plan):
     return df
 
 def execute(plan):
-    previous_df = None
-    for product,processing in plan():
-        df = _getDataProduct(product)
-        df = _executeBlocks(df,processing)
-        if previous_df is not None and "combineProducts" in processing:
-            ecombineProducts
 
+    if 'combine' in plan:
+        df = _getDataProduct(plan['combine']['p1'][0])
+        df = _executeBlocks(df, plan['combine']['p1'][1])
 
+        df2 = _getDataProduct(plan['combine']['p2'][0])
+        df2 = _executeBlocks(df2, plan['combine']['p2'][1])
 
+        df = _combineProducts(df,df2,plan['column'],plan['type'],plan['values'])
 
-r1= {'name': 'sales_data_23', 'url': 'http://127.0.0.1:5000/products/Sales_Data/sales_data_23'}
-r2 = {'name': 'customer_data_23', 'url': 'http://127.0.0.1:5000/products/Sales_Data/customer_data_23'}
-one = [{"function":"filter","values":{"gender":"Female","age":{"min":38}}},{"function":"getRows","values":{"customer_id":"None"}}]
-two = [{"function":"combineProducts","values":{"customer_id":["C109593"]}},{"function":"sum","values":{"group_by":"category"}}]
+    else:
+        df = _getDataProduct(plan['execute']['p1'][0])
+        df = _executeBlocks(df,plan['execute']['p1'][1])
 
-plan = [(r1,one),(r2,two)]
+    return df
+
+def _combineProducts(first,second, column,type,value):
+
+    if type =="select":
+        first = first[first[column].isin(value)]
+    if type == "join":
+        first = first.join(second,on=column)
+        if value is not None:
+            first = first[first[column].isin(value)]
+    return first
+
+l = {"execute":{"p1":({"name": "sales_data_23", "url": "http://127.0.0.1:5000/products/Sales_Data/sales_data_23"},[{"function":"filter","values":{"gender":"Female","payment_method":"Credit Card","age":{"min":38}}},{"function":"getRows","values":{"customer_id":"None"}}])}}
+print(l)
+agent_result = json.loads(l)
+execute(agent_result)
 
 
