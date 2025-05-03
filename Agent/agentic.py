@@ -15,6 +15,8 @@ from dotenv import load_dotenv
 from langchain_openai import AzureOpenAIEmbeddings, AzureChatOpenAI
 from langchain.agents import tool
 import yaml
+
+from langchain.tools.retriever import create_retriever_tool
 load_dotenv()
 
 embeddings = AzureOpenAIEmbeddings(
@@ -50,36 +52,59 @@ def formatOutput():
     """
     pass
 
+@tool
+def chooseProduct(query,retrievedProducts):
+    """
+    Decides the best possible data product based on a user query and the retrieved products
+    :param query: text about the queries
+    :param retrievedProducts: data product decription and data product name
+    :return: {{"name":"name","url":"http://127.0.0.1:5000/exampleUrl"}}
+    """
+    sys_prompt = """ Your task is to help identify the correct url and data product for a user based on their query
+                        Only provide one url at a time together withe the name of the data product.
+                        The output should be a valid json formatted as follwos:
+                        {{"name":"name","url":"http://127.0.0.1:5000/exampleUrl"}}
+        """
+    input_prompt = PromptTemplate.from_template("""
+            User Query:{query}
+            possible Products:{retrievedProducts}
+            """)
+    input_prompt = input_prompt.format(query=query, catalog_dict=retrievedProducts)
+    messages = [
+        ("system", sys_prompt),
+        ("human", input_prompt),
+    ]
+    return llm.invoke(messages)
 
+@tool
 def breakDownQuery(query):
     """
     Breaks down a user query into multiple steps
-    :param query: user query
+    :param query: user query received at the start
     :return: list of steps
     """
-    sys_prompt = """ Your task is to identify the seperate steps and data products necerssary to answer a user query. 
-                    To complete this goal break every user query into multiple steps if multiple data products are necerssary.
-                    For this combine the results of the createExecutionPlan and identifyDataProduct tool to create find each necerssary data product as well as a execution plan for it.
-                    If more than one data product is needed use the combine structure otherwise use execute.
-
-
-                    The result should be a valid json
-
-                    Examples for the result are:
-                    user query: "All females customers who paid with Credit Card and are at least 38 years old"
-                    result: {{"execute":{{"p1":({{"name": "sales_data_23", "url": "http://127.0.0.1:5000/products/Sales_Data/sales_data_23"}},[{{"function":"filter","values":{{"gender":"Female","age":{{"min":38}} }} }},{{"function":"getRows","values":{{"customer_id":"None"}} }}])}} }}
-                    user query: "Total cost per category bought by women over 38 who paid with credit card"
-                    result: {{"combine":{{"p1":({{"name": "sales_data_23", "url": "http://127.0.0.1:5000/products/Sales_Data/sales_data_23"}},[{{"function":"sum","values":{{"group_by":"category"}} }} ]),"p2":({{"name": "customer_data_23", "url": "http://127.0.0.1:5000/products/Sales_Data/customer_data_23"}},[{{"function":"filter","values":{{"gender":"Female","age":{{"min":38}} }} }} , {{"function":"getRows","values":{{"customer_id":"None"}} }}] )}},'column':"customer_id",'type':'select','values':["C109593"]}}
-
-                    Do only return the result and do not explain it
+    sys_prompt = """ Your task is to deconstruct a user query into multipe parts if necerssary.
+                    Example
+                    User query: Based on the customer data of women over 38 who have paid with credit cards I want to see the sum of all sales per category in the sales data
+                    parts:["customer data of women over 38 who have paid with credit cards", "the sum of all sales per category in the sales data"]
+                    
+                    User query: Average age of all customers who previously have bought toys, by gender
+                    parts:["Customers who have bought toys", "Average age by gender"]
+                    
+                    User query: "All females customers who paid with Credit Card and are at least 38 years old"
+                    parts:["Females who paid ith credit card over 38"]
+                    
+                    
         """
-    prompt = ChatPromptTemplate.from_messages(
-        [
-            ("system", sys_prompt),
-            ("human", "input"),
-            ("placeholder", "{agent_scratchpad}"),
-        ]
-    )
+    input_prompt = PromptTemplate.from_template("""
+                User Query:{query}
+                """)
+    input_prompt = input_prompt.format(query=query)
+    messages = [
+        ("system", sys_prompt),
+        ("human", input_prompt),
+    ]
+    return llm.invoke(messages)
 
 
 @tool
@@ -101,7 +126,7 @@ def createExecutionPlan(query, dataProduct):
     """
     Calls an agent system that creates an execution plan based on defined functions and the user query
     query: a user query defining a specifc data product
-    dataProduct: name of the data product (retrieved with identifyDataProduct )
+    dataProduct: name of the data product ( by identifyDataProduct )
     :return: [{{"function":"filter","values":{{"gender":"Female","age":{{"min":38,"max":38}} }} }},{{"function":"getRows","values":{{"customer_id":"None"}} }}]
     """
     query = query + f"The correct data products name is {dataProduct}"
@@ -205,21 +230,22 @@ except:
 
 # JSONDecodeError
 
-sys_prompt = """ Your task is to identify the seperate steps and data products necerssary to answer a user query. 
-                To complete this goal break every user query into multiple steps if multiple data products are necerssary.
+sys_prompt = """ Your task is to create an execution plan for a user query.
+                To do this you first need to break the user query in possible multiple parts and the iodentfy data products and how to process these products
                 For this combine the results of the createExecutionPlan and identifyDataProduct tool to create find each necerssary data product as well as a execution plan for it.
                 If more than one data product is needed use the combine structure otherwise use execute.
                 
-                
                 The result should be a valid json
-                
+            
                 Examples for the result are:
                 user query: "All females customers who paid with Credit Card and are at least 38 years old"
                 result: {{"execute":{{"p1":({{"name": "sales_data_23", "url": "http://127.0.0.1:5000/products/Sales_Data/sales_data_23"}},[{{"function":"filter","values":{{"gender":"Female","age":{{"min":38}} }} }},{{"function":"getRows","values":{{"customer_id":"None"}} }}])}} }}
                 user query: "Total cost per category bought by women over 38 who paid with credit card"
                 result: {{"combine":{{"p1":({{"name": "sales_data_23", "url": "http://127.0.0.1:5000/products/Sales_Data/sales_data_23"}},[{{"function":"sum","values":{{"group_by":"category"}} }} ]),"p2":({{"name": "customer_data_23", "url": "http://127.0.0.1:5000/products/Sales_Data/customer_data_23"}},[{{"function":"filter","values":{{"gender":"Female","age":{{"min":38}} }} }} , {{"function":"getRows","values":{{"customer_id":"None"}} }}] )}},'column':"customer_id",'type':'select','values':["C109593"]}}
                 
-                Do only return the result and do not explain it
+                Do only return the result and do not explain it 
+                
+                
     """
 prompt = ChatPromptTemplate.from_messages(
     [
@@ -229,15 +255,22 @@ prompt = ChatPromptTemplate.from_messages(
     ]
 )
 
-tools = [identifyDataProduct, createExecutionPlan]
+retriever_tool = create_retriever_tool(
+        vector_store.as_retriever(),
+        "data_retriever",
+        "Searches and returns Data files aboout diffrent statistics ",
+    )
+
+tools = [identifyDataProduct,createExecutionPlan,breakDownQuery]
 
 agent = create_tool_calling_agent(llm, tools, prompt)
 
 planning_agent = AgentExecutor(agent=agent, tools=tools, verbose=True)
 
 agent_result = planning_agent.invoke({"input": user})['output']
-
+print(agent_result)
 agent_result = ast.literal_eval(agent_result)
+#print(breakDownQuery.invoke(user))
 print(execute(agent_result))
 r1 = "sales_data_23"
 p2 = [{'function': 'filter', 'values': {'gender': 'Female', 'age': {'min': 38}, 'payment': 'Credit Card'}},
