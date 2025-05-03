@@ -36,6 +36,9 @@ vector_store = PGVector(
     use_jsonb=True,
 )
 
+#aggregations = {'sum': aggregation.getSum, "mean": aggregation.mean}
+#filters = {'getRows': {'function'filter.getRows, 'filter': filter.applyFilter, 'combine': filter.combineProducts}
+
 @tool
 def matchFunction(query, catalog_dict):
     """
@@ -153,8 +156,8 @@ def init_agent():
                     You only need to identify which functions need to be used and with which parameters. Use the available tools
                     The output should be a string containing a list of valid of python dictionaires, each dict containing one execution step and the necerssary values:
                     User query: "All females customers who paid with Credit Card and are at least 38 years old"
-                    response [{{"function":"filter","values":{{"gender":"Female","age":{{"min":38,"max":38}} }} }},{{"function":"getRows","values":{{"customer_id":"None"}} }}]
-                    do  not return a json
+                    response: [{{"function":"filter","values":{{"gender":"Female","age":{{"min":38,"max":38}} }} }},{{"function":"getRows","values":{{"customer_id":"None"}} }}]
+                    do not return a json, return only the result ith no explanantion
         """
     prompt = ChatPromptTemplate.from_messages(
             [

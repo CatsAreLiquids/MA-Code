@@ -46,39 +46,39 @@ aggregations = {'sum': aggregation.getSum, "mean": aggregation.mean}
 filters = {'getRows': filter.getRows, 'filter': filter.applyFilter, 'combine': filter.combineProducts}
 
 
-
+@tool
 def createExecutionPlan(query:str, dataProduct):
     """
     Creates an execution plan based on the input
-    query: a query extracted from the original user input with breakDownQuery
-    dataProduct: name of the data product ( by identifyDataProduct )
+    :param query: a query extracted from the original user input with breakDownQuery
+    :param dataProduct: name of the data product ( by identifyDataProduct )
     :return: [{{"function":"filter","values":{{"gender":"Female","age":{{"min":38,"max":38}} }} }},{{"function":"getRows","values":{{"customer_id":"None"}} }}]
     """
     query = query + f"The correct data products name is {dataProduct}"
     pagent = processing_agent.init_agent()
     agent_result = pagent.invoke({"input": query})['output']
+    print(agent_result)
     agent_result = ast.literal_eval(agent_result)
-    print(query)
     return agent_result
 
+@tool
 def identifyDataProduct(query:str):
     """
     Calls a retriever agent that identfies the most fitting data product for the input query
-    query: a user query defining a specifc data product
+    :param query: a user query defining a specifc data product
     :return: {{"name":"name","url":"http://127.0.0.1:5000/exampleUrl"}}
     """
-    print("identifyDataProduct: ", query)
     ragent = retrieval_agent.init_agent()
     agent_result = ragent.invoke({"input": query})['output']
     agent_result = json.loads(agent_result)
 
     return agent_result
-
-
+#TODO @tool(parse_docstring=True)
+@tool
 def breakDownQuery(query:str):
     """
     Breaks down a user query into multiple steps
-    query: user query asking for an data product
+    :param query user query asking for an data product
     :return: list of steps
     """
     sys_prompt = """ Your task is to deconstruct a user query into multipe parts if necerssary.
@@ -98,18 +98,13 @@ def breakDownQuery(query:str):
                 User Query:{query}
                 """)
     input_prompt = input_prompt.format(query=query)
-    print("breakDownQuery: ", query)
     messages = [
         ("system", sys_prompt),
         ("human", input_prompt),
     ]
     tmp = llm.invoke(messages)
-    print(tmp)
     return tmp
 
 
 def init_tools():
-    retriever= StructuredTool.from_function(identifyDataProduct)
-    planning = StructuredTool.from_function(createExecutionPlan)
-    split = StructuredTool.from_function(breakDownQuery)
-    return [retriever,planning,split]
+    return [identifyDataProduct,createExecutionPlan,breakDownQuery]

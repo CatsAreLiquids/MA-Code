@@ -101,6 +101,7 @@ def _getDataProduct(agent_result):
 
 
 def _combineProducts(first, second, column, type, value):
+    print(first,second)
     if type == "select":
         first = first[first[column].isin(value)]
     if type == "join":
@@ -112,12 +113,14 @@ def _combineProducts(first, second, column, type, value):
 
 def execute(plan):
     if 'combine' in plan:
+
         df = _getDataProduct(plan['combine']['p1'][0])
+        print("first pre:", df)
         df = _executeBlocks(df, plan['combine']['p1'][1])
-
+        print("first post:", df)
         df2 = _getDataProduct(plan['combine']['p2'][0])
-        df2 = _executeBlocks(df2, plan['combine']['p2'][1])
 
+        df2 = _executeBlocks(df2, plan['combine']['p2'][1])
         df = _combineProducts(df, df2, plan['column'], plan['type'], plan['values'])
 
     else:
@@ -129,7 +132,8 @@ def execute(plan):
 
 def _executeBlocks(df, plan):
     try:
-        plan = ast.literal_eval(plan)
+        if isinstance(plan,str):
+            plan = ast.literal_eval(plan)
         for elem in plan:
             if 'values' in elem:
                 values = elem['values']
@@ -137,7 +141,7 @@ def _executeBlocks(df, plan):
                 values = None
             df = applyFunction(df, elem['function'], values)
     except:
-        pass
+        print("error")
 
     return df
 
@@ -183,8 +187,6 @@ except:
 # JSONDecodeError
 
 sys_prompt = """ Your task is to create an execution plan for a user query.
-                To do this you first need to break the user query in possible multiple parts and the iodentfy data products and how to process these products
-                For this combine the results of the createExecutionPlan and identifyDataProduct tool to create find each necerssary data product as well as a execution plan for it.
                 If more than one data product is needed use the combine structure otherwise use execute.
                 
                 The result should be a valid json
@@ -193,19 +195,14 @@ sys_prompt = """ Your task is to create an execution plan for a user query.
                 user query: "All females customers who paid with Credit Card and are at least 38 years old"
                 result: {{"execute":{{"p1":({{"name": "sales_data_23", "url": "http://127.0.0.1:5000/products/Sales_Data/sales_data_23"}},[{{"function":"filter","values":{{"gender":"Female","age":{{"min":38}} }} }},{{"function":"getRows","values":{{"customer_id":"None"}} }}])}} }}
                 user query: "Total cost per category bought by women over 38 who paid with credit card"
-                result: {{"combine":{{"p1":({{"name": "sales_data_23", "url": "http://127.0.0.1:5000/products/Sales_Data/sales_data_23"}},[{{"function":"sum","values":{{"group_by":"category"}} }} ]),"p2":({{"name": "customer_data_23", "url": "http://127.0.0.1:5000/products/Sales_Data/customer_data_23"}},[{{"function":"filter","values":{{"gender":"Female","age":{{"min":38}} }} }} , {{"function":"getRows","values":{{"customer_id":"None"}} }}] )}},'column':"customer_id",'type':'select','values':["C109593"]}}
+                result: {{"combine":{{"p1":({{"name": "sales_data_23", "url": "http://127.0.0.1:5000/products/Sales_Data/sales_data_23"}},[{{"function":"sum","values":{{"group_by":"category","column":"price"}} }} ]),"p2":({{"name": "customer_data_23", "url": "http://127.0.0.1:5000/products/Sales_Data/customer_data_23"}},[{{"function":"filter","values":{{"gender":"Female","age":{{"min":38}} }} }} , {{"function":"getRows","values":{{"customer_id":"None"}} }}] )}},"column":"customer_id","type":"select","values":["None"]}}
                 
                 Do only return the result and do not explain it 
-                
-                
-    """
-sys_prompt = """ Your task is to create an execution plan for a user query.
-                To do this you first need to break the user query in possible multiple parts and the iodentfy data products and how to process these products
     """
 prompt = ChatPromptTemplate.from_messages(
     [
         ("system", sys_prompt),
-        ("human", "input"),
+        ("human", "{input}"),
         ("placeholder", "{agent_scratchpad}"),
     ]
 )
@@ -221,17 +218,16 @@ tools = init_tools()
 agent = create_tool_calling_agent(llm, tools, prompt)
 
 planning_agent = AgentExecutor(agent=agent, tools=tools, verbose=True)
-
-agent_result = planning_agent.invoke({"input": user})['output']
-print(agent_result)
+agent_result= planning_agent.invoke({'input':user})['output']
 #agent_result = ast.literal_eval(agent_result)
+#print(agent_result)
+l = {"combine":{"p1":({"name": "sales_data_23", "url": "http://127.0.0.1:5000/products/Sales_Data/sales_data_23"},[{"function":"sum","values":{"operation":"sum","field":"amount_spent"}}]),"p2":({"name": "customer_data_23", "url": "http://127.0.0.1:5000/products/Sales_Data/customer_data_23"},[{"function":"filter","values":{"gender":"Female","age":{"min":38}}},{"function":"getRows","values":{"customer_id":"None"}}])},"column":"customer_id","type":"select","values":["None"]}
 
 #print(execute(agent_result))
 r1 = "sales_data_23"
 p2 = [{'function': 'filter', 'values': {'gender': 'Female', 'age': {'min': 38}, 'payment': 'Credit Card'}},
       {'function': 'getRows', 'values': {'customer_id': 'None'}}]
 
-#print(verfiyPlan(r1, p2))
 
 # alt = {'execute':{'p1':(r1,one)}}
 # plan = {'execute':{'p1':{'product':{'name': 'sales_data_23', 'url': 'http://127.0.0.1:5000/products/Sales_Data/sales_data_23'},[{"function":"filter","values":{"gender":"Female","age":{"min":38},"payment":"Credit Card"}},{"function":"getRows","values":{"customer_id":"None"}}])}}

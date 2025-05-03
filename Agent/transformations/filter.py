@@ -47,6 +47,7 @@ def _matchValues(df, column, values):
 
 
 def getRows(df, filter_dict):
+    msg = ""
     for column, values in filter_dict.items():
         if (values is not None) and (values != "None"):
 
