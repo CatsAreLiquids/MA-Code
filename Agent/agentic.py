@@ -16,6 +16,11 @@ from langchain_openai import AzureOpenAIEmbeddings, AzureChatOpenAI
 from langchain.agents import tool
 import yaml
 
+
+from Agent.tools import init_tools
+
+from langchain_core.tools import StructuredTool
+
 from langchain.tools.retriever import create_retriever_tool
 load_dotenv()
 
@@ -76,65 +81,12 @@ def chooseProduct(query,retrievedProducts):
     ]
     return llm.invoke(messages)
 
-@tool
-def breakDownQuery(query):
-    """
-    Breaks down a user query into multiple steps
-    :param query: user query received at the start
-    :return: list of steps
-    """
-    sys_prompt = """ Your task is to deconstruct a user query into multipe parts if necerssary.
-                    Example
-                    User query: Based on the customer data of women over 38 who have paid with credit cards I want to see the sum of all sales per category in the sales data
-                    parts:["customer data of women over 38 who have paid with credit cards", "the sum of all sales per category in the sales data"]
-                    
-                    User query: Average age of all customers who previously have bought toys, by gender
-                    parts:["Customers who have bought toys", "Average age by gender"]
-                    
-                    User query: "All females customers who paid with Credit Card and are at least 38 years old"
-                    parts:["Females who paid ith credit card over 38"]
-                    
-                    
-        """
-    input_prompt = PromptTemplate.from_template("""
-                User Query:{query}
-                """)
-    input_prompt = input_prompt.format(query=query)
-    messages = [
-        ("system", sys_prompt),
-        ("human", input_prompt),
-    ]
-    return llm.invoke(messages)
 
 
-@tool
-def identifyDataProduct(query):
-    """
-    Calls a retriever agent that identfies the most fitting data product for the input query
-    query: a user query defining a specifc data product
-    :return: {{"name":"name","url":"http://127.0.0.1:5000/exampleUrl"}}
-    """
-    ragent = retrieval_agent.init_agent()
-    agent_result = ragent.invoke({"input": query})['output']
-    agent_result = json.loads(agent_result)
-
-    return agent_result
 
 
-@tool
-def createExecutionPlan(query, dataProduct):
-    """
-    Calls an agent system that creates an execution plan based on defined functions and the user query
-    query: a user query defining a specifc data product
-    dataProduct: name of the data product ( by identifyDataProduct )
-    :return: [{{"function":"filter","values":{{"gender":"Female","age":{{"min":38,"max":38}} }} }},{{"function":"getRows","values":{{"customer_id":"None"}} }}]
-    """
-    query = query + f"The correct data products name is {dataProduct}"
-    pagent = processing_agent.init_agent()
-    agent_result = pagent.invoke({"input": query})['output']
-    agent_result = ast.literal_eval(agent_result)
 
-    return agent_result
+
 
 
 def _getDataProduct(agent_result):
@@ -247,6 +199,9 @@ sys_prompt = """ Your task is to create an execution plan for a user query.
                 
                 
     """
+sys_prompt = """ Your task is to create an execution plan for a user query.
+                To do this you first need to break the user query in possible multiple parts and the iodentfy data products and how to process these products
+    """
 prompt = ChatPromptTemplate.from_messages(
     [
         ("system", sys_prompt),
@@ -261,17 +216,17 @@ retriever_tool = create_retriever_tool(
         "Searches and returns Data files aboout diffrent statistics ",
     )
 
-tools = [identifyDataProduct,createExecutionPlan,breakDownQuery]
-
+#tools = [breakDownQuery]
+tools = init_tools()
 agent = create_tool_calling_agent(llm, tools, prompt)
 
 planning_agent = AgentExecutor(agent=agent, tools=tools, verbose=True)
 
 agent_result = planning_agent.invoke({"input": user})['output']
 print(agent_result)
-agent_result = ast.literal_eval(agent_result)
-#print(breakDownQuery.invoke(user))
-print(execute(agent_result))
+#agent_result = ast.literal_eval(agent_result)
+
+#print(execute(agent_result))
 r1 = "sales_data_23"
 p2 = [{'function': 'filter', 'values': {'gender': 'Female', 'age': {'min': 38}, 'payment': 'Credit Card'}},
       {'function': 'getRows', 'values': {'customer_id': 'None'}}]
