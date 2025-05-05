@@ -75,10 +75,10 @@ def mean(df,filter_dict):
 
     return df[filter_dict['column']].mean()
 
-l = {"execute":{"p1":({"name": "sales_data_23", "url": "http://127.0.0.1:5000/products/Sales_Data/sales_data_23"},[{"function":"filter","values":{"gender":"Female","payment_method":"Credit Card","age":{"min":38}}},{"function":"getRows","values":{"customer_id":"None"}}])}}
-print(l)
+l = {"combine":{"p1":({"name": "sales_data_23", "url": "http://127.0.0.1:5000/products/Sales_Data/sales_data_23"},[{"function":"sum","values":{"column":"price","group_by":["category"]}}]),"p2":({"name": "customer_data_23", "url": "http://127.0.0.1:5000/products/Sales_Data/customer_data_23"},[{"function":"filter","values":{"gender":"Women","age":{"min":38}}}])},"column":"customer_id","type":"select","values":["None"]}
+print(l['column'])
 #agent_result = json.loads(l)
 #execute(agent_result)
 df = pd.read_csv("data/Sales_Data/sales_data_23.csv")
-l = {'function': 'sum', 'values': {'column': 'price','group_by':['category','shopping_mall']}}
+l = {'function': 'mean', 'values': {'column': 'price','group_by':['category','shopping_mall']}}
 print(mean(df,l['values']))

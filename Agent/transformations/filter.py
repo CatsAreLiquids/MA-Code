@@ -21,6 +21,8 @@ def applyFilter(df, filter_dict):
             df = df[idx]
         else:
             try:
+                if isinstance(val, str):
+                    val = val.lower()
                 df = df[df[key] == val]
             except KeyError:
                 msg = f"Could not find coulumn {column} in the dataset please try to rephrase your query"
@@ -31,6 +33,8 @@ def _matchValues(df, column, values):
     idx = []
     msg = ""
     for val in values:
+        if isinstance(val,str):
+            val = val.lower()
         mask = df[column] == val
         tmp = np.where(np.asarray(mask))[0].tolist()
         if not tmp:

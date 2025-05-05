@@ -7,7 +7,7 @@ def helper(val):
         return True
     else: return False
 
-
+"""
 df = pd.read_csv("archive/sales_data_full.csv", parse_dates=['invoice_date'])
 
 tmp = df[df['invoice_date'].apply(lambda x: helper(x))]
@@ -22,3 +22,16 @@ print(len(tmp2))
 tmp2.to_csv("customer_data_23.csv",index=False)
 print(tmp2.head())
 
+"""
+df = pd.read_csv("customer_data_23.csv")
+df['customer_id'] = df['customer_id'].str.lower()
+df['gender'] = df['gender'].str.lower()
+df['payment_method'] = df['payment_method'].str.lower()
+df.to_csv("customer_data_23.csv",index=False)
+
+df = pd.read_csv("sales_data_23.csv")
+df['customer_id'] = df['customer_id'].str.lower()
+df['invoice_no'] = df['invoice_no'].str.lower()
+df['category'] = df['category'].str.lower()
+df['shopping_mall'] = df['shopping_mall'].str.lower()
+df.to_csv("sales_data_23.csv",index=False)

@@ -57,7 +57,6 @@ def createExecutionPlan(query:str, dataProduct):
     query = query + f"The correct data products name is {dataProduct}"
     pagent = processing_agent.init_agent()
     agent_result = pagent.invoke({"input": query})['output']
-    print(agent_result)
     agent_result = ast.literal_eval(agent_result)
     return agent_result
 
@@ -102,8 +101,7 @@ def breakDownQuery(query:str):
         ("system", sys_prompt),
         ("human", input_prompt),
     ]
-    tmp = llm.invoke(messages)
-    return tmp
+    return llm.invoke(messages)
 
 
 def init_tools():
