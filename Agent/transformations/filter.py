@@ -47,7 +47,7 @@ def _matchValues(df, column, values):
     if msg != "":
         msg += f"in the {column} column"
 
-    return idx, msg
+    return idx#, msg
 
 
 def getRows(df, filter_dict):
@@ -63,7 +63,7 @@ def getRows(df, filter_dict):
 
             except KeyError:
                 msg = f"Could not find coulumn {column} in the dataset please try to rephrase your query"
-    return df, msg
+    return df#, msg
 
 
 def combineProducts(df, filter_dict):

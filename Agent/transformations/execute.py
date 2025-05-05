@@ -1,3 +1,20 @@
+import ast
+import json
+import pandas as pd
+import requests
+import io
+
+from . import aggregation
+from . import filter
+
+aggregations = {'sum': aggregation.getSum, "mean": aggregation.mean}
+filters = {'getRows': filter.getRows, 'filter': filter.applyFilter}
+
+
+def getData(url):
+    response = requests.get(url)
+    content = json.loads(response.text)
+    return pd.read_json(io.StringIO(content['data']))
 
 def _getDataProduct(agent_result):
     """
@@ -5,15 +22,19 @@ def _getDataProduct(agent_result):
     :return:
     """
     try:
-        return util.getData(agent_result['url'])
+        return getData(agent_result['url'])
     except:
         return "could not access data product is the URL correct ?"
 
 
 def _combineProducts(first, second, column, type, value):
+
     if type == "select":
         if (value is None) or (value==['None']):
-            value = second[column].to_list()
+            if isinstance(second,pd.Series):
+                value = second.tolist()
+            else:
+                value = second[column].to_list()
         first = first[first[column].isin(value)]
     if type == "join":
         first = first.join(second, on=column)
@@ -39,8 +60,6 @@ def _executeBlocks(df, plan):
 
 def execute(plan):
     if 'combine' in plan:
-
-
         try:
             column = plan['combine']['column']
             type = plan['combine']['type']
@@ -51,10 +70,8 @@ def execute(plan):
             values = plan['values']
 
         df2 = _getDataProduct(plan['combine']['p2'][0])
-        print("df2 pre",df2)
         df2 = _executeBlocks(df2, plan['combine']['p2'][1])
 
-        print("df2 post",df2)
 
         df = _getDataProduct(plan['combine']['p1'][0])
         df = _combineProducts(df, df2, column, type, values)

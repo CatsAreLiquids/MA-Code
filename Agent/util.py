@@ -51,3 +51,28 @@ def getData(url):
     response = requests.get(url)
     content = json.loads(response.text)
     return pd.read_json(io.StringIO(content['data']))
+
+def getProductColumns(file):
+    """
+        Retrieves columns available in a data product
+        file: the file name of a specific data product
+        :return: list of all available rows
+    """
+    # TODO this should be a call to the microservice
+    try:
+        with open("../dataCatalog/configs/catalog.yml") as stream:
+            catalog = yaml.safe_load(stream)
+    except FileNotFoundError:
+        return "could not find the main catalog"
+
+    for collection in catalog:
+        if file in collection['products']:
+            try:
+                with open("../dataCatalog/configs/" + collection['name'] + ".yml") as stream:
+                    collection_dict = yaml.safe_load(stream)
+                    for product in collection_dict['products']:
+                        if product['name'] == file:
+                            return product['columns']
+
+            except FileNotFoundError:
+                return "could not find the specific collection catalog"
