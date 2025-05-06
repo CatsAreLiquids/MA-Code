@@ -124,7 +124,7 @@ if __name__ == "__main__":
     )
 
     # vector_store.add_documents(docs, ids=[doc.metadata["id"] for doc in docs])
-    #add_doc(vector_store,"GHG_totals_by_country","automatic")
+    add_doc(vector_store,"GHG_by_sector_and_country","automatic")
     #add_docs(vector_store, "../data/Sales_Data/metadata_automatic.json","automatic")
     #vector_store.delete_collection()
     # filter = {"id": {"$in": [1, 5, 2, 9]}, "location": {"$in": ["pond", "market"]}}

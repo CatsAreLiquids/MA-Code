@@ -8,13 +8,13 @@ def helper(val):
     else: return False
 
 """
-df = pd.read_csv("archive/sales_data_full.csv", parse_dates=['invoice_date'])
+df = pd.read_csv("Original_Data/sales_data_full.csv", parse_dates=['invoice_date'])
 
 tmp = df[df['invoice_date'].apply(lambda x: helper(x))]
 print(len(tmp))
 cid = tmp['customer_id'].unique().tolist()
 print(len(cid))
-df2 = pd.read_csv("archive/customer_data_full.csv")
+df2 = pd.read_csv("Original_Data/customer_data_full.csv")
 print(len(df2))
 tmp2 = df2.merge(tmp['customer_id'],how='inner')
 print(tmp2.columns)

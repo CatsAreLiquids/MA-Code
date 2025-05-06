@@ -48,6 +48,7 @@ def _executeBlocks(df, plan):
     if isinstance(plan,str):
         plan = ast.literal_eval(plan)
     for elem in plan:
+
         if 'values' in elem:
             values = elem['values']
         else:

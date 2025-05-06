@@ -23,7 +23,9 @@ def applyFilter(df, filter_dict):
             try:
                 if isinstance(val, str):
                     val = val.lower()
-                df = df[df[key] == val]
+                    df = df[df[key].str.lower() == val]
+                else:
+                    df = df[df[key] == val]
             except KeyError:
                 msg = f"Could not find coulumn {column} in the dataset please try to rephrase your query"
     return df
@@ -32,6 +34,7 @@ def applyFilter(df, filter_dict):
 def _matchValues(df, column, values):
     idx = []
     msg = ""
+
     for val in values:
         if isinstance(val,str):
             val = val.lower()
@@ -49,20 +52,26 @@ def _matchValues(df, column, values):
 
     return idx#, msg
 
+def _getInDf(df,column):
+    pass
+
+
 
 def getRows(df, filter_dict):
     msg = ""
     for column, values in filter_dict.items():
-        if (values is not None) and (values != "None"):
+        if column in df:
+            if (values is not None) and (values != "None"):
 
-            idx, msg = _matchValues(df, column, values)
-            df = df[idx]
-        else:
-            try:
-                df = df[column]
-
-            except KeyError:
-                msg = f"Could not find coulumn {column} in the dataset please try to rephrase your query"
+                idx, msg = _matchValues(df, column, values)
+                df = df[idx]
+            else:
+                try:
+                    df = df[column]
+                except KeyError:
+                    msg = f"Could not find coulumn {column} in the dataset please try to rephrase your query"
+        else :
+            df = df[values]
     return df#, msg
 
 

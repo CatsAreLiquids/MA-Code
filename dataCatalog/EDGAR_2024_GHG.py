@@ -100,7 +100,7 @@ class EDGAR_GNG_2024_products(dataProduct):
 
 
 if __name__ == "__main__":
-    with open("configs/archive/EDGAR_GHG_2024_per_capita_by_country.yml") as stream:
+    with open("configs/Original_Data/EDGAR_GHG_2024_per_capita_by_country.yml") as stream:
         data = yaml.safe_load(stream)
     file = 'EDGAR_GHG_2024_per_capita_by_country'
     testset = EDGAR_GHG_2024(file)

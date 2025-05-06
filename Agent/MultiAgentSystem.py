@@ -1,29 +1,22 @@
-
 import util
 import json
 import ast
 import os
-from transformations import aggregation
-from transformations import filter
+import yaml
+
+from typing import List, Optional
+from dotenv import load_dotenv
 
 from langchain_postgres.vectorstores import PGVector
-
-from langchain_core.prompts import PromptTemplate
-from langchain.agents import AgentExecutor, create_tool_calling_agent
-from langchain_core.prompts import ChatPromptTemplate
-from dotenv import load_dotenv
+from langchain.agents import AgentExecutor, create_tool_calling_agent,tool
 from langchain_openai import AzureOpenAIEmbeddings, AzureChatOpenAI
-from langchain.agents import tool
-import yaml
-from typing import List, Optional
-
-
-from langchain_core.tools import StructuredTool
-
 from langchain.tools.retriever import create_retriever_tool
-
+from langchain_core.prompts import PromptTemplate,ChatPromptTemplate
 from langchain_core.callbacks import UsageMetadataCallbackHandler
-import langchain_core
+
+from transformations import aggregation
+from transformations import filter
+from transformations.execute import execute
 
 load_dotenv()
 
@@ -315,8 +308,13 @@ def runQuery(query):
 
 
 if __name__ == "__main__":
-    user = "From the sales data i would like to know the total amount of money spent per category of available items, of Females over 38"
+    user = "Germanies emisson for the 2000s"
     agent = init_planning_agent()
-    agent_result = agent.invoke({'input':user},config={"callbacks": [callback]})['output']
+    #agent_result = agent.invoke({'input':user},config={"callbacks": [callback]})['output']
+    #agent_result = ast.literal_eval(agent_result)
+
+    agent_result = {"execute":{"p1":({"name": "GHG_totals_by_country", "url": "http://127.0.0.1:5000/products/EDGAR_2024_GHG/GHG_totals_by_country"},[{"function":"filter","values":{"Country":"Germany"}},{"function":"getRows","values":{"columns":["2000","2001","2002","2003","2004","2005","2006","2007","2008","2009"]}}])}}
+
+    print(execute(agent_result))
     print(callback.usage_metadata)
 

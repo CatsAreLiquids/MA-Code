@@ -44,6 +44,13 @@ def getProduct1():
     df = pd.read_csv('../data/EDGAR_2024_GHG/GHG_by_sector_and_country.csv')
     return {'data': df.to_json()}
 
+@app.route('/products/EDGAR_2024_GHG/GHG_totals_by_country', methods=['GET'])
+def getProduct6():
+    file = request.args.get('file')
+    # read from data catalog
+    df = pd.read_csv('../data/EDGAR_2024_GHG/GHG_totals_by_country.csv')
+    return {'data': df.to_json()}
+
 
 @app.route('/products/EDGAR_2024_GHG/LULUCF_macroregions', methods=['GET'])
 def getProduct2():
