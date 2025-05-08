@@ -1,6 +1,6 @@
 import os
 from flask import Flask, request
-from Backend.Agent import MultiAgentSystem
+from Backend.Agent import MultiAgentSystem,SQLAgent
 import pandas as pd
 
 app = Flask(__name__)
@@ -13,7 +13,7 @@ def forward_agent():
     if message is None:
         return "Please provide input"
 
-    df = MultiAgentSystem.runQueryRemote(message)
+    df = SQLAgent.runQueryRemote(message)
     return {'data':df.to_json()}
 
 if __name__ == "__main__":

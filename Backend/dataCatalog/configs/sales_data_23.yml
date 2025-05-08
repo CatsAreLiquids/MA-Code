@@ -18,6 +18,7 @@ products:
     - price
     - invoice_date
     - shopping_mall
+  location: '../data/Sales_Data/sales_data_23.csv'
 - base_api: http://127.0.0.1:5000/products/Sales_Data/customer_data_23
   description: "The dataset \"customer_data_23\" contains information about customers, specifically focusing on their gender, age, and payment method. It includes two entries, both of which are male customers aged 24 and 23 years old. The payment methods utilized by these customers are Cash and Credit Card, respectively. This data can be useful for analyzing customer demographics and payment preferences."
   name: customer_data_23
@@ -26,3 +27,4 @@ products:
     - gender
     - age
     - payment_method
+  location: '../data/Sales_Data/customer_data_23.csv'

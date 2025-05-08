@@ -78,7 +78,6 @@ if prompt:
     response = requests.get(url)
     content = json.loads(response.text)
 
-    st.markdown(content)
     try:
         df = pd.read_json(io.StringIO(content['data']))
     except ValueError:
