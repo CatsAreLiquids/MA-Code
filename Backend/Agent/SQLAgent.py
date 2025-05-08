@@ -218,15 +218,14 @@ def runQueryRemote(query):
 
 if __name__ == "__main__":
     user = "From the sales data i would like to know the total amount of money spent per category of available items, of Females over 38"
-    user = "All Customers ho have bought at least one toy orderd by the number of purchases"
-    agent_result = {'product': ['sales_data_23','customer_data_23'], 'query': "SELECT category, SUM(price * quantity) AS total_spent FROM sales_data_23 WHERE customer_id IN (SELECT customer_id FROM sales_data_23 WHERE age > 38 AND gender = 'Female') GROUP BY category;"}
-    #agent = init_planning_agent()
-    #agent_result = agent.invoke({'input':user},config={"callbacks": [callback]})['output']
-    #agent_result = ast.literal_eval(agent_result)
+    user = "Germanies total emissons for the 2000s"
+    #agent_result = {'product': ['sales_data_23','customer_data_23'], 'query': "SELECT category, SUM(price * quantity) AS total_spent FROM sales_data_23 WHERE customer_id IN (SELECT customer_id FROM sales_data_23 WHERE age > 38 AND gender = 'Female') GROUP BY category;"}
+    agent = init_planning_agent()
+    agent_result = agent.invoke({'input':user})['output']
+    agent_result = ast.literal_eval(agent_result)
     #agent_result = {'product': ['sales_data_23'], 'query': "SELECT customer_id, COUNT(invoice_no) as number_of_purchases FROM sales_data_23 WHERE category = 'toy' GROUP BY customer_id HAVING COUNT(invoice_no) > 0 ORDER BY number_of_purchases DESC;"}
     #print(callback.usage_metadata)
     #print(agent_result)
-    #print(runSQL(agent_result))
+    print(runSQL(agent_result))
     #runSQL(agent_result)
-    #print(execute(agent_result))
-    print(runQuery(user))
+    #print(runQuery(user))

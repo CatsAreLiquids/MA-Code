@@ -83,4 +83,6 @@ if prompt:
     except ValueError:
         df = pd.Series(ast.literal_eval(content['data']))
 
+
+
     st.dataframe(df)
