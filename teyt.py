@@ -79,6 +79,15 @@ l = {"combine":{"p1":({"name": "sales_data_23", "url": "http://127.0.0.1:5000/pr
 print(l['column'])
 #agent_result = json.loads(l)
 #execute(agent_result)
-df = pd.read_csv("data/Sales_Data/sales_data_23.csv")
+df = pd.read_csv("Backend/data/Sales_Data/sales_data_23.csv")
 l = {'function': 'mean', 'values': {'column': 'price','group_by':['category','shopping_mall']}}
 print(mean(df,l['values']))
+l = {'data': '{"books":8499.15,"clothing":980961.52,"cosmetics":61071.32,"food & beverage":7562.58,"shoes":564759.97,"souvenir":5219.85,"technology":547050.0,"toys":31539.2}'}
+try:
+    df = pd.read_json(io.StringIO(l['data']))
+except ValueError:
+    df = ast.literal_eval(l['data'])
+    print(df)
+    df = pd.Series(ast.literal_eval(l['data']))
+
+print(df)

@@ -47,7 +47,7 @@ def add_docs(db, file, type):
     db.add_documents(docs)
 
 def add_doc(db, file, type):
-    data = json.load(open("../data/EDGAR_2024_GHG/metadata_automatic.json"))[file]
+    data = json.load(open("../Backend/data/EDGAR_2024_GHG/metadata_automatic.json"))[file]
 
     tags = data["tags"]
     meta_dict = {"tags": tags,

@@ -103,7 +103,7 @@ def _products_exists(dataset_name):
 
 def get_description(dataset_name):
     try:
-        return json.load(open("../data/data_products/metadata_automatic.json"))[dataset_name][
+        return json.load(open("../Backend/data/data_products/metadata_automatic.json"))[dataset_name][
             "description"]
     except:
         print(

@@ -1,10 +1,9 @@
-import util
+
 import json
 import ast
 import os
 import yaml
 
-from typing import List, Optional
 from dotenv import load_dotenv
 
 from langchain_postgres.vectorstores import PGVector
@@ -14,10 +13,8 @@ from langchain.tools.retriever import create_retriever_tool
 from langchain_core.prompts import PromptTemplate,ChatPromptTemplate
 from langchain_core.callbacks import UsageMetadataCallbackHandler
 
-from transformations import aggregation
-from transformations import filter
-from transformations.execute import execute
-
+from Backend.Agent.transformations.execute import execute
+from Backend.Agent import util
 load_dotenv()
 
 callback = UsageMetadataCallbackHandler()
@@ -305,6 +302,14 @@ def runQuery(query):
     agent = init_planning_agent()
     agent_result = agent.invoke({'input': query}, config={"callbacks": [callback]})
     return agent_result,callback
+
+def runQueryRemote(query):
+    result,meta = runQuery(query)
+    result = ast.literal_eval(result['output'])
+    df = execute(result)
+
+    return df
+
 
 
 if __name__ == "__main__":

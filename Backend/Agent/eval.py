@@ -83,13 +83,14 @@ def evalAgent():
         'q7': {'function': q7, 'query': "The GWP_100_AR5_GHG data per region and sector for each year"}, }
 
     start = time.time()
-    agent_result, callbacks = runQuery(queries['q4']['query'])
-    agent_result= ast.literal_eval(agent_result['output'])
+    #agent_result, callbacks = runQuery(queries['q3']['query'])
+    #agent_result= ast.literal_eval(agent_result['output'])
+    agent_result = {'combine': {'p1': ({'name': 'sales_data_23', 'url': 'http://127.0.0.1:5000/products/Sales_Data/sales_data_23'}, [{'function': 'filter', 'values': {'shopping_mall': 'highest turnover'}}]), 'p2': ({'name': 'customer_data_23', 'url': 'http://127.0.0.1:5000/products/Sales_Data/customer_data_23'}, [{'function': 'getRows', 'values': {'customer_id': 'None'}}]), 'column': 'customer_id', 'type': 'select', 'values': ['None']}}
     end = time.time()
     query_result = execute(agent_result)
     print(agent_result)
 
-    ground_truth = queries['q']['function']()
+    ground_truth = queries['q3']['function']()
     print("Time:", end - start)
     print(callbacks.usage_metadata)
     try: print((ground_truth == query_result).all())

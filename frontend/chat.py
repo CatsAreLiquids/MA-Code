@@ -10,6 +10,9 @@ import io
 
 import util
 from uuid import uuid4
+import ast
+
+
 
 def parseData(urls,titles):
     content = []
@@ -47,10 +50,10 @@ def formatHistory():
     # get chat streaming ready
     # https://docs.streamlit.io/develop/tutorials/chat-and-llm-apps/build-conversational-apps
 
-st.title("Test Interface")
+st.title("Demo Interface")
 bot = st.chat_message("assistant")
 
-base_url = "http://127.0.0.1:5000/chat"
+base_url = "http://127.0.0.1:5100/chat"
 conversation_id = str(uuid4())
 
 # Initialize chat history
@@ -71,18 +74,14 @@ if prompt:
         st.markdown(prompt)
     st.session_state.messages.append({"role": "user", "content": prompt})
 
-    url = f"{base_url}?message={prompt}&id={conversation_id}"
+    url = f"{base_url}?message={prompt}"
     response = requests.get(url)
     content = json.loads(response.text)
 
-    if content['success']:
-        with st.chat_message("assistant"):
-            st.session_state.messages.append({"role": "assistant", "content": content['message']})
-            st.markdown(content['message'])
+    st.markdown(content)
+    try:
+        df = pd.read_json(io.StringIO(content['data']))
+    except ValueError:
+        df = pd.Series(ast.literal_eval(content['data']))
 
-            parseData(content['urls'],content['data_name'])
-    else:
-        with st.chat_message("assistant"):
-            st.session_state.messages.append({"role": "assistant", "content": content['message']})
-            st.markdown(content['message'])
-
+    st.dataframe(df)
