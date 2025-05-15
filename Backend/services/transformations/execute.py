@@ -6,7 +6,7 @@ import io
 
 from . import aggregation
 from . import filter
-
+#TODO ho to combine
 aggregations = {'sum': aggregation.getSum, "mean": aggregation.mean}
 filters = {'getRows': filter.getRows, 'filter': filter.applyFilter}
 
@@ -26,8 +26,6 @@ def _getDataProduct(agent_result):
     except:
         return "could not access data product is the URL correct ?"
 
-def _putDataProduct():
-    pass
 
 def _combineProducts(first, second, column, type, value):
 
@@ -62,9 +60,29 @@ def _executeBlocks(df, plan):
 
 
 def execute(plan):
-    frames = {}
-    for elem in plan :
+    if 'combine' in plan:
+        try:
+            column = plan['combine']['column']
+            type = plan['combine']['type']
+            values = plan['combine']['values']
+        except KeyError:
+            column = plan['column']
+            type = plan['type']
+            values = plan['values']
 
+        df2 = _getDataProduct(plan['combine']['p2'][0])
+        df2 = _executeBlocks(df2, plan['combine']['p2'][1])
+
+
+        df = _getDataProduct(plan['combine']['p1'][0])
+        df = _combineProducts(df, df2, column, type, values)
+
+        df = _executeBlocks(df, plan['combine']['p1'][1])
+
+
+    else:
+        df = _getDataProduct(plan['execute']['p1'][0])
+        df = _executeBlocks(df, plan['execute']['p1'][1])
 
     return df
 

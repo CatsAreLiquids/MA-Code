@@ -1,6 +1,10 @@
 - name: EDGAR_2024_GHG
   products:
     - GHG_totals_by_country
+    - LULUCF_macroregions
+    - GHG_per_GDP_by_country
+    - GHG_per_capita_by_country
+    - GHG_by_sector_and_country
 - name: sales_data_23
   products:
     - sales_data_23

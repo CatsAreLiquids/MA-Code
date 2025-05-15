@@ -28,7 +28,7 @@ def q2():
 
 
 def q3():
-    # All customers who shopped in the mall with the highest turnover
+    # All customer data of customers who shopped in the mall with the highest turnover
     customers = pd.read_csv("../data/Sales_Data/customer_data_23.csv")
     sales = pd.read_csv("../data/Sales_Data/sales_data_23.csv")
     tmp = sales.groupby(['shopping_mall'])['price'].sum()

@@ -108,15 +108,55 @@ def correctQUery():
     """pass"""
     pass
 
+@tool
+def identifyDataProduct(query: str):
+    """
+    Calls a retriever agent that identfies the most fitting data product for the input query
+    :param query: a user query defining a specifc data product
+    :return: {{"name":"name","url":"http://127.0.0.1:5000/exampleUrl"}}
+    """
+    ragent = init_retrieval_agent()
+    agent_result = ragent.invoke({"input": query})['output']
+    agent_result = json.loads(agent_result)
+
+    return agent_result
+
+def init_retrieval_agent():
+    sys_prompt = """ Your task is to help identify the correct url and data product for a user based on their query
+                    Only provide one url at a time together with the the name of the data product.
+                    The output should be a valid json formatted as follwos:
+                    {{"name":"name","url":"http://127.0.0.1:5000/exampleUrl"}}
+    """
+    prompt = ChatPromptTemplate.from_messages(
+        [
+            ("system", sys_prompt),
+            ("human", "{input}"),
+            ("placeholder", "{agent_scratchpad}"),
+        ]
+    )
+
+    retriever_tool = create_retriever_tool(
+        vector_store.as_retriever(),
+        "data_retriever",
+        "Searches and returns Data files aboout diffrent statistics ",
+    )
+
+    tools = [retriever_tool, getCatalogItem]
+
+    agent = create_tool_calling_agent(llm, tools, prompt)
+
+    return AgentExecutor(agent=agent, tools=tools, verbose=True)
+
 def init_planning_agent():
     sys_prompt = """ Your task is to rewrite a user query into an sql query.
                     To do this use the retriever_tool tool to find the corressponding data product and the getCatalogItem tool to gather all necerssary information about this data product
-                    Make sure that the columns referenced in the sql query are realy in the data product
+                    Make sure that the columns referenced in the sql query are realy in the data product and are enclosed in "
                     Return the result as fowllos:
                     {{"product":[data products names],"query": sql query}}
                     Example:
-                    {{"product":[Actors_data,movie_data],"query": "SELECT avg(age) as age FROM Actors_data WHERE actor_id in (SELECT actor_id from movie_data WHERE release_year > 2020);}}
+                    {{"product":[Actors_data,movie_data],"query": "SELECT avg("age") as age FROM Actors_data WHERE "actor_id" in (SELECT "actor_id" from movie_data WHERE "release_year" > 2020);}}
                     and replace data product name and sql query ith the corresponding values
+                    
         """
 
     retriever_tool = create_retriever_tool(
@@ -154,6 +194,10 @@ def _getRelevantColumns(query):
 
     return columns
 
+def invert(val:int)-> int:
+
+    return -val
+
 def getDF(name):
     location = util.getProductKey(name,'location')
     try :
@@ -168,11 +212,15 @@ def formatSQL(result):
         globals()[name] = getDF(product)
 
         result['query'] = result['query'].replace(product,name)
+
+    result['query'] = result['query'].replace('`', "\"")
+
     return result
 
 def runSQL(result):
 
     q = formatSQL(result)['query']
+    print(q)
     return duckdb.sql(q).df()
 
 
@@ -208,6 +256,7 @@ def runQueryRemote(query):
 
     df = runSQL(agent_result)
     if df.empty:
+        print("correction")
         correctioins = rerunQuery(query, agent_result)
         modded_query = f"The original query:\n {query}\n Produced no results try correct it ith the list of possible values for the columns {correctioins}"
         agent_result = agent.invoke({'input': modded_query}, config={"callbacks": [callback]})
@@ -217,15 +266,15 @@ def runQueryRemote(query):
     return df
 
 if __name__ == "__main__":
-    user = "From the sales data i would like to know the total amount of money spent per category of available items, of Females over 38"
-    user = "Germanies total emissons for the 2000s"
-    #agent_result = {'product': ['sales_data_23','customer_data_23'], 'query': "SELECT category, SUM(price * quantity) AS total_spent FROM sales_data_23 WHERE customer_id IN (SELECT customer_id FROM sales_data_23 WHERE age > 38 AND gender = 'Female') GROUP BY category;"}
+    user = "From the sales data i would like to know the total amount of money spent per category of available items, of females over 38"
+    user = "The mall ith the most items sold"
+    #duckdb.create_function("invert", invert, )
     agent = init_planning_agent()
     agent_result = agent.invoke({'input':user})['output']
     agent_result = ast.literal_eval(agent_result)
-    #agent_result = {'product': ['sales_data_23'], 'query': "SELECT customer_id, COUNT(invoice_no) as number_of_purchases FROM sales_data_23 WHERE category = 'toy' GROUP BY customer_id HAVING COUNT(invoice_no) > 0 ORDER BY number_of_purchases DESC;"}
+    #agent_result = {'product': ['LULUCF_macroregions'], 'query': 'SELECT "Macro-region", Sector, Substance FROM LULUCF_macroregions;'}
+
+    print(agent_result)
+    #print(runSQL(agent_result))
+    #print(runQueryRemote(user))
     #print(callback.usage_metadata)
-    #print(agent_result)
-    print(runSQL(agent_result))
-    #runSQL(agent_result)
-    #print(runQuery(user))

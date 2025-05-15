@@ -1,8 +1,5 @@
 name: sales_data_23
-description: TODO
-id: df135eeb-ad7f-441a-a6db-2ff29a46fcf9
 location: ../data/EDGAR_2024_GHG/GHG_totals_by_country.csv
-name_readable: []
 product_names:
 - sales_data_23
 - customer_data_23

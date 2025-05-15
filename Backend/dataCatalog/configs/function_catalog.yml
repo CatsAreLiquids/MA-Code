@@ -1,0 +1,26 @@
+aggregation:
+  sum:
+    base_api: http://127.0.0.1:5200/sum
+    description: Calcuates the sum of a dataframe based on a list of group_by columns and
+    filter_dict:
+      - group_by: a list of coulmns in the dataframe, can be None
+      - columns: a list of columns for hicht the sum should be calculated, cant be None
+
+transformation:
+  max:
+    base_api: http://127.0.0.1:5200/max
+    description: Retrieves the maximum value for a list of specified columns in a dataframe
+    filter_dict:
+      - columns: a list of columns for hich the maximum should be retrieved
+  filter:
+    base_api: http://127.0.0.1:5200/filter
+    description: returns all data matching the filter dict, i.e keeps all columns
+    filter_dict:
+      - columns: a dict ith the corresponding columns and their values i.e. {"columns":{"location":"berlin","year":{"min":2002,"max":2007}}
+  getRows:
+    base_api: http://127.0.0.1:5200/getRows
+    description: Retrieves specififed data rows in a list format
+    filter_dict:
+      - columns: a column on ihich to match
+      - values: a dict ith a value to match
+

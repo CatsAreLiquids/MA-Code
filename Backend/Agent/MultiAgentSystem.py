@@ -313,10 +313,10 @@ def runQueryRemote(query):
 
 
 if __name__ == "__main__":
-    user = "Germanies emisson for the 2000s"
+    user = "Based on this query generate the calls {'product': ['LULUCF_macroregions'], 'query': 'SELECT \"Macro-region\", Sector, Substance FROM LULUCF_macroregions;'}"
     agent = init_planning_agent()
-    #agent_result = agent.invoke({'input':user},config={"callbacks": [callback]})['output']
-    #agent_result = ast.literal_eval(agent_result)
+    agent_result = agent.invoke({'input':user},config={"callbacks": [callback]})['output']
+    agent_result = ast.literal_eval(agent_result)
 
     agent_result = {"execute":{"p1":({"name": "GHG_totals_by_country", "url": "http://127.0.0.1:5000/products/EDGAR_2024_GHG/GHG_totals_by_country"},[{"function":"filter","values":{"Country":"Germany"}},{"function":"getRows","values":{"columns":["2000","2001","2002","2003","2004","2005","2006","2007","2008","2009"]}}])}}
 
