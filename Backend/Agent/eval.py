@@ -1,9 +1,8 @@
-from MultiAgentSystem import runQuery
 import time
-from transformations.execute import execute
+from Backend.Agent.execute import execute
 import pandas as pd
 import numpy as np
-import ast
+
 
 def q1():
     # From the sales data i would like to know the total amount of money spent per category of available items, of Females over 38

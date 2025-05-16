@@ -13,7 +13,7 @@ from langchain.tools.retriever import create_retriever_tool
 from langchain_core.prompts import PromptTemplate,ChatPromptTemplate
 from langchain_core.callbacks import UsageMetadataCallbackHandler
 
-from Backend.Agent.transformations.execute import execute
+from Backend.Agent.execute import execute
 from Backend.Agent import util
 load_dotenv()
 
@@ -53,7 +53,7 @@ def getCatalogItem(file):
     """
     # TODO this should be a call to the microservice
     try:
-        with open("../dataCatalog/configs/catalog.yml") as stream:
+        with open("../data/Catalogs/catalog.yml") as stream:
             catalog = yaml.safe_load(stream)
     except FileNotFoundError:
         return "could not find the main catalog"
@@ -61,7 +61,7 @@ def getCatalogItem(file):
     for collection in catalog:
         if file in collection['products']:
             try:
-                with open("../dataCatalog/configs/" + collection['name'] + ".yml") as stream:
+                with open("../dataCatalog/Catalogs/" + collection['name'] + ".yml") as stream:
                     collection_dict = yaml.safe_load(stream)
                     for product in collection_dict['products']:
                         if product['name'] == file:

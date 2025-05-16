@@ -60,7 +60,7 @@ def getProductColumns(file):
     """
     # TODO this should be a call to the microservice
     try:
-        with open("../dataCatalog/configs/catalog.yml") as stream:
+        with open("../data/Catalogs/catalog.yml") as stream:
             catalog = yaml.safe_load(stream)
     except FileNotFoundError:
         return "could not find the main catalog"
@@ -68,7 +68,7 @@ def getProductColumns(file):
     for collection in catalog:
         if file in collection['products']:
             try:
-                with open("../dataCatalog/configs/" + collection['name'] + ".yml") as stream:
+                with open("../dataCatalog/Catalogs/" + collection['name'] + ".yml") as stream:
                     collection_dict = yaml.safe_load(stream)
                     for product in collection_dict['products']:
                         if product['name'] == file:
@@ -86,7 +86,7 @@ def getProductKey(file, key):
     """
     # TODO this should be a call to the microservice
     try:
-        with open("../dataCatalog/configs/catalog.yml") as stream:
+        with open("../data/Catalogs/catalog.yml") as stream:
             catalog = yaml.safe_load(stream)
     except FileNotFoundError:
         return "could not find the main catalog"
@@ -94,7 +94,7 @@ def getProductKey(file, key):
     for collection in catalog:
         if file in collection['products']:
             try:
-                with open("../dataCatalog/configs/" + collection['name'] + ".yml") as stream:
+                with open("../dataCatalog/Catalogs/" + collection['name'] + ".yml") as stream:
                     collection_dict = yaml.safe_load(stream)
                     for product in collection_dict['products']:
                         if product['name'] == file:

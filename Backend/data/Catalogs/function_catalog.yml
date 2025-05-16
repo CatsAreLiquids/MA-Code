@@ -1,12 +1,16 @@
-aggregation:
   sum:
     base_api: http://127.0.0.1:5200/sum
     description: Calcuates the sum of a dataframe based on a list of group_by columns and
     filter_dict:
       - group_by: a list of coulmns in the dataframe, can be None
       - columns: a list of columns for hicht the sum should be calculated, cant be None
-
-transformation:
+  combine:
+    base_api: http://127.0.0.1:5200/combine
+    description: Combines two data products into one based on provided columns types and values
+    filter_dict:
+      - type: weather the values should be equal or not
+      - columns: a list of columns based on which the data products should be combined
+      - values: specific values used for the combination, if None the whole row is used
   max:
     base_api: http://127.0.0.1:5200/max
     description: Retrieves the maximum value for a list of specified columns in a dataframe
@@ -22,5 +26,5 @@ transformation:
     description: Retrieves specififed data rows in a list format
     filter_dict:
       - columns: a column on ihich to match
-      - values: a dict ith a value to match
+      - values: a dict ith a value to match if None returns the all columns from columns
 

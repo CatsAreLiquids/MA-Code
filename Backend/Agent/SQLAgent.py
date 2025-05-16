@@ -8,19 +8,14 @@ import ast
 import os
 import yaml
 
-from typing import List, Optional
 from dotenv import load_dotenv
 
 from langchain_postgres.vectorstores import PGVector
 from langchain.agents import AgentExecutor, create_tool_calling_agent,tool
 from langchain_openai import AzureOpenAIEmbeddings, AzureChatOpenAI
 from langchain.tools.retriever import create_retriever_tool
-from langchain_core.prompts import PromptTemplate,ChatPromptTemplate
+from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.callbacks import UsageMetadataCallbackHandler
-
-from Backend.Agent.transformations import aggregation
-from Backend.Agent.transformations import filter
-from Backend.Agent.transformations.execute import execute
 
 import duckdb
 
@@ -60,7 +55,7 @@ def getCatalogItem(file):
     """
     # TODO this should be a call to the microservice
     try:
-        with open("../dataCatalog/configs/catalog.yml") as stream:
+        with open("../data/Catalogs/catalog.yml") as stream:
             catalog = yaml.safe_load(stream)
     except FileNotFoundError:
         return "could not find the main catalog"
@@ -68,7 +63,7 @@ def getCatalogItem(file):
     for collection in catalog:
         if file in collection['products']:
             try:
-                with open("../dataCatalog/configs/" + collection['name'] + ".yml") as stream:
+                with open("../dataCatalog/Catalogs/" + collection['name'] + ".yml") as stream:
                     collection_dict = yaml.safe_load(stream)
                     for product in collection_dict['products']:
                         if product['name'] == file:
@@ -86,7 +81,7 @@ def getCatalogColumns(file):
     """
     # TODO this should be a call to the microservice
     try:
-        with open("../dataCatalog/configs/catalog.yml") as stream:
+        with open("../data/Catalogs/catalog.yml") as stream:
             catalog = yaml.safe_load(stream)
     except FileNotFoundError:
         return "could not find the main catalog"
@@ -94,7 +89,7 @@ def getCatalogColumns(file):
     for collection in catalog:
         if file in collection['products']:
             try:
-                with open("../dataCatalog/configs/" + collection['name'] + ".yml") as stream:
+                with open("../dataCatalog/Catalogs/" + collection['name'] + ".yml") as stream:
                     collection_dict = yaml.safe_load(stream)
                     for product in collection_dict['products']:
                         if product['name'] == file:

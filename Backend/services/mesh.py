@@ -11,7 +11,7 @@ port = int(os.environ.get('PORT', 5000))
 @app.route('/catalog', methods=['GET'])
 def getCatalog():
     try:
-        with open("../dataCatalog/configs/catalog.yml") as stream:
+        with open("../data/Catalogs/catalog.yml") as stream:
             return yaml.safe_load(stream)
     except FileNotFoundError:
         return "Main catalog is not findable"
@@ -21,7 +21,7 @@ def getCatalog():
 def getCatalogEDGAR_2024_GHG():
     file = request.args.get('file')
     try:
-        with open("../dataCatalog/configs/" + file + ".yml") as stream:
+        with open("../dataCatalog/Catalogs/" + file + ".yml") as stream:
             return yaml.safe_load(stream)
     except FileNotFoundError:
         return "Could not find a catalog item asociated to your request"
@@ -31,7 +31,7 @@ def getCatalogEDGAR_2024_GHG():
 def getCatalogSales_Data():
     file = request.args.get('file')
     try:
-        with open("../dataCatalog/configs/" + file + ".yml") as stream:
+        with open("../dataCatalog/Catalogs/" + file + ".yml") as stream:
             return yaml.safe_load(stream)
     except FileNotFoundError:
         return "Could not find a catalog item asociated to your request"

@@ -82,3 +82,4 @@ l = {"combine":{"p1":({"name": "sales_data_23", "url": "http://127.0.0.1:5000/pr
 df = pd.read_csv("Backend/data/Sales_Data/sales_data_23.csv")
 df = df[df['category']=='toys'].groupby(["shopping_mall"])['quantity'].sum()
 print(df.max())
+l = {{"products":[{{"product":"http://127.0.0.1:5000/products/Sales_Data/sales_data_23","transformation":[{{"function":"http://127.0.0.1:5200/sum","values":{{"group_by":"shopping_mall","column":"quantity"}} }} ,{{"function":"http://127.0.0.1:5200/max","values":{{"column":"shopping_mall"}} }}]  }}], "combination":{{}} }}

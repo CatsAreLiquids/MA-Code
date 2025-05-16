@@ -1,7 +1,10 @@
 import os
 from flask import Flask, request
-from Backend.Agent import MultiAgentSystem,SQLAgent
 import pandas as pd
+import json
+import io
+
+from Backend.services.transformations import aggregation
 
 app = Flask(__name__)
 port = int(os.environ.get('PORT', 5200))
@@ -9,11 +12,12 @@ port = int(os.environ.get('PORT', 5200))
 
 @app.route('/sum', methods=['PUT'])
 def call_sum():
-    message = request.args.get('message')
-    if message is None:
-        return "Please provide input"
 
-    df = MultiAgentSystem.runQueryRemote(message)
+    content = json.loads(request.data)
+
+    df = pd.read_json(io.StringIO(content['data']))
+    df = aggregation.getSum(df, content['args'])
+
     return {'data':df.to_json()}
 
 @app.route('/max', methods=['PUT'])
