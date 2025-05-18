@@ -32,3 +32,29 @@ def parseData(urls,titles):
             return None
 
     st.dataframe(df)
+
+def confirmResult(query: str,result):
+    """
+    Breaks down a user query into multiple steps
+    :param query user query asking for an data product
+    :return: list of steps
+    """
+    if isinstance(result,pd.Series) or isinstance(result,pd.DataFrame):
+        data = result[:5]
+    else:
+        data = result
+
+    sys_prompt = """ Your task is to decide wether the provided data answers a query. 
+                    For this you will receive at max the top 5 rows of the data, try to extrapolate if the data answers the query
+                    Do only return True if the data seems to answer the query and return False, if the query is not answerd give a one sentence sumarry of what seems to be wrong
+        """
+    input_prompt = PromptTemplate.from_template("""
+                User Query:{query}
+                Data:{data}
+                """)
+    input_prompt = input_prompt.format(query=query,data= data)
+    messages = [
+        ("system", sys_prompt),
+        ("human", input_prompt),
+    ]
+    return llm.invoke(messages, config={"callbacks": [callback]})

@@ -1,323 +1,765 @@
-description: The dataset titled "GHG_by_sector_and_country_CO2_Agriculture" contains
-  information on carbon dioxide (CO2) emissions from agriculture across various countries.
-  The data columns represent a wide range of countries and regions, including Afghanistan,
-  Argentina, the United States, and the EU27, among others. Each country has a corresponding
-  value indicative of CO2 emissions, measured in a specific manner that appears to
-  include several numerical entries along with instances of 'nan' indicating missing
-  data. This dataset offers insights into agricultural emissions and can be essential
-  for understanding global and regional contributions to greenhouse gas emissions.
-id: df135eeb-ad7f-441a-a6db-2ff29a46fcf9
-location: ../data/EDGAR_2024_GHG/GHG_totals_by_country.csv
-name: EDGAR_2024_GHG
-name_readable: []
-product_names:
-- GHG_by_sector_and_country
-products:
-- base_api: http://127.0.0.1:5000/products/EDGAR_2024_GHG/GHG_totals_by_country
-  description: "The dataset titled GHG_totals_by_country provides greenhouse gas (GHG) emissions data for various countries from 1970 to 2023. Each row represents a different country, with the first column indicating the country name and subsequent columns displaying the GHG emissions values for each year. For instance, Aruba's emissions show a gradual increase from 0.037 in 1970 to a peak of 0.589 in 2022, while Afghanistan's emissions exhibit more fluctuation, starting at 15.437 in 1970 and reaching 29.46 by 2023. This data can be useful for analyzing trends in GHG emissions over time and comparing the performance of different countries in terms of emissions reduction or increase."
-  name: GHG_totals_by_country
-  location: '../data/EDGAR_2024_GHG/GHG_totals_by_country.csv'
+GHG_by_sector_and_country:
+  base_api: http://127.0.0.1:5000/products/EDGAR_2024_GHG/GHG_by_sector_and_country
   columns:
-    - Country
-    - '1970'
-    - '1971'
-    - '1972'
-    - '1973'
-    - '1974'
-    - '1975'
-    - '1976'
-    - '1977'
-    - '1978'
-    - '1979'
-    - '1980'
-    - '1981'
-    - '1982'
-    - '1983'
-    - '1984'
-    - '1985'
-    - '1986'
-    - '1987'
-    - '1988'
-    - '1989'
-    - '1990'
-    - '1991'
-    - '1992'
-    - '1993'
-    - '1994'
-    - '1995'
-    - '1996'
-    - '1997'
-    - '1998'
-    - '1999'
-    - '2000'
-    - '2001'
-    - '2002'
-    - '2003'
-    - '2004'
-    - '2005'
-    - '2006'
-    - '2007'
-    - '2008'
-    - '2009'
-    - '2010'
-    - '2011'
-    - '2012'
-    - '2013'
-    - '2014'
-    - '2015'
-    - '2016'
-    - '2017'
-    - '2018'
-    - '2019'
-    - '2020'
-    - '2021'
-    - '2022'
-    - '2023'
-- base_api: http://127.0.0.1:5000/products/EDGAR_2024_GHG/LULUCF_macroregions
-  description: "The dataset titled \"LULUCF_macroregions\" provides a comprehensive overview of land use, land-use change, and forestry (LULUCF) metrics across Africa from 1990 to 2023. It includes two main sectors: Deforestation and Fires, with annual values reflecting the extent of deforestation and the occurrence of fires over the years. The data reveals trends in deforestation, showing a gradual increase in values, while the fire sector exhibits more variability, with notable peaks and troughs throughout the years. This dataset is essential for understanding environmental changes and challenges in Africa related to land use and forestry practices."
-  name: LULUCF_macroregions
-  location: '../data/EDGAR_2024_GHG/LULUCF_macroregions.csv'
+  - Substance
+  - Sector
+  - EDGAR Country Code
+  - Country
+  - '1970'
+  - '1971'
+  - '1972'
+  - '1973'
+  - '1974'
+  - '1975'
+  - '1976'
+  - '1977'
+  - '1978'
+  - '1979'
+  - '1980'
+  - '1981'
+  - '1982'
+  - '1983'
+  - '1984'
+  - '1985'
+  - '1986'
+  - '1987'
+  - '1988'
+  - '1989'
+  - '1990'
+  - '1991'
+  - '1992'
+  - '1993'
+  - '1994'
+  - '1995'
+  - '1996'
+  - '1997'
+  - '1998'
+  - '1999'
+  - '2000'
+  - '2001'
+  - '2002'
+  - '2003'
+  - '2004'
+  - '2005'
+  - '2006'
+  - '2007'
+  - '2008'
+  - '2009'
+  - '2010'
+  - '2011'
+  - '2012'
+  - '2013'
+  - '2014'
+  - '2015'
+  - '2016'
+  - '2017'
+  - '2018'
+  - '2019'
+  - '2020'
+  - '2021'
+  - '2022'
+  - '2023'
+GHG_per_GDP_by_country:
+  base_api: http://127.0.0.1:5000/products/EDGAR_2024_GHG/GHG_per_GDP_by_country
   columns:
-    - Substance
-    - Macro-region
-    - Sector
-    - '1970'
-    - '1971'
-    - '1972'
-    - '1973'
-    - '1974'
-    - '1975'
-    - '1976'
-    - '1977'
-    - '1978'
-    - '1979'
-    - '1980'
-    - '1981'
-    - '1982'
-    - '1983'
-    - '1984'
-    - '1985'
-    - '1986'
-    - '1987'
-    - '1988'
-    - '1989'
-    - '1990'
-    - '1991'
-    - '1992'
-    - '1993'
-    - '1994'
-    - '1995'
-    - '1996'
-    - '1997'
-    - '1998'
-    - '1999'
-    - '2000'
-    - '2001'
-    - '2002'
-    - '2003'
-    - '2004'
-    - '2005'
-    - '2006'
-    - '2007'
-    - '2008'
-    - '2009'
-    - '2010'
-    - '2011'
-    - '2012'
-    - '2013'
-    - '2014'
-    - '2015'
-    - '2016'
-    - '2017'
-    - '2018'
-    - '2019'
-    - '2020'
-    - '2021'
-    - '2022'
-    - '2023'
-- base_api: http://127.0.0.1:5000/products/EDGAR_2024_GHG/GHG_per_GDP_by_country
-  description: "The dataset titled \"GHG_per_GDP_by_country\" provides greenhouse gas emissions per unit of GDP for two countries, Aruba and Afghanistan, spanning from 1990 to 2023. Each row contains the annual emissions data, measured in a specific unit, reflecting the economic performance and environmental impact of these nations over the years. The data reveals fluctuations in emissions, with Aruba showing a general trend of increase and decrease, while Afghanistan exhibits a more volatile pattern with significant peaks and troughs. This dataset is valuable for analyzing the relationship between economic growth and greenhouse gas emissions in these countries over the specified timeline."
-  name: GHG_per_GDP_by_country
-  location: '../data/EDGAR_2024_GHG/GHG_per_GDP_by_country.csv'
+  - 'Unnamed: 0'
+  - Aruba
+  - Afghanistan
+  - Angola
+  - Anguilla
+  - Albania
+  - "Cura\xE7ao"
+  - United Arab Emirates
+  - Argentina
+  - Armenia
+  - Antigua and Barbuda
+  - Australia
+  - Austria
+  - Azerbaijan
+  - Burundi
+  - Belgium
+  - Benin
+  - Burkina Faso
+  - Bangladesh
+  - Bulgaria
+  - Bahrain
+  - Bahamas
+  - Bosnia and Herzegovina
+  - Belarus
+  - Belize
+  - Bermuda
+  - Bolivia
+  - Brazil
+  - Barbados
+  - Brunei
+  - Bhutan
+  - Botswana
+  - Central African Republic
+  - Canada
+  - Switzerland and Liechtenstein
+  - Chile
+  - China
+  - "C\xF4te d\u2019Ivoire"
+  - Cameroon
+  - Democratic Republic of the Congo
+  - Congo
+  - Cook Islands
+  - Colombia
+  - Comoros
+  - Cabo Verde
+  - Costa Rica
+  - Cuba
+  - Cayman Islands
+  - Cyprus
+  - Czechia
+  - Germany
+  - Djibouti
+  - Dominica
+  - Denmark
+  - Dominican Republic
+  - Algeria
+  - Ecuador
+  - Egypt
+  - Eritrea
+  - Western Sahara
+  - Spain and Andorra
+  - Estonia
+  - Ethiopia
+  - Finland
+  - Fiji
+  - Falkland Islands
+  - France and Monaco
+  - Faroes
+  - Gabon
+  - United Kingdom
+  - Georgia
+  - Ghana
+  - Gibraltar
+  - Guinea
+  - Guadeloupe
+  - The Gambia
+  - Guinea-Bissau
+  - Equatorial Guinea
+  - Greece
+  - Grenada
+  - Greenland
+  - Guatemala
+  - French Guiana
+  - Guyana
+  - Hong Kong
+  - Honduras
+  - Croatia
+  - Haiti
+  - Hungary
+  - Indonesia
+  - India
+  - Ireland
+  - Iran
+  - Iraq
+  - Iceland
+  - Israel and Palestine, State of
+  - Italy, San Marino and the Holy See
+  - Jamaica
+  - Jordan
+  - Japan
+  - Kazakhstan
+  - Kenya
+  - Kyrgyzstan
+  - Cambodia
+  - Kiribati
+  - Saint Kitts and Nevis
+  - South Korea
+  - Kuwait
+  - Laos
+  - Lebanon
+  - Liberia
+  - Libya
+  - Saint Lucia
+  - Sri Lanka
+  - Lesotho
+  - Lithuania
+  - Luxembourg
+  - Latvia
+  - Macao
+  - Morocco
+  - Moldova
+  - Madagascar
+  - Maldives
+  - Mexico
+  - North Macedonia
+  - Mali
+  - Malta
+  - Myanmar/Burma
+  - Mongolia
+  - Mozambique
+  - Mauritania
+  - Martinique
+  - Mauritius
+  - Malawi
+  - Malaysia
+  - Namibia
+  - New Caledonia
+  - Niger
+  - Nigeria
+  - Nicaragua
+  - Netherlands
+  - Norway
+  - Nepal
+  - New Zealand
+  - Oman
+  - Pakistan
+  - Panama
+  - Peru
+  - Philippines
+  - Palau
+  - Papua New Guinea
+  - Poland
+  - Puerto Rico
+  - North Korea
+  - Portugal
+  - Paraguay
+  - French Polynesia
+  - Qatar
+  - "R\xE9union"
+  - Romania
+  - Russia
+  - Rwanda
+  - Saudi Arabia
+  - Serbia and Montenegro
+  - Sudan and South Sudan
+  - Senegal
+  - Singapore
+  - Saint Helena, Ascension and Tristan da Cunha
+  - Solomon Islands
+  - Sierra Leone
+  - El Salvador
+  - Somalia
+  - Saint Pierre and Miquelon
+  - "S\xE3o Tom\xE9 and Pr\xEDncipe"
+  - Suriname
+  - Slovakia
+  - Slovenia
+  - Sweden
+  - Eswatini
+  - Seychelles
+  - Syria
+  - Turks and Caicos Islands
+  - Chad
+  - Togo
+  - Thailand
+  - Tajikistan
+  - Turkmenistan
+  - Timor-Leste
+  - Tonga
+  - Trinidad and Tobago
+  - Tunisia
+  - "T\xFCrkiye"
+  - Taiwan
+  - Tanzania
+  - Uganda
+  - Ukraine
+  - Uruguay
+  - United States
+  - Uzbekistan
+  - Saint Vincent and the Grenadines
+  - Venezuela
+  - British Virgin Islands
+  - Viet Nam
+  - Vanuatu
+  - Samoa
+  - Yemen
+  - South Africa
+  - Zambia
+  - Zimbabwe
+  - EU27
+  - GLOBAL TOTAL
+GHG_per_capita_by_country:
+  base_api: http://127.0.0.1:5000/products/EDGAR_2024_GHG/GHG_per_capita_by_country
   columns:
-    - EDGAR Country Code
-    - Country
-    - '1970'
-    - '1971'
-    - '1972'
-    - '1973'
-    - '1974'
-    - '1975'
-    - '1976'
-    - '1977'
-    - '1978'
-    - '1979'
-    - '1980'
-    - '1981'
-    - '1982'
-    - '1983'
-    - '1984'
-    - '1985'
-    - '1986'
-    - '1987'
-    - '1988'
-    - '1989'
-    - '1990'
-    - '1991'
-    - '1992'
-    - '1993'
-    - '1994'
-    - '1995'
-    - '1996'
-    - '1997'
-    - '1998'
-    - '1999'
-    - '2000'
-    - '2001'
-    - '2002'
-    - '2003'
-    - '2004'
-    - '2005'
-    - '2006'
-    - '2007'
-    - '2008'
-    - '2009'
-    - '2010'
-    - '2011'
-    - '2012'
-    - '2013'
-    - '2014'
-    - '2015'
-    - '2016'
-    - '2017'
-    - '2018'
-    - '2019'
-    - '2020'
-    - '2021'
-    - '2022'
-    - '2023'
-- base_api: http://127.0.0.1:5000/products/EDGAR_2024_GHG/GHG_per_capita_by_country
-  description: "The dataset titled \"GHG_per_capita_by_country\" provides greenhouse gas emissions per capita for various countries from 1970 to 2023. It includes data for Aruba and Afghanistan, showcasing their annual emissions in metric tons per person over the specified years. The emissions for Aruba demonstrate a general upward trend, particularly notable in the late 1980s and early 2000s, while Afghanistan's emissions show fluctuations with a significant decline in the late 1990s and early 2000s. This dataset is valuable for analyzing trends in greenhouse gas emissions and understanding the environmental impact of different countries over time."
-  name: GHG_per_capita_by_country
-  location: '../data/EDGAR_2024_GHG/GHG_per_capita_by_country.csv'
+  - 'Unnamed: 0'
+  - Aruba
+  - Afghanistan
+  - Angola
+  - Anguilla
+  - Albania
+  - "Cura\xE7ao"
+  - United Arab Emirates
+  - Argentina
+  - Armenia
+  - Antigua and Barbuda
+  - Australia
+  - Austria
+  - Azerbaijan
+  - Burundi
+  - Belgium
+  - Benin
+  - Burkina Faso
+  - Bangladesh
+  - Bulgaria
+  - Bahrain
+  - Bahamas
+  - Bosnia and Herzegovina
+  - Belarus
+  - Belize
+  - Bermuda
+  - Bolivia
+  - Brazil
+  - Barbados
+  - Brunei
+  - Bhutan
+  - Botswana
+  - Central African Republic
+  - Canada
+  - Switzerland and Liechtenstein
+  - Chile
+  - China
+  - "C\xF4te d\u2019Ivoire"
+  - Cameroon
+  - Democratic Republic of the Congo
+  - Congo
+  - Cook Islands
+  - Colombia
+  - Comoros
+  - Cabo Verde
+  - Costa Rica
+  - Cuba
+  - Cayman Islands
+  - Cyprus
+  - Czechia
+  - Germany
+  - Djibouti
+  - Dominica
+  - Denmark
+  - Dominican Republic
+  - Algeria
+  - Ecuador
+  - Egypt
+  - Eritrea
+  - Western Sahara
+  - Spain and Andorra
+  - Estonia
+  - Ethiopia
+  - Finland
+  - Fiji
+  - Falkland Islands
+  - France and Monaco
+  - Faroes
+  - Gabon
+  - United Kingdom
+  - Georgia
+  - Ghana
+  - Gibraltar
+  - Guinea
+  - Guadeloupe
+  - The Gambia
+  - Guinea-Bissau
+  - Equatorial Guinea
+  - Greece
+  - Grenada
+  - Greenland
+  - Guatemala
+  - French Guiana
+  - Guyana
+  - Hong Kong
+  - Honduras
+  - Croatia
+  - Haiti
+  - Hungary
+  - Indonesia
+  - India
+  - Ireland
+  - Iran
+  - Iraq
+  - Iceland
+  - Israel and Palestine, State of
+  - Italy, San Marino and the Holy See
+  - Jamaica
+  - Jordan
+  - Japan
+  - Kazakhstan
+  - Kenya
+  - Kyrgyzstan
+  - Cambodia
+  - Kiribati
+  - Saint Kitts and Nevis
+  - South Korea
+  - Kuwait
+  - Laos
+  - Lebanon
+  - Liberia
+  - Libya
+  - Saint Lucia
+  - Sri Lanka
+  - Lesotho
+  - Lithuania
+  - Luxembourg
+  - Latvia
+  - Macao
+  - Morocco
+  - Moldova
+  - Madagascar
+  - Maldives
+  - Mexico
+  - North Macedonia
+  - Mali
+  - Malta
+  - Myanmar/Burma
+  - Mongolia
+  - Mozambique
+  - Mauritania
+  - Martinique
+  - Mauritius
+  - Malawi
+  - Malaysia
+  - Namibia
+  - New Caledonia
+  - Niger
+  - Nigeria
+  - Nicaragua
+  - Netherlands
+  - Norway
+  - Nepal
+  - New Zealand
+  - Oman
+  - Pakistan
+  - Panama
+  - Peru
+  - Philippines
+  - Palau
+  - Papua New Guinea
+  - Poland
+  - Puerto Rico
+  - North Korea
+  - Portugal
+  - Paraguay
+  - French Polynesia
+  - Qatar
+  - "R\xE9union"
+  - Romania
+  - Russia
+  - Rwanda
+  - Saudi Arabia
+  - Serbia and Montenegro
+  - Sudan and South Sudan
+  - Senegal
+  - Singapore
+  - Saint Helena, Ascension and Tristan da Cunha
+  - Solomon Islands
+  - Sierra Leone
+  - El Salvador
+  - Somalia
+  - Saint Pierre and Miquelon
+  - "S\xE3o Tom\xE9 and Pr\xEDncipe"
+  - Suriname
+  - Slovakia
+  - Slovenia
+  - Sweden
+  - Eswatini
+  - Seychelles
+  - Syria
+  - Turks and Caicos Islands
+  - Chad
+  - Togo
+  - Thailand
+  - Tajikistan
+  - Turkmenistan
+  - Timor-Leste
+  - Tonga
+  - Trinidad and Tobago
+  - Tunisia
+  - "T\xFCrkiye"
+  - Taiwan
+  - Tanzania
+  - Uganda
+  - Ukraine
+  - Uruguay
+  - United States
+  - Uzbekistan
+  - Saint Vincent and the Grenadines
+  - Venezuela
+  - British Virgin Islands
+  - Viet Nam
+  - Vanuatu
+  - Samoa
+  - Yemen
+  - South Africa
+  - Zambia
+  - Zimbabwe
+  - EU27
+  - GLOBAL TOTAL
+GHG_totals_by_country:
+  base_api: http://127.0.0.1:5000/products/EDGAR_2024_GHG/GHG_totals_by_country
   columns:
-    - EDGAR Country Code
-    - Country
-    - '1970'
-    - '1971'
-    - '1972'
-    - '1973'
-    - '1974'
-    - '1975'
-    - '1976'
-    - '1977'
-    - '1978'
-    - '1979'
-    - '1980'
-    - '1981'
-    - '1982'
-    - '1983'
-    - '1984'
-    - '1985'
-    - '1986'
-    - '1987'
-    - '1988'
-    - '1989'
-    - '1990'
-    - '1991'
-    - '1992'
-    - '1993'
-    - '1994'
-    - '1995'
-    - '1996'
-    - '1997'
-    - '1998'
-    - '1999'
-    - '2000'
-    - '2001'
-    - '2002'
-    - '2003'
-    - '2004'
-    - '2005'
-    - '2006'
-    - '2007'
-    - '2008'
-    - '2009'
-    - '2010'
-    - '2011'
-    - '2012'
-    - '2013'
-    - '2014'
-    - '2015'
-    - '2016'
-    - '2017'
-    - '2018'
-    - '2019'
-    - '2020'
-    - '2021'
-    - '2022'
-    - '2023'
-- base_api: http://127.0.0.1:5000/products/EDGAR_2024_GHG/GHG_by_sector_and_country
-  description: "The dataset titled \"GHG_by_sector_and_country\" provides greenhouse gas (GHG) emissions data categorized by sector and country from 1970 to 2023. It includes two entries for the agriculture sector in Afghanistan and Albania, detailing their respective emissions values over the years. The data reveals trends in emissions, with Afghanistan showing fluctuations and a notable increase in recent years, while Albania's emissions demonstrate a more stable pattern with some variations. This dataset is valuable for analyzing the impact of agricultural practices on GHG emissions across different countries over time."
-  name: GHG_by_sector_and_country
-  location: '../data/EDGAR_2024_GHG/GHG_by_sector_and_country.csv'
+  - 'Unnamed: 0'
+  - Aruba
+  - Afghanistan
+  - Angola
+  - Anguilla
+  - International Aviation
+  - Albania
+  - "Cura\xE7ao"
+  - United Arab Emirates
+  - Argentina
+  - Armenia
+  - Antigua and Barbuda
+  - Australia
+  - Austria
+  - Azerbaijan
+  - Burundi
+  - Belgium
+  - Benin
+  - Burkina Faso
+  - Bangladesh
+  - Bulgaria
+  - Bahrain
+  - Bahamas
+  - Bosnia and Herzegovina
+  - Belarus
+  - Belize
+  - Bermuda
+  - Bolivia
+  - Brazil
+  - Barbados
+  - Brunei
+  - Bhutan
+  - Botswana
+  - Central African Republic
+  - Canada
+  - Switzerland and Liechtenstein
+  - Chile
+  - China
+  - "C\xF4te d\u2019Ivoire"
+  - Cameroon
+  - Democratic Republic of the Congo
+  - Congo
+  - Cook Islands
+  - Colombia
+  - Comoros
+  - Cabo Verde
+  - Costa Rica
+  - Cuba
+  - Cayman Islands
+  - Cyprus
+  - Czechia
+  - Germany
+  - Djibouti
+  - Dominica
+  - Denmark
+  - Dominican Republic
+  - Algeria
+  - Ecuador
+  - Egypt
+  - Eritrea
+  - Western Sahara
+  - Spain and Andorra
+  - Estonia
+  - Ethiopia
+  - Finland
+  - Fiji
+  - Falkland Islands
+  - France and Monaco
+  - Faroes
+  - Gabon
+  - United Kingdom
+  - Georgia
+  - Ghana
+  - Gibraltar
+  - Guinea
+  - Guadeloupe
+  - The Gambia
+  - Guinea-Bissau
+  - Equatorial Guinea
+  - Greece
+  - Grenada
+  - Greenland
+  - Guatemala
+  - French Guiana
+  - Guyana
+  - Hong Kong
+  - Honduras
+  - Croatia
+  - Haiti
+  - Hungary
+  - Indonesia
+  - India
+  - Ireland
+  - Iran
+  - Iraq
+  - Iceland
+  - Israel and Palestine, State of
+  - Italy, San Marino and the Holy See
+  - Jamaica
+  - Jordan
+  - Japan
+  - Kazakhstan
+  - Kenya
+  - Kyrgyzstan
+  - Cambodia
+  - Kiribati
+  - Saint Kitts and Nevis
+  - South Korea
+  - Kuwait
+  - Laos
+  - Lebanon
+  - Liberia
+  - Libya
+  - Saint Lucia
+  - Sri Lanka
+  - Lesotho
+  - Lithuania
+  - Luxembourg
+  - Latvia
+  - Macao
+  - Morocco
+  - Moldova
+  - Madagascar
+  - Maldives
+  - Mexico
+  - North Macedonia
+  - Mali
+  - Malta
+  - Myanmar/Burma
+  - Mongolia
+  - Mozambique
+  - Mauritania
+  - Martinique
+  - Mauritius
+  - Malawi
+  - Malaysia
+  - Namibia
+  - New Caledonia
+  - Niger
+  - Nigeria
+  - Nicaragua
+  - Netherlands
+  - Norway
+  - Nepal
+  - New Zealand
+  - Oman
+  - Pakistan
+  - Panama
+  - Peru
+  - Philippines
+  - Palau
+  - Papua New Guinea
+  - Poland
+  - Puerto Rico
+  - North Korea
+  - Portugal
+  - Paraguay
+  - French Polynesia
+  - Qatar
+  - "R\xE9union"
+  - Romania
+  - Russia
+  - Rwanda
+  - Saudi Arabia
+  - Serbia and Montenegro
+  - Sudan and South Sudan
+  - International Shipping
+  - Senegal
+  - Singapore
+  - Saint Helena, Ascension and Tristan da Cunha
+  - Solomon Islands
+  - Sierra Leone
+  - El Salvador
+  - Somalia
+  - Saint Pierre and Miquelon
+  - "S\xE3o Tom\xE9 and Pr\xEDncipe"
+  - Suriname
+  - Slovakia
+  - Slovenia
+  - Sweden
+  - Eswatini
+  - Seychelles
+  - Syria
+  - Turks and Caicos Islands
+  - Chad
+  - Togo
+  - Thailand
+  - Tajikistan
+  - Turkmenistan
+  - Timor-Leste
+  - Tonga
+  - Trinidad and Tobago
+  - Tunisia
+  - "T\xFCrkiye"
+  - Taiwan
+  - Tanzania
+  - Uganda
+  - Ukraine
+  - Uruguay
+  - United States
+  - Uzbekistan
+  - Saint Vincent and the Grenadines
+  - Venezuela
+  - British Virgin Islands
+  - Viet Nam
+  - Vanuatu
+  - Samoa
+  - Yemen
+  - South Africa
+  - Zambia
+  - Zimbabwe
+  - EU27
+  - GLOBAL TOTAL
+LULUCF_macroregions:
+  base_api: http://127.0.0.1:5000/products/EDGAR_2024_GHG/LULUCF_macroregions
   columns:
-    - Substance
-    - Sector
-    - EDGAR Country Code
-    - Country
-    - '1970'
-    - '1971'
-    - '1972'
-    - '1973'
-    - '1974'
-    - '1975'
-    - '1976'
-    - '1977'
-    - '1978'
-    - '1979'
-    - '1980'
-    - '1981'
-    - '1982'
-    - '1983'
-    - '1984'
-    - '1985'
-    - '1986'
-    - '1987'
-    - '1988'
-    - '1989'
-    - '1990'
-    - '1991'
-    - '1992'
-    - '1993'
-    - '1994'
-    - '1995'
-    - '1996'
-    - '1997'
-    - '1998'
-    - '1999'
-    - '2000'
-    - '2001'
-    - '2002'
-    - '2003'
-    - '2004'
-    - '2005'
-    - '2006'
-    - '2007'
-    - '2008'
-    - '2009'
-    - '2010'
-    - '2011'
-    - '2012'
-    - '2013'
-    - '2014'
-    - '2015'
-    - '2016'
-    - '2017'
-    - '2018'
-    - '2019'
-    - '2020'
-    - '2021'
-    - '2022'
-    - '2023'
-row_names: []
+  - Substance
+  - Macro-region
+  - Sector
+  - '1970'
+  - '1971'
+  - '1972'
+  - '1973'
+  - '1974'
+  - '1975'
+  - '1976'
+  - '1977'
+  - '1978'
+  - '1979'
+  - '1980'
+  - '1981'
+  - '1982'
+  - '1983'
+  - '1984'
+  - '1985'
+  - '1986'
+  - '1987'
+  - '1988'
+  - '1989'
+  - '1990'
+  - '1991'
+  - '1992'
+  - '1993'
+  - '1994'
+  - '1995'
+  - '1996'
+  - '1997'
+  - '1998'
+  - '1999'
+  - '2000'
+  - '2001'
+  - '2002'
+  - '2003'
+  - '2004'
+  - '2005'
+  - '2006'
+  - '2007'
+  - '2008'
+  - '2009'
+  - '2010'
+  - '2011'
+  - '2012'
+  - '2013'
+  - '2014'
+  - '2015'
+  - '2016'
+  - '2017'
+  - '2018'
+  - '2019'
+  - '2020'
+  - '2021'
+  - '2022'
+  - '2023'

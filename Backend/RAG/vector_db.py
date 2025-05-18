@@ -97,12 +97,12 @@ def get_docs(max:int,filter=None):
     for i in res:
         print(i)
 
-def retrieve():
+def getChain(prompt,config):
     vector_store = models.getVectorStore()
     llm = models.get_LLM()
 
-    retriever = vector_store.as_retriever()
-    prompt = PromptTemplate.from_template(json.load(open("../../prompts.json"))['rag_prompt'])
+    retriever = vector_store.as_retriever(search_kwargs= config)
+    prompt = PromptTemplate.from_template(prompt)
 
     def format_docs(docs):
         return "\n\n".join(doc.page_content for doc in docs)
@@ -121,5 +121,4 @@ if __name__ == "__main__":
     # filter = {"id": {"$in": [1, 5, 2, 9]}, "location": {"$in": ["pond", "market"]}}
 
     get_docs(30)
-
 

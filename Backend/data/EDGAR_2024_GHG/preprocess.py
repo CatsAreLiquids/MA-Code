@@ -6,28 +6,38 @@ def GHG_totals_by_country():
     df = pd.read_excel('Original_Data/EDGAR_2024_GHG_booklet_2024.xlsx', sheet_name='GHG_totals_by_country')
     df.rename(columns={"Country": "year", }, inplace=True)
     df = df.drop(columns=["EDGAR Country Code"])
-    df['Country']= df['Country'].str.lower()
     df = df.dropna()
     df = df.T
     df.columns = df.iloc[0]
-    df = df.drop(df.index[0])
-
+    #df = df.drop(df.index[0])
+    print(df)
     df.to_csv('./GHG_totals_by_country.csv')
 
 
 # Need to seperate this into sector and substance type
 def GHG_by_sector_and_country():
     df = pd.read_excel('./Original_Data/EDGAR_2024_GHG_booklet_2024.xlsx', sheet_name='GHG_by_sector_and_country')
+    #df.rename(columns={"Country": "year", }, inplace=True)
     df = df.drop(columns=["EDGAR Country Code"])
     df = df.dropna(how='all')
 
-    print(df.head())
-
-    df.rename(columns={"Country": "year", }, inplace=True)
-    df = df.T
+    sector = df.drop(columns = ["Country","Substance"])
+    sector  = sector.T
+    print(sector)
     df.columns = df.iloc[0]
     df = df.drop(df.index[0])
-    #df.to_csv('./GHG_by_sector_and_country.csv')
+    df = df.drop(columns=["Substance","Sector"])
+    print(tmp.shape)
+    print(df.shape)
+    print(tmp)
+    df = df.T
+    print(df.shape)
+    print(df)
+    df = pd.concat([tmp,df],axis=1)
+    print(df)
+    df.columns = df.iloc[0]
+    df = df.drop(df.index[0])
+    df.to_csv('./GHG_by_sector_and_country.csv')
 
 
 def GHG_per_GDP_by_country():

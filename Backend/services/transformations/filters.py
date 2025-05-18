@@ -1,4 +1,17 @@
 import numpy as np
+import ast
+import pandas as pd
+
+
+def getNRows(df,filter_dict):
+
+    filter_dict = ast.literal_eval(filter_dict)
+    if filter_dict['top'] == True:
+        return df.head(filter_dict['n'])
+    elif filter_dict['top'] == False:
+        return df.tail(filter_dict['n'])
+    else:
+        return df
 
 
 def _rangeFilter(df, column, range_dict):
@@ -13,6 +26,10 @@ def _rangeFilter(df, column, range_dict):
 
 
 def applyFilter(df, filter_dict):
+    filter_dict = ast.literal_eval(filter_dict)
+    if 'columns' in filter_dict:
+        filter_dict = filter_dict['columns']
+
     for key, val in filter_dict.items():
         if isinstance(val, dict):
             df = _rangeFilter(df, key, val)
@@ -27,7 +44,7 @@ def applyFilter(df, filter_dict):
                 else:
                     df = df[df[key] == val]
             except KeyError:
-                msg = f"Could not find coulumn {column} in the dataset please try to rephrase your query"
+                df
     return df
 
 
@@ -36,7 +53,7 @@ def _matchValues(df, column, values):
     msg = ""
 
     for val in values:
-        if isinstance(val,str):
+        if isinstance(val, str):
             val = val.lower()
         mask = df[column] == val
         tmp = np.where(np.asarray(mask))[0].tolist()
@@ -50,36 +67,42 @@ def _matchValues(df, column, values):
     if msg != "":
         msg += f"in the {column} column"
 
-    return idx#, msg
+    return idx  # , msg
 
-def _getInDf(df,column):
+
+def _getInDf(df, column):
     pass
 
-def getMax(df,column):
+
+def getMax(df, filter_dict):
+    filter_dict = ast.literal_eval(filter_dict)
+    if isinstance(df, pd.Series):
+        df = df.to_frame()
+        return {"value":str(df.max()[0]),filter_dict['column']:df.idxmax()[0]}
     try:
-        return df[column].max()
+        return df[filter_dict['column']].max()
     except KeyError:
-        return "unable to find column"
+        return df
+
 
 def getRows(df, filter_dict):
-    msg = ""
-    for column, values in filter_dict.items():
-        if column in df:
-            if (values is not None) and (values != "None"):
+    filter_dict = ast.literal_eval(filter_dict)
 
-                idx, msg = _matchValues(df, column, values)
-                df = df[idx]
-            else:
-                try:
-                    df = df[column]
-                except KeyError:
-                    msg = f"Could not find coulumn {column} in the dataset please try to rephrase your query"
-        else :
-            df = df[values]
-    return df#, msg
+    if filter_dict['columns'] in df:
+        if (filter_dict['values'] is not None) and (filter_dict['values'] != "None"):
+            idx, msg = _matchValues(df, column, filter_dict['values'])
+            return df[idx]
+        else:
+            try:
+                return df[filter_dict['columns']]
+            except KeyError:
+                return df
+    else:
+        return df
 
 
 def combineProducts(df, filter_dict):
+    filter_dict = ast.literal_eval(filter_dict)
     for column, values in filter_dict.items():
         if not isinstance(values):
             values = [values]

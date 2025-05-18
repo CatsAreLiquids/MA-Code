@@ -3,6 +3,8 @@ from pathlib import Path
 import yaml
 import requests
 import os
+from Backend import models
+
 
 baseAPi = "http://127.0.0.1:5000/products"
 
@@ -58,17 +60,33 @@ def process_Product(file):
 
     api = baseAPi + f"/{collection}/{Path(file).stem}"
     if not _testAPI(api):
-        print("error on API call make sure the data product is callable. Not going to proceed")
+        print(f"error on API call make sure the data product ({api}) is callable. Not going to proceed")
         return
 
-    _get_or_create(columns, api, collection, product)
+    _get_or_create(columns, api, collection, Path(product).stem)
 
 
 def main(file):
     process_Product(file)
 
 
+def identifyColumns():
+    llm = models.get_LLM()
+
+    sys_prompt = """ Your task is to rewrite a user query into an sql query.
+                """
+    input_prompt = PromptTemplate.from_template("""
+                        User Query:{query}
+                        """)
+    input_prompt = input_prompt.format(query=query)
+    messages = [
+        ("system", sys_prompt),
+        ("human", input_prompt),
+    ]
+    llm, callback = models.get_LLM_with_callbacks()
+    return llm.invoke(messages, config={"callbacks": [callback]})
+
 
 if __name__ == '__main__':
-    file = "./Sales_Data/customer_data_23.csv"
+    file = "./EDGAR_2024_GHG/GHG_totals_by_country.csv"
     main(file)

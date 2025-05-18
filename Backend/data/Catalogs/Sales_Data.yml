@@ -1,4 +1,4 @@
-customer_data_23.csv:
+customer_data_23:
   base_api: http://127.0.0.1:5000/products/Sales_Data/customer_data_23
   columns:
   - customer_id
