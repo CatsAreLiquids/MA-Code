@@ -88,5 +88,5 @@ def identifyColumns():
 
 
 if __name__ == '__main__':
-    file = "./EDGAR_2024_GHG/GHG_totals_by_country.csv"
+    file = "./EDGAR_2024_GHG/GHG_per_capita_by_country.csv"
     main(file)

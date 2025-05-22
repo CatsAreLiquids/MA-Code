@@ -62,7 +62,7 @@ GHG_by_sector_and_country:
 GHG_per_GDP_by_country:
   base_api: http://127.0.0.1:5000/products/EDGAR_2024_GHG/GHG_per_GDP_by_country
   columns:
-  - 'Unnamed: 0'
+  - year
   - Aruba
   - Afghanistan
   - Angola
@@ -276,7 +276,7 @@ GHG_per_GDP_by_country:
 GHG_per_capita_by_country:
   base_api: http://127.0.0.1:5000/products/EDGAR_2024_GHG/GHG_per_capita_by_country
   columns:
-  - 'Unnamed: 0'
+  - year
   - Aruba
   - Afghanistan
   - Angola
@@ -490,7 +490,7 @@ GHG_per_capita_by_country:
 GHG_totals_by_country:
   base_api: http://127.0.0.1:5000/products/EDGAR_2024_GHG/GHG_totals_by_country
   columns:
-  - 'Unnamed: 0'
+  - year
   - Aruba
   - Afghanistan
   - Angola

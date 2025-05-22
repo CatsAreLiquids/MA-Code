@@ -17,7 +17,7 @@ from langchain_community.callbacks import get_openai_callback
 from Backend import models
 from Backend.Agent import execute
 from Backend.RAG import vector_db
-load_dotenv()
+
 
 @tool(parse_docstring=True)
 def functionRetriever(query):
@@ -38,13 +38,32 @@ def functionRetriever(query):
     retrieval_chain = vector_db.getChain(prompt,config)
     return retrieval_chain.invoke(query)
 
+@tool(parse_docstring=True)
+def productRetriever(query):
+    """
+    Returns the describtion of suitable dataproducts to answer the query
+    Args:
+        query: original user query
+    Returns:
+        a text descrbing potential functions
+    """
+    prompt = """You are an assistant for question-answering tasks. Use the following pieces of retrieved context to answer the question. If you don't know the answer, just say that you don't know. Use three sentences maximum and keep the answer concise.
+        Question: {question} 
+        Context: {context} 
+        Answer:
+    """
 
-@tool
+    config = {"filter":{"type":{"$eq":"product"}}}
+    retrieval_chain = vector_db.getChain(prompt,config)
+    return retrieval_chain.invoke(query)
+
+@tool(parse_docstring=True)
 def getCatalogItem(file):
     """
         Retrieves the data catalog entry for specific data product
-        file: the file name of a specific data product
-        :return: dict containing all information about the data product
+        Args:
+            file: the file name of a specific data product
+        Returns: dict containing all information about the data product
     """
 
     if 'http' in file:
@@ -53,64 +72,15 @@ def getCatalogItem(file):
     response = requests.get("http://127.0.0.1:5000/catalog", json={"file": file})
     return json.loads(response.text)
 
-
-@tool
-def getCatalogColumns(file):
-    """
-        Retrieves the data catalog entry for specific data product
-        file: the file name of a specific data product
-        :return: dict containing all information about the data product
-    """
-
-    if 'http' in file:
-        file = file.split("/")[-1]
-
-    response = requests.get("http://127.0.0.1:5000/catalog/columns", json={"file": file})
-    return json.loads(response.text)
-
-@tool
-def getFunctionCatalog(name):
-    """
-        Retrieves the data catalog entry for a specific type of processing functions
-        name: the function name to retrieve
-        :return: dict containing all information about the data product
-    """
-    # TODO this should be a call to the microservice
-    response = requests.get("http://127.0.0.1:5200/catalog",json={"function_name":name})
-    return json.loads(response.text)
-
-@tool
-def confirmResult(query: str,result):
-    """
-    Breaks down a user query into multiple steps
-    :param query user query asking for an data product
-    :return: list of steps
-    """
-    if isinstance(result,pd.Series) or isinstance(result,pd.DataFrame):
-        data = result[:5]
-    else:
-        data = result
-
-    sys_prompt = """ Your task is to decide wether the provided data answers a query. 
-                    For this you will receive at max the top 5 rows of the data, try to extrapolate if the data answers the query
-                    Do only return True if the data seems to answer the query and return False, if the query is not answerd give a one sentence sumarry of what seems to be wrong
-        """
-    input_prompt = PromptTemplate.from_template("""
-                User Query:{query}
-                Data:{data}
-                """)
-    input_prompt = input_prompt.format(query=query,data= data)
-    messages = [
-        ("system", sys_prompt),
-        ("human", input_prompt),
-    ]
-    return llm.invoke(messages, config={"callbacks": [callback]})
-
-@tool()
+@tool(parse_docstring=True)
 def createSQLquery(query,columns):
     """
-    stuff
-    :return:
+    Creates a sql query based on the provide user query and the column names in accesible data products
+    Args:
+        query: original user query
+        columns: columns present in the data products
+    Returns:
+        a string sql query
     """
     sys_prompt = """ Your task is to rewrite a user query into an sql query.
             """
@@ -123,31 +93,60 @@ def createSQLquery(query,columns):
         ("system", sys_prompt),
         ("human", input_prompt),
     ]
-    llm, callback = models.get_LLM_with_callbacks()
-    return llm.invoke(messages, config={"callbacks": [callback]})
+    llm = models.get_LLM()
+    return llm.invoke(messages)
+
+@tool
+def getFunctionCatalog(name):
+    """
+        Retrieves the data catalog entry for a specific type of processing functions
+        name: the function name to retrieve
+        :return: dict containing all information about the data product
+    """
+    # TODO this should be a call to the microservice
+    response = requests.get("http://127.0.0.1:5200/catalog",json={"function_name":name})
+    return json.loads(response.text)
+
+@tool()
+def breakDownSQLQuery(sqlquery: str):
+    """
+    Breaks down a sql query into its multiple steps
+    Args:
+        sqlquery: a sql query
+    Returns:
+        a list of steps
+    """
+    sys_prompt = """ Your task is to deconstruct a sql query into multipe parts if necerssary.
+    
+                Example:
+                query: "SELECT category, SUM(price) AS total_amount_spent\nFROM your_table_name\nWHERE gender = 'Female' AND age > 38\nGROUP BY category;"
+                output: ["SELECT year, Türkiye FROM emissions_data", "WHERE Türkiye = (SELECT MAX(Türkiye) FROM emissions_data)"]
+        """
+    input_prompt = PromptTemplate.from_template("""
+                User Query:{query}
+                """)
+    input_prompt = input_prompt.format(query=query)
+    messages = [
+        ("system", sys_prompt),
+        ("human", input_prompt),
+    ]
+
+    llm = models.get_LLM()
+
+    return llm.invoke(messages)
 
 
 def init_agent():
     sys_prompt = """ 
                 Your task is to transform a user query into a list of api calls.
                 To achieve your goal follo these steps:
-                
-                1. infer which data products are needed with the help of the retriever tool
-                2. retrieve the information of these product with the getCatalogItems
-                3. create a sql query with the createSQL tool and the corresponding column names
-                3. transform the sql into a list of api call with the help of the getFunctionCatalog tool to infear which functions need to be called
-                
-                
-                Retrieve additional information with the getCatalogItem tool to make sure that all referenced columns are present in the data
-                Make sure that all columns referenced in a query are present in the data
-                
-                
+
                 Example:
-                user:"The mall ith the most items sold"
+                user:"The mall with the most items sold"
                 output:  {{"products":[{{"product":"http://127.0.0.1:5000/products/Sales_Data/sales_data_23","transformation":[{{"function":"http://127.0.0.1:5200/sum","values":{{"group_by":"shopping_mall","column":"quantity"}} }} ,{{"function":"http://127.0.0.1:5200/max","values":{{"column":"shopping_mall"}} }}]  }}], "combination":[] }}
                 user: "All customer data of customers who have bought at least 1 book"
                 output: {{"products":[{{"product":"http://127.0.0.1:5000/products/Sales_Data/sales_data_23","transformation":[{{"function":"http://127.0.0.1:5200/filter","columns":{{"category":"books"}} }} ,{{"function":"http://127.0.0.1:5200/getRows",filter_dict:{{"values":"None","column":"customer_id"}} }}]  }} ,{{"product":"http://127.0.0.1:5000/products/Sales_Data/customer_data_23","transformation":[]}}], "combination":[{{"column":"customer_id","type":"equals","values":["None"]}}] }}
-                
+
                 Do only return the output list and no explanation
         """
     prompt = ChatPromptTemplate.from_messages(
@@ -163,12 +162,11 @@ def init_agent():
         "data_retriever",
         "Searches and returns Data files aboout diffrent statistics ",
     )
-    tools = [retriever_tool,functionRetriever, getFunctionCatalog, createSQLquery, getCatalogItem]
+    tools = [retriever_tool, functionRetriever, getFunctionCatalog, createSQLquery, getCatalogItem]#,breakDownSQLQuery]
     llm, callback = models.get_LLM_with_callbacks()
 
     agent = create_tool_calling_agent(llm, tools, prompt)
-    return AgentExecutor(agent=agent, tools=tools, verbose=True),callback
-
+    return AgentExecutor(agent=agent, tools=tools, verbose=True), callback
 
 with get_openai_callback() as cb:
     agent_i,test = init_agent()
@@ -182,12 +180,4 @@ with get_openai_callback() as cb:
     #agent_result ={"products": [{"product": "http://127.0.0.1:5000/products/Sales_Data/sales_data_23", "transformation": [{"function": "http://127.0.0.1:5200/filter", "columns": {"gender": "Female", "age": {"min": 39}}},{"function": "http://127.0.0.1:5200/sum", "values": {"group_by": "category", "column": "price"}}]}, {"product": "http://127.0.0.1:5000/products/Sales_Data/customer_data_23","transformation": []}], "combination": [{"column": "customer_id", "type": "equals", "values": ["None"]}]}
 
     print(agent_result)
-    print(execute.execute(agent_result))
-
-
-#print(f"Total Tokens: {cb.total_tokens}")
-#print(f"Prompt Tokens: {cb.prompt_tokens}")
-#print(f"Completion Tokens: {cb.completion_tokens}")
-#print(f"Total Cost (USD): ${cb.total_cost}")
-
-print(test.usage_metadata)
+    #print(execute.execute(agent_result))

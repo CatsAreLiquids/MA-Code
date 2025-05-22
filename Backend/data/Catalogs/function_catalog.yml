@@ -1,43 +1,45 @@
   sum:
     base_api: http://127.0.0.1:5200/sum
-    description: Calcuates the sum of a dataframe based on a list of group_by columns and
+    description: "Calcuates the sum of a dataframe based on a list of group_by columns and"
     filter_dict:
-      - group_by: a list of coulmns in the dataframe, can be None
-      - columns: a list of columns for hicht the sum should be calculated, cant be None
+      - group_by: "a list of coulmns in the dataframe, can be None"
+      - columns: "a list of columns for hicht the sum should be calculated, cant be None"
   combine:
     base_api: http://127.0.0.1:5200/combine
-    description: Combines two data products into one based on provided columns types and values
+    description: "Combines two data products into one based on provided columns types and values"
     filter_dict:
-      - type: weather the values should be equal or not
-      - columns: a list of columns based on which the data products should be combined
-      - values: specific values used for the combination, if None the whole row is used
+      - type: "weather the values should be equal or not"
+      - columns: "a list of columns based on which the data products should be combined"
+      - values: "specific values used for the combination, if None the whole row is used"
   max:
     base_api: http://127.0.0.1:5200/max
-    description: Retrieves the maximum value for a list of specified columns in a dataframe
+    description: "Retrieves the maximum value for a list of specified columns in a dataframe"
     filter_dict:
-      - columns: a list of columns for hich the maximum should be retrieved
-      - type: either column to return the column name or value to return the value
+      - columns: "a list of columns for hich the maximum should be retrieved"
+      - type: "either column to return the column name or value to return the value"
   filter:
     base_api: http://127.0.0.1:5200/filter
-    description: returns all data matching the filter dict, i.e keeps all columns
+    description: "returns all data matching the filter dict, i.e keeps all columns"
     filter_dict:
-      - columns: a dict ith the corresponding columns and their values i.e. {"columns":{"location":"berlin","year":{"min":2002,"max":2007}}
+      - columns: "a dict ith the corresponding columns and their values"
+    example: "{'columns':{'location':'berlin','year':{'min':2002,'max':2007}}"
   getRows:
     base_api: http://127.0.0.1:5200/getRows
-    description: Retrieves specififed data rows in a list format
+    description: "Retrieves specififed data rows in a list format"
     filter_dict:
-      - columns: a column on ihich to match
-      - values: a dict ith a value to match if None returns the all columns from columns
+      - columns: "a column on wihich to match"
+      - values: "a dict ith a value to match if None returns the all columns from columns"
+    example: "filter_dict:{'values':'None','column':'customer_id'}"
   sortby:
     base_api: http://127.0.0.1:5200/sortby
-    description: sorts the data based on a the provided columns and
+    description: "sorts the data based on a the provided columns and"
     filter_dict:
-      - columns: a column on which the sorting is based on
-      - ascending: True if the data is sorted ascending, False for descending
+      - columns: "a column on which the sorting is based on"
+      - ascending: "'True' if the data is sorted ascending, 'False' for descending"
   getNRows:
     base_api: http://127.0.0.1:5200/getNRows
-    description: returns either the top or bottom N rows
+    description: "returns either the top or bottom N rows"
     filter_dict:
-      - top: either True or False, if True return the top rows if False returns the bottom Rows
-      - n: Number of rows to be returned
+      - top: "either 'True' or 'False', if 'True' return the top rows if 'False' returns the bottom Rows"
+      - n: "Number of rows to be returned"
 

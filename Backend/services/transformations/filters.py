@@ -39,6 +39,8 @@ def applyFilter(df, filter_dict):
         else:
             try:
                 if isinstance(val, str):
+                    if val == 'max':
+                        return getMax(df,{'columns':key})
                     val = val.lower()
                     df = df[df[key].str.lower() == val]
                 else:
@@ -87,10 +89,11 @@ def getMax(df, filter_dict):
 
 def getRows(df, filter_dict):
     filter_dict = ast.literal_eval(filter_dict)
-
+    print(filter_dict)
     if filter_dict['columns'] in df:
         if (filter_dict['values'] is not None) and (filter_dict['values'] != "None"):
-            idx, msg = _matchValues(df, column, filter_dict['values'])
+
+            idx, msg = _matchValues(df, filter_dict['columns'], filter_dict['values'])
             return df[idx]
         else:
             try:

@@ -31,7 +31,7 @@ def _getDataProduct(url):
 
 # TODO manage when data is to big
 def _putDataProduct(df, function):
-    print(df,function)
+
     if 'values' in function:
         args = json.dumps(function['values'])
     if 'filter_dict' in function:
@@ -40,7 +40,7 @@ def _putDataProduct(df, function):
         args = json.dumps(function['columns'])
     response = requests.put(function["function"],
                             json={"data": df.to_json(), "args": args})
-    print(response)
+
     content = json.loads(response.text)
 
     try:
@@ -79,8 +79,9 @@ def execute(agent_result):
         print(plan[i]["product"])
         df = _getDataProduct(plan[i]["product"])
         if isinstance(df,str):
+            print(df)
             return None
-        print(df, plan[i]["transformation"])
+        print(plan[i]["transformation"])
         df = _executeProcessing(df, plan[i]["transformation"])
         frames["df_" + str(i)] = df
 

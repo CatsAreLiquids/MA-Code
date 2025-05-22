@@ -9,9 +9,10 @@ def GHG_totals_by_country():
     df = df.dropna()
     df = df.T
     df.columns = df.iloc[0]
-    #df = df.drop(df.index[0])
-    print(df)
-    df.to_csv('./GHG_totals_by_country.csv')
+    df = df.drop(df.index[0])
+    df = df.reset_index()
+    df.rename(columns={"index": "year", }, inplace=True)
+    df.to_csv('./GHG_totals_by_country.csv',index=False)
 
 
 # Need to seperate this into sector and substance type
@@ -47,8 +48,10 @@ def GHG_per_GDP_by_country():
     df = df.drop(columns=["EDGAR Country Code"]).T
     df.columns = df.iloc[0]
     df = df.drop(df.index[0])
+    df = df.reset_index()
+    df.rename(columns={"index": "year", }, inplace=True)
 
-    df.to_csv('./GHG_per_GDP_by_country.csv')
+    df.to_csv('./GHG_per_GDP_by_country.csv',index=False)
 
 
 def GHG_per_capita_by_country():
@@ -59,8 +62,10 @@ def GHG_per_capita_by_country():
     df = df.T
     df.columns = df.iloc[0]
     df = df.drop(df.index[0])
+    df = df.reset_index()
+    df.rename(columns={"index": "year", }, inplace=True)
 
-    df.to_csv('./GHG_per_capita_by_country.csv')
+    df.to_csv('./GHG_per_capita_by_country.csv',index=False)
 
 
 def LULUCF_macroregions():
@@ -89,6 +94,6 @@ def LULUCF_macroregions():
 if __name__ == "__main__":
     GHG_totals_by_country()
     #GHG_by_sector_and_country()
-    #GHG_per_GDP_by_country()
-    #GHG_per_capita_by_country()
+    GHG_per_GDP_by_country()
+    GHG_per_capita_by_country()
     #LULUCF_macroregions()

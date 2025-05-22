@@ -8,10 +8,10 @@ from dotenv import load_dotenv
 import json
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables import RunnablePassthrough
-
+from langchain_core.runnables import RunnableLambda
 from langchain_core.prompts import PromptTemplate
 import re
-
+from langchain_community.document_transformers import LongContextReorder
 from typing import Optional, List
 import uuid
 
@@ -90,21 +90,25 @@ def delete(id: List | None):
     else:
         vector_store.delete(id)
 
-def get_docs(max:int,filter=None):
+def get_docs(query,max:int,filter=None):
 
     vector_store = models.getVectorStore()
-    res = vector_store.similarity_search("test", k=max )
+    res = vector_store.similarity_search_with_score(query, k=max,filter=filter,search_type="mmr")
     for i in res:
         print(i)
 
 def getChain(prompt,config):
     vector_store = models.getVectorStore()
     llm = models.get_LLM()
-
-    retriever = vector_store.as_retriever(search_kwargs= config)
+    if config is not None:
+        retriever = vector_store.as_retriever(search_type="mmr",search_kwargs= config)
+    else:
+        retriever = vector_store.as_retriever()
     prompt = PromptTemplate.from_template(prompt)
 
     def format_docs(docs):
+        reorder = LongContextReorder()
+        docs = reorder.transform_documents(docs)
         return "\n\n".join(doc.page_content for doc in docs)
 
     rag_chain = (
@@ -116,9 +120,11 @@ def getChain(prompt,config):
 
     return rag_chain
 
+def reorder1(docs):
+    print(docs)
 
 if __name__ == "__main__":
-    # filter = {"id": {"$in": [1, 5, 2, 9]}, "location": {"$in": ["pond", "market"]}}
+    #filter = {"id": {"$in": [1, 5, 2, 9]}, "location": {"$in": ["pond", "market"]}}
 
-    get_docs(30)
+    get_docs(query = "aggregate total items sold for each mall",max= 5,filter={"type": {"$eq": "function"}})
 

@@ -10,6 +10,32 @@ port = int(os.environ.get('PORT', 5000))
 
 @app.route('/catalog', methods=['GET'])
 def getCatalog():
+    content = json.loads(request.data)
+    file = content['file']
+
+    if "/" in file:
+        file = file.split("/")[-1]
+
+    try:
+        with open("../data/Catalogs/catalog.yml") as stream:
+            catalog = yaml.safe_load(stream)
+    except FileNotFoundError:
+        return "could not find the main catalog"
+
+    for collection in catalog:
+        if file in collection['products']:
+            try:
+                with open("../data/Catalogs/" + collection['name'] + ".yml") as stream:
+                    collection_dict = yaml.safe_load(stream)
+                    print(file)
+                    return collection_dict[file]
+            except FileNotFoundError:
+                return "could not find the specific collection catalog"
+            except KeyError:
+                return collection_dict
+
+@app.route('/catalog/columns', methods=['GET'])
+def getCatalogColumns():
     print(request.data)
     content = json.loads(request.data)
     file = content['file']
@@ -34,7 +60,6 @@ def getCatalog():
                 return "could not find the specific collection catalog"
             except KeyError:
                 return collection_dict
-
 
 @app.route('/catalog/EDGAR_2024_GHG', methods=['GET'])
 def getCatalogEDGAR_2024_GHG():

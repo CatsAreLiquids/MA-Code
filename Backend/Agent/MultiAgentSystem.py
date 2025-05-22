@@ -258,8 +258,6 @@ def breakDownQuery(query: str):
 
                     User query: "All females customers who paid with Credit Card and are at least 38 years old"
                     parts:["Females who paid ith credit card over 38"]
-
-
         """
     input_prompt = PromptTemplate.from_template("""
                 User Query:{query}
