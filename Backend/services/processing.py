@@ -114,6 +114,12 @@ def call_getNRows():
 
     return {'data': df.to_json()}
 
+@app.route('/retrieve', methods=['PUT'])
+def call_retrieve():
+    pass
+
+    #return {'data': df.to_json()}
+
 
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=port)

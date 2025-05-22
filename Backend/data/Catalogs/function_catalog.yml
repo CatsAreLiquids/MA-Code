@@ -1,3 +1,9 @@
+  retrieve:
+    base_api: http://127.0.0.1:5200/retrieve
+    description: "retrieves the specified data product, takes the data products name and a list of requested columns as arguments"
+    filter_dict:
+      - product: "api of the data product"
+      - columns: "list of columns to retrieve"
   sum:
     base_api: http://127.0.0.1:5200/sum
     description: "Calcuates the sum of a dataframe based on a list of group_by columns and"
@@ -19,7 +25,7 @@
       - type: "either column to return the column name or value to return the value"
   filter:
     base_api: http://127.0.0.1:5200/filter
-    description: "returns all data matching the filter dict, i.e keeps all columns"
+    description: "filters a data product based on the provided filterdict, it filters row wise keeping all input columns"
     filter_dict:
       - columns: "a dict ith the corresponding columns and their values"
     example: "{'columns':{'location':'berlin','year':{'min':2002,'max':2007}}"
@@ -42,4 +48,3 @@
     filter_dict:
       - top: "either 'True' or 'False', if 'True' return the top rows if 'False' returns the bottom Rows"
       - n: "Number of rows to be returned"
-

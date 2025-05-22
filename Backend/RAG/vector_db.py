@@ -10,6 +10,8 @@ from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables import RunnablePassthrough
 from langchain_core.runnables import RunnableLambda
 from langchain_core.prompts import PromptTemplate
+from langchain.retrievers import EnsembleRetriever
+from langchain_community.retrievers import BM25Retriever
 import re
 from langchain_community.document_transformers import LongContextReorder
 from typing import Optional, List
@@ -21,6 +23,9 @@ import yaml
 
 load_dotenv()
 
+def _init_bm25(config):
+    docs = get_docs("",1000,config['filter'])
+    return BM25Retriever.from_documents(docs)
 
 def _add_Function(functionName: str, description: dict):
     vector_store = models.getVectorStore()
@@ -90,12 +95,17 @@ def delete(id: List | None):
     else:
         vector_store.delete(id)
 
+def get_docs_score(query,max:int,filter=None):
+    vector_store = models.getVectorStore()
+    res = vector_store.similarity_search_with_score(query, k=max, filter=filter)
+
+    for i in res:
+        print(i)
+
 def get_docs(query,max:int,filter=None):
 
     vector_store = models.getVectorStore()
-    res = vector_store.similarity_search_with_score(query, k=max,filter=filter,search_type="mmr")
-    for i in res:
-        print(i)
+    return vector_store.similarity_search(query, k=max,filter=filter)
 
 def getChain(prompt,config):
     vector_store = models.getVectorStore()
@@ -104,15 +114,24 @@ def getChain(prompt,config):
         retriever = vector_store.as_retriever(search_type="mmr",search_kwargs= config)
     else:
         retriever = vector_store.as_retriever()
+
+    bm25_retriever = _init_bm25(config)
+
+    ensemble_retriever = EnsembleRetriever(k=5,
+        retrievers=[bm25_retriever, retriever], weights=[0.6, 0.4]
+    )
+
     prompt = PromptTemplate.from_template(prompt)
 
     def format_docs(docs):
         reorder = LongContextReorder()
         docs = reorder.transform_documents(docs)
+        #for i in docs:
+        #    print(i)
         return "\n\n".join(doc.page_content for doc in docs)
 
     rag_chain = (
-            {"context": retriever | format_docs, "question": RunnablePassthrough()}
+            {"context": ensemble_retriever | format_docs, "question": RunnablePassthrough()}
             | prompt
             | llm
             | StrOutputParser()
@@ -124,7 +143,6 @@ def reorder1(docs):
     print(docs)
 
 if __name__ == "__main__":
-    #filter = {"id": {"$in": [1, 5, 2, 9]}, "location": {"$in": ["pond", "market"]}}
-
-    get_docs(query = "aggregate total items sold for each mall",max= 5,filter={"type": {"$eq": "function"}})
-
+    #delete(["dd37bae8-82ec-4e96-918d-35189c08dffc"])
+    get_docs_score(query = "identify the mall with the highest total book sales",max= 10,filter={"type": {"$eq": "function"}})
+    #add_Functions("filter")
