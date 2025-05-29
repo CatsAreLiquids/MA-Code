@@ -17,7 +17,19 @@ from langchain_community.callbacks import get_openai_callback
 from Backend import models
 from Backend.Agent import execute
 from Backend.RAG import vector_db
+@tool
+def getCatalogItem(file):
+    """
+        Retrieves the data catalog entry for specific data product
+        file: the file name of a specific data product
+        :return: dict containing all information about the data product
+    """
 
+    if 'http' in file:
+        file = file.split("/")[-1]
+
+    response = requests.get("http://127.0.0.1:5000/catalog", json={"file": file})
+    return json.loads(response.text)
 
 @tool(parse_docstring=True)
 def getFunctionCatalog(func_name):
@@ -127,9 +139,12 @@ def breakDownQuery(query: str,prod_descriptions):
     """
     sys_prompt = """ Your task is to explain how you would slove the provided query. For this break it down into sepereate retrieval, computation and combination steps.
                 You will be provided with information for fitting data products, keep the steps short and preciese.
+                Always do all steps necerssary for one product in a row.
+                Consider identifying the same step as extracting
+                
                 Return the steps as a orderd list.
                 Example: All customer data of customers who have bought at least 1 book
-                result ["retrieve sales data","filter for customers who have bought 1 book","retrieve customer data","combine customers from sales data and custmer data"] 
+                result: ["retrieve sales data","filter for customers who have bought 1 book","retrieve customer data","combine customers from sales data and custmer data"] 
         """
     input_prompt = PromptTemplate.from_template("""
                 User Query:{query}
@@ -144,6 +159,51 @@ def breakDownQuery(query: str,prod_descriptions):
     llm = models.get_LLM()
 
     return llm.invoke(messages)
+
+
+@tool(parse_docstring=False)
+def transformRetrieval(step: str, prod_description: str, columns: list[str]):
+    """
+    Breaks down a user query into its multiple steps
+    Args:
+        step:  a retrieval step in a query that is being solved
+        prod_description: a data product description can be retrieved with the getCatalogItems Tool
+        columns: relevant columns for the query
+    Returns:
+        a dict containing a function api and its parameters
+    """
+    sys_prompt = """ Your task is generate a retrieval step, follow the example below:
+                    
+                    Example:
+                    step: aggregate total items sold for each mall
+                    prod_description: 
+                    base_api: http://127.0.0.1:5000/products/Sales_Data/sales_data_23
+                    columns:
+                    - invoice_no
+                    - customer_id
+                    - category
+                    - quantity
+                    - price
+                    - invoice_date
+                    - shopping_mall
+
+                    {{"function":"http://127.0.0.1:5200/retrieve","values":{{"columns":["invoice_no","customer_id","category","quantity","price","invoice_date","shopping_mall"],"product":"http://127.0.0.1:5000/products/Sales_Data/customer_data_23" }} }}
+ """
+    input_prompt = PromptTemplate.from_template("""
+                step:{step}
+                prod_description: {prod_description}
+                columns: {columns}
+                """)
+    input_prompt = input_prompt.format(step=step, prod_description=prod_description, columns=columns)
+    messages = [
+        ("system", sys_prompt),
+        ("human", input_prompt),
+    ]
+
+    llm = models.get_LLM()
+
+    return llm.invoke(messages)
+
 
 @tool(parse_docstring=False)
 def transformStep(step: str,func_description:str,columns:list[str]):
@@ -219,9 +279,9 @@ def init_agent():
                 
                     Example:
                     user:"The mall ith the most items sold"
-                    output:  {{"plans":[[{{"function":"http://127.0.0.1:5200/retrieve","values":{{"product":"http://127.0.0.1:5000/products/Sales_Data/sales_data_23","columns":["invoice_no","customer_id","category","quantity","price","invoice_date","shopping_mall"]}} }},{{"function":"http://127.0.0.1:5200/filter","values":{{"columns":"category","criteria":{{"category":"book"}} }} }},{{"function":"http://127.0.0.1:5200/sum","values":{{"group_by":"shopping_mall","column":"quantity"}} }},{{"function":"http://127.0.0.1:5200/sortby","values":{{"columns":"quantity","order":"descending"}} }}]],"combination":[]}}
+                    output:  {{"plans":[{{"function":"http://127.0.0.1:5200/retrieve","values":{{"product":"http://127.0.0.1:5000/products/Sales_Data/sales_data_23","columns":["invoice_no","customer_id","category","quantity","price","invoice_date","shopping_mall"]}} }},{{"function":"http://127.0.0.1:5200/filter","values":{{"columns":"category","criteria":{{"category":"book"}} }} }},{{"function":"http://127.0.0.1:5200/sum","values":{{"group_by":"shopping_mall","column":"quantity"}} }},{{"function":"http://127.0.0.1:5200/sortby","values":{{"columns":"quantity","order":"descending"}} }}],"combination":[] }}
                     user: "All customer data of customers who have bought at least 1 book"
-                    output: {{"plans":[[{{"function":"http://127.0.0.1:5200/retrieve","values":{{"product":"http://127.0.0.1:5000/products/Sales_Data/customer_data_23","columns":["customer_id","category"]}} }},{{"function":"http://127.0.0.1:5200/filter","values":{{"columns":{{"category":"book"}} }} }},{{"function":"http://127.0.0.1:5200/getRows","values":{{"filter_dict":{{"values":"None","column":"customer_id"}} }} }}],[{{"function":"http://127.0.0.1:5200/retrieve","values":{{"product":"http://127.0.0.1:5000/products/Sales_Data/sales_data_23","columns":["customer_id","gender","age","payment_method"]}} }}]],"combination":[{{"column":"customer_id","type":"equals","values":["None"]}} ] }}
+                    output: {{"plans":[{{"function":"http://127.0.0.1:5200/retrieve","values":{{"product":"http://127.0.0.1:5000/products/Sales_Data/customer_data_23","columns":["customer_id","category"]}} }},{{"function":"http://127.0.0.1:5200/filter","values":{{"columns":{{"category":"book"}} }} }},{{"function":"http://127.0.0.1:5200/getRows","values":{{"filter_dict":{{"values":"None","column":"customer_id"}} }} }},{{"function":"http://127.0.0.1:5200/retrieve","values":{{"product":"http://127.0.0.1:5000/products/Sales_Data/sales_data_23","columns":["customer_id","gender","age","payment_method"]}} }}],"combination":[{{"column":"customer_id","type":"equals","values":["None"]}} ] }}
                     Do only return the result, keep to the provided schema, and do not explain it 
         """
     prompt = ChatPromptTemplate.from_messages(
@@ -232,13 +292,13 @@ def init_agent():
         ]
     )
 
-    tools = [breakDownQuery, getCatalogColumns,functionRetriever,productRetriever,transformStep,getFunctionCatalog]
+    tools = [breakDownQuery, getCatalogItem,functionRetriever,productRetriever,transformStep,getFunctionCatalog,transformRetrieval]
 
     agent = create_tool_calling_agent(models.get_LLM(), tools, prompt)
     return AgentExecutor(agent=agent, tools=tools, verbose=True)
 
 
-print(functionRetriever.invoke("filter sales data for the book category"))
+#print(functionRetriever.invoke("filter sales data for the book category"))
 #The mall with the most items sold
 #print(breakDownQuery.invoke("The ten countries with the highest per capita emissions for 2007"))
 # retrieve sales data from all malls
@@ -251,21 +311,24 @@ print(functionRetriever.invoke("filter sales data for the book category"))
 #TODO does not call function retriever
 #TODO rework transform step cause weird
 #TODO combine is still a problem
-
+#todo adjust filter in main call
 #'retrieve sales data from sales_data_23'
 #'filter sales data for book category'
 #'identify the mall with the highest total book sales'
 #{"plans":[[{"function":"http://127.0.0.1:5200/retrieve","values":{"product":"http://127.0.0.1:5000/products/Sales_Data/sales_data_23","columns":["invoice_no","customer_id","category","quantity","price","invoice_date","shopping_mall"]}},{"function":"http://127.0.0.1:5200/filter","values":{"columns":["category"],"values":["books"]}},{"function":"http://127.0.0.1:5200/sum","values":{"group_by":"shopping_mall","column":"quantity"}},{"function":"http://127.0.0.1:5200/sortby","values":{"columns":["quantity"],"order":"descending"}}]],"combination":[]}}
 
-"""
+# think of good output format for combinations bacck to products seperatly ?
 with get_openai_callback() as cb:
     agent_i = init_agent()
-    sql = "From the sales data i would like to know the total amount of money spent per category of available items, of Females over 38"
-    #sql = "The year of the highest per GDP greenhouse gas emissions for Turkey"
-    sql = "The mall with the highest book sales"
+    #sql = "From the sales data i would like to know the total amount of money spent per category of available items, of Females over 38"
+    sql = "The year of the highest per GDP greenhouse gas emissions for Turkey"
+    sql = "The mall with the highest books sales"
+
     #sql = "All customer data of customers who have bought at least 1 book"
     agent_result = agent_i.invoke({'input': sql})['output']
     print(agent_result)
     agent_result = ast.literal_eval(agent_result)
-    #print(execute.execute(agent_result))
-"""
+    #agent_result = {"plans":[[{"function":"http://127.0.0.1:5200/retrieve","values":{"product":"http://127.0.0.1:5000/products/Sales_Data/sales_data_23","columns":["invoice_no","customer_id","category","quantity","price","invoice_date","shopping_mall"]}},{"function":"http://127.0.0.1:5200/filter","values":{"conditions":{"category":"books"},"columns":["invoice_no","customer_id","category","quantity","price","invoice_date","shopping_mall"]}},{"function":"http://127.0.0.1:5200/sum","values":{"group_by":"shopping_mall","column":"quantity"}},{"function":"http://127.0.0.1:5200/sortby","values":{"columns":["shopping_mall","quantity"]}}]],"combination":[] }
+    #agent_result = {"plans":[{"function":"http://127.0.0.1:5200/retrieve","values":{"product":"http://127.0.0.1:5000/products/Sales_Data/sales_data_23","columns":["invoice_no","customer_id","category","quantity","price","invoice_date","shopping_mall"]}},{"function":"http://127.0.0.1:5200/filter","values":{"columns":["customer_id","category"],"conditions":[{"column":"category","value":"book"}]}},{"function":"http://127.0.0.1:5200/retrieve","values":{"product":"http://127.0.0.1:5000/products/Sales_Data/customer_data","columns":["customer_id","gender","age","payment_method"]}}],"combination":[{"column":"customer_id","type":"equals","values":["None"]}]}
+
+    print(execute.execute_new(agent_result))

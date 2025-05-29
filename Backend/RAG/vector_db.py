@@ -34,13 +34,13 @@ def _add_Function(functionName: str, description: dict):
     for k, v in description.items():
         text += f"{k}: {v}\n"
 
-    doc = [Document(page_content=text, metadata={"type": "function", "id": str(uuid.uuid4())})]
+    doc = [Document(page_content=text, metadata={"type": "function_text", "id": str(uuid.uuid4())})]
     vector_store.add_documents(doc)
 
 
 def add_Functions(functionName: str | None):
     try:
-        with open("../data/Catalogs/function_catalog.yml") as stream:
+        with open("../data/Catalogs/function_catalog_text_only.yml") as stream:
             data = yaml.safe_load(stream)
             if functionName is not None:
                 _add_Function(functionName, data[functionName])
@@ -143,6 +143,6 @@ def reorder1(docs):
     print(docs)
 
 if __name__ == "__main__":
-    #delete(["dd37bae8-82ec-4e96-918d-35189c08dffc"])
-    get_docs_score(query = "identify the mall with the highest total book sales",max= 10,filter={"type": {"$eq": "function"}})
-    #add_Functions("filter")
+    #delete(["a0790de5-9747-44a9-8a64-a339fe9c9efb"])
+    get_docs_score(query = "",max= 10,filter={"type": {"$eq": "function_text"}})
+    #add_Functions("getNRows")

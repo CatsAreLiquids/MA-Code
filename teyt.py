@@ -95,4 +95,10 @@ if "/" in file:
 print(file)
 
 l = {{"plans":[[{{"function":"http://127.0.0.1:5200/retrieve","values":{{"product":"http://127.0.0.1:5000/products/Sales_Data/sales_data_23","columns":["invoice_no","customer_id","category","quantity","price","invoice_date","shopping_mall"]}} }},{{"function":"http://127.0.0.1:5200/filter","values":{{"columns":"category","criteria":{{"category":"book"}} }} }},{{"function":"http://127.0.0.1:5200/sum","values":{{"group_by":"shopping_mall","column":"quantity"}} }},{{"function":"http://127.0.0.1:5200/sortby","values":{{"columns":"quantity","order":"descending"}} }}]],"combination":[]}}
-
+l = {"plans":[
+	[
+		{"function":"http://127.0.0.1:5200/retrieve","values":{"product":"http://127.0.0.1:5000/products/Sales_Data/sales_data_23","columns":["invoice_no","customer_id","category","quantity","price","invoice_date","shopping_mall"]}},
+		{"function":"http://127.0.0.1:5200/filter","values":{"columns":["category"],"values":["books"]}},
+		{"function":"http://127.0.0.1:5200/sum","values":{"group_by":"shopping_mall","column":"quantity"}},
+		{"function":"http://127.0.0.1:5200/sortby","values":{"column":"quantity","order":"descending"}}
+]],"combination":[]}

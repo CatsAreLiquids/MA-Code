@@ -1,0 +1,16 @@
+  retrieve:
+    description: "retrieves the specified data product, takes the data products name and a list of requested columns as arguments"
+  sum:
+    description: "Calcuates the sum of a dataframe based on a list of group_by columns and"
+  combine:
+    description: "Combines two data products into one based on provided columns types and values"
+  max:
+    description: "Retrieves the maximum value for a list of specified columns in a dataframe"
+  filter:
+    description: "filters a data product based on the provided filterdict, it filters row wise keeping all input columns"
+  getRows:
+    description: "Retrieves specififed data rows in a list format"
+  sortby:
+    description: "sorts the data based on a the provided columns and"
+  getNRows:
+    description: "returns either the top or bottom N rows"

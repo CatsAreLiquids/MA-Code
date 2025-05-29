@@ -27,9 +27,18 @@ def _rangeFilter(df, column, range_dict):
 
 def applyFilter(df, filter_dict):
     filter_dict = ast.literal_eval(filter_dict)
-    if 'columns' in filter_dict:
-        filter_dict = filter_dict['columns']
 
+
+    if 'conditions' in filter_dict:
+        filter_dict = filter_dict['conditions']
+        print(filter_dict)
+    elif 'columns' in filter_dict:
+        filter_dict = filter_dict['columns']
+        print(filter_dict)
+
+    if isinstance(filter_dict,list):
+        filter_dict = filter_dict[0]
+    print(filter_dict)
     for key, val in filter_dict.items():
         if isinstance(val, dict):
             df = _rangeFilter(df, key, val)

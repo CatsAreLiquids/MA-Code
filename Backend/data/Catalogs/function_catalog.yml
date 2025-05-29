@@ -27,8 +27,8 @@
     base_api: http://127.0.0.1:5200/filter
     description: "filters a data product based on the provided filterdict, it filters row wise keeping all input columns"
     filter_dict:
-      - columns: "a dict ith the corresponding columns and their values"
-    example: "{'columns':{'location':'berlin','year':{'min':2002,'max':2007}}"
+      - conditions: "a dict ith the corresponding columns and their values"
+    example: "{'condition':{'location':'berlin','year':{'min':2002,'max':2007}}"
   getRows:
     base_api: http://127.0.0.1:5200/getRows
     description: "Retrieves specififed data rows in a list format"

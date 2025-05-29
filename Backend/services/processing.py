@@ -100,7 +100,11 @@ def call_filter():
 def call_sortby():
     content = json.loads(request.data)
 
-    df = pd.read_json(io.StringIO(content['data']))
+    try:
+        df = pd.read_json(io.StringIO(content['data']))
+    except ValueError:
+        df = pd.Series(ast.literal_eval(content['data']))
+
     df = misc.sortby(df, content['args'])
 
     return {'data': df.to_json()}

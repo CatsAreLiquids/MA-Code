@@ -5,16 +5,20 @@ import requests
 import io
 
 
-def getData(url):
+def getData(url,columns=None):
     response = requests.get(url)
     content = json.loads(response.text)
-    print(url)
 
     try:
         df = pd.read_json(io.StringIO(content['data']))
     except ValueError:
         df = pd.Series(ast.literal_eval(content['data']))
 
+    if columns is not None:
+        try:
+            df = df[columns]
+        except KeyError:
+            df
     return df
 
 
@@ -69,6 +73,18 @@ def _executeProcessing(df, plan):
         df = _putDataProduct(df, elem)
     return df
 
+def executeStep(plan):
+
+    print(plan)
+    retrieve = plan[0]
+    df = getData(retrieve['values']['product'],retrieve['values']['columns'])
+
+    for elem in plan[1:]:
+        print(elem)
+        df = _putDataProduct(df, elem)
+        print(df)
+    return df
+
 
 def execute(agent_result):
     plan = agent_result['products']
@@ -86,6 +102,32 @@ def execute(agent_result):
         frames["df_" + str(i)] = df
 
     if len(plan) -1 != len(combination): #& len(combination[0]) != 0:
+        return frames
+
+    previous = frames["df_0"]
+    for i in range(len(combination)):
+        new = frames["df_"+str(i+1)]
+        previous = _putDataProductCombination(previous,new,combination[i])
+
+    return previous
+
+
+
+def execute_new(agent_result):
+    plans = agent_result['plans']
+    combination = agent_result['combination']
+    frames = {}
+    i = 0
+    for elem in plans:
+        print(elem)
+        if elem['function'] == 'http://127.0.0.1:5200/retrieve':
+            df = getData(elem['values']['product'], elem['values']['columns'])
+            i+=1
+        else:
+            df = _putDataProduct(df, elem)
+        frames["df_" + str(i)] = df
+
+    if len(plans) -1 != len(combination): #& len(combination[0]) != 0:
         return frames
 
     previous = frames["df_0"]
