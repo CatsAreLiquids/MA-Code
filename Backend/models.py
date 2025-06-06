@@ -42,10 +42,13 @@ def get_embeddings():
     )
 
 
-def getVectorStore():
+def getVectorStore(PGCollection=None):
+    if PGCollection is None:
+        PGCollection = os.environ["PGCollection"]
+
     return PGVector(
         embeddings=get_embeddings(),
-        collection_name=os.environ["PGCollection"],
+        collection_name=PGCollection,
         connection=os.environ["PGConnection"],
         use_jsonb=True,
     )

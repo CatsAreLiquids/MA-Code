@@ -79,7 +79,7 @@ l = {"combine":{"p1":({"name": "sales_data_23", "url": "http://127.0.0.1:5000/pr
 
 #agent_result = json.loads(l)
 #execute(agent_result)
-df = pd.read_csv("Backend/data/Sales_Data/sales_data_23.csv")
+df = pd.read_csv("Backend/data/old/Sales_Data/sales_data_23.csv")
 df = df[df['category']=='toys'].groupby(["shopping_mall"])['quantity'].sum()
 file = 'http://127.0.0.1:5000/products/Sales_Data/customer_data_23'
 if 'http' in file:

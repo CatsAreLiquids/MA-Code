@@ -85,7 +85,7 @@ def getCatalogSales_Data():
 def getProduct1():
     file = request.args.get('file')
     # read from data catalog
-    df = pd.read_csv('../data/EDGAR_2024_GHG/GHG_by_sector_and_country.csv')
+    df = pd.read_csv('../data/old/EDGAR_2024_GHG/GHG_by_sector_and_country.csv')
     return {'data': df.to_json()}
 
 
@@ -93,7 +93,7 @@ def getProduct1():
 def getProduct6():
     file = request.args.get('file')
     # read from data catalog
-    df = pd.read_csv('../data/EDGAR_2024_GHG/GHG_totals_by_country.csv')
+    df = pd.read_csv('../data/old/EDGAR_2024_GHG/GHG_totals_by_country_2024.csv')
     return {'data': df.to_json()}
 
 
@@ -101,7 +101,7 @@ def getProduct6():
 def getProduct7():
     file = request.args.get('file')
     # read from data catalog
-    df = pd.read_csv('../data/EDGAR_2024_GHG/GHG_per_capita_by_country.csv')
+    df = pd.read_csv('../data/old/EDGAR_2024_GHG/GHG_per_capita_by_country_2024.csv')
     return {'data': df.to_json()}
 
 
@@ -109,27 +109,82 @@ def getProduct7():
 def getProduct5():
     file = request.args.get('file')
     # read from data catalog
-    df = pd.read_csv('../data/EDGAR_2024_GHG/GHG_per_GDP_by_country.csv')
+    df = pd.read_csv('../data/old/EDGAR_2024_GHG/GHG_per_GDP_by_country_2024.csv')
     return {'data': df.to_json()}
 
 
 @app.route('/products/EDGAR_2024_GHG/LULUCF_macroregions', methods=['GET'])
 def getProduct2():
-    df = pd.read_csv('../data/EDGAR_2024_GHG/LULUCF_macroregions.csv')
+    df = pd.read_csv('../data/old/EDGAR_2024_GHG/LULUCF_macroregions.csv')
     return {'data': df.to_json()}
 
 
 @app.route('/products/Sales_Data/customer_data_23', methods=['GET'])
 def getProduct3():
-    df = pd.read_csv('../data/Sales_Data/customer_data_23.csv')
+    df = pd.read_csv('../data/old/Sales_Data/customer_data_23.csv')
     return {'data': df.to_json()}
 
 
 @app.route('/products/Sales_Data/sales_data_23', methods=['GET'])
 def getProduct4():
-    df = pd.read_csv('../data/Sales_Data/sales_data_23.csv')
+    df = pd.read_csv('../data/old/Sales_Data/sales_data_23.csv')
     return {'data': df.to_json()}
 
+@app.route('/products/Domestic_producer_prices/estat_teiis040_en', methods=['GET'])
+def getProduct8():
+    df = pd.read_csv('../data/old/Domestic_producer_prices/estat_teiis040_en.csv')
+    return {'data': df.to_json()}
+@app.route('/products/Domestic_producer_prices/estat_teiis050_en', methods=['GET'])
+def getProduct9():
+    df = pd.read_csv('../data/old/Domestic_producer_prices/estat_teiis050_en.csv')
+    return {'data': df.to_json()}
+
+
+@app.route('/products/EDGAR_2021_GHG/GHG_totals_by_country_2021', methods=['GET'])
+def getProductc():
+    file = request.args.get('file')
+    # read from data catalog
+    df = pd.read_csv('../data/old/EDGAR_2021_GHG/GHG_totals_by_country_2021.csv')
+    return {'data': df.to_json()}
+
+
+@app.route('/products/EDGAR_2021_GHG/GHG_per_capita_by_country_2021', methods=['GET'])
+def getProductb():
+    file = request.args.get('file')
+    # read from data catalog
+    df = pd.read_csv('../data/old/EDGAR_2021_GHG/GHG_per_capita_by_country_2021.csv')
+    return {'data': df.to_json()}
+
+
+@app.route('/products/EDGAR_2021_GHG/GHG_per_GDP_by_country_2021', methods=['GET'])
+def getProducta():
+    file = request.args.get('file')
+    # read from data catalog
+    df = pd.read_csv('../data/old/EDGAR_2021_GHG/GHG_per_GDP_by_country_2021.csv')
+    return {'data': df.to_json()}
+
+@app.route('/products/EDGAR_2023_GHG/GHG_totals_by_country_2023', methods=['GET'])
+def getProductd():
+    file = request.args.get('file')
+    # read from data catalog
+    df = pd.read_csv('../data/old/EDGAR_2023_GHG/GHG_totals_by_country_2023.csv')
+    return {'data': df.to_json()}
+
+
+@app.route('/products/EDGAR_2023_GHG/GHG_per_capita_by_country_2023', methods=['GET'])
+def getProducte():
+    file = request.args.get('file')
+    # read from data catalog
+    df = pd.read_csv('../data/old/EDGAR_2023_GHG/GHG_per_capita_by_country_2023.csv')
+    return {'data': df.to_json()}
+
+
+@app.route('/products/EDGAR_2023_GHG/GHG_per_GDP_by_country_2023', methods=['GET'])
+def getProductf():
+    file = request.args.get('file')
+    # read from data catalog
+    df = pd.read_csv('../data/old/EDGAR_2023_GHG/GHG_per_GDP_by_country_2023.csv')
+    return {'data': df.to_json()}
 
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=port)

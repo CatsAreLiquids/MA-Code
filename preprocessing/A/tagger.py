@@ -123,6 +123,6 @@ if __name__ == "__main__":
     res = formatResult(res, files)
 
     #TODO check if files exists and tags exist
-    json.dump(res, open("../../Backend/data/Sales_Data/metadata_automatic.json", 'w'))
+    json.dump(res, open("../../Backend/data/old/Sales_Data/metadata_automatic.json", 'w'))
 
 # TODO caching of input so we save on computing

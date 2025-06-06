@@ -1,11 +1,12 @@
 from Backend import models
+import numpy as np
 
 
-def mmr(targets, contexts: List[str]) -> float:
+def mmr(targets, contexts) -> float:
     mmr = 0
     for i in range(len(contexts)):
-        if targets.lower().strip() in contexts[i].lower():
-            mmr += 1 / i
+        if contexts[i] in targets:
+            mmr += 1 / (i+1)
     return mmr/len(contexts)
 
 
@@ -29,7 +30,7 @@ def correctness_LLM(truth, response):
 def precison(relevant,contexts):
     rel = 0
     for context in contexts:
-        if context.lower() in relevant:
+        if context in relevant:
             rel += 1
 
     return rel / len(contexts)
@@ -37,10 +38,16 @@ def precison(relevant,contexts):
 def recall(relevant,contexts):
     rel = 0
     for context in contexts:
-        if context.lower() in relevant:
+        if context in relevant:
             rel += 1
 
     return rel / len(relevant)
 
 def F1(precision,recall):
-    return 2* ((precision * recall)/ (precision+ recall))
+    score = []
+    for p,r in zip(precision,recall):
+        try:
+            score.append(  2* ((p * r)/ (p+ r)))
+        except:
+            score.append(0)
+    return score

@@ -300,7 +300,7 @@ def init_agent():
 
 #print(functionRetriever.invoke("filter sales data for the book category"))
 #The mall with the most items sold
-#print(breakDownQuery.invoke("The ten countries with the highest per capita emissions for 2007"))
+#print(breakDownQuery.invoke("All Customers between 30 and 50 years old"))
 # retrieve sales data from all malls
 #print(productRetriever.invoke({"query":"The mall ith the most items sold","step":"retrieve sales data from all malls"}))
 #aggregate total items sold for each mall
@@ -325,10 +325,11 @@ with get_openai_callback() as cb:
     sql = "The mall with the highest books sales"
 
     #sql = "All customer data of customers who have bought at least 1 book"
+    sql = "The GWP_100_AR5_GHG data per region and sector decrasing"
     agent_result = agent_i.invoke({'input': sql})['output']
     print(agent_result)
-    agent_result = ast.literal_eval(agent_result)
+    #agent_result = ast.literal_eval(agent_result)
     #agent_result = {"plans":[[{"function":"http://127.0.0.1:5200/retrieve","values":{"product":"http://127.0.0.1:5000/products/Sales_Data/sales_data_23","columns":["invoice_no","customer_id","category","quantity","price","invoice_date","shopping_mall"]}},{"function":"http://127.0.0.1:5200/filter","values":{"conditions":{"category":"books"},"columns":["invoice_no","customer_id","category","quantity","price","invoice_date","shopping_mall"]}},{"function":"http://127.0.0.1:5200/sum","values":{"group_by":"shopping_mall","column":"quantity"}},{"function":"http://127.0.0.1:5200/sortby","values":{"columns":["shopping_mall","quantity"]}}]],"combination":[] }
     #agent_result = {"plans":[{"function":"http://127.0.0.1:5200/retrieve","values":{"product":"http://127.0.0.1:5000/products/Sales_Data/sales_data_23","columns":["invoice_no","customer_id","category","quantity","price","invoice_date","shopping_mall"]}},{"function":"http://127.0.0.1:5200/filter","values":{"columns":["customer_id","category"],"conditions":[{"column":"category","value":"book"}]}},{"function":"http://127.0.0.1:5200/retrieve","values":{"product":"http://127.0.0.1:5000/products/Sales_Data/customer_data","columns":["customer_id","gender","age","payment_method"]}}],"combination":[{"column":"customer_id","type":"equals","values":["None"]}]}
 
-    print(execute.execute_new(agent_result))
+    #print(execute.execute_new(agent_result))

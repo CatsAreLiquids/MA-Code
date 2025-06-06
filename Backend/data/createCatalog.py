@@ -49,7 +49,7 @@ def _getColumns(file):
 
 
 def process_Product(file):
-    collection = file.split("/")[1]
+    collection = file.split("/")[0]
     product = file.split("/")[-1]
 
     if _data_exists(collection,product):
@@ -88,5 +88,5 @@ def identifyColumns():
 
 
 if __name__ == '__main__':
-    file = "./EDGAR_2024_GHG/GHG_per_capita_by_country.csv"
+    file = "old/EDGAR_2023_GHG/GHG_per_capita_by_country_2023.csv"
     main(file)
