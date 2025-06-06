@@ -3,6 +3,7 @@ from pathlib import Path
 import yaml
 import requests
 import os
+import glob
 from Backend import models
 
 
@@ -44,13 +45,22 @@ def _get_or_create(columns, api, collection, product):
 
 def _getColumns(file):
 
-    df = pd.read_csv(file)
+    if file == "california_schools\schools.csv":
+        df = pd.read_csv(file, dtype={"CharterNum": str})
+    elif file == "card_games\cards.csv":
+        df = pd.read_csv(file,
+                         dtype={"duelDeck": str, "flavorName": str, "frameVersion": str, "loyalty": str,
+                                "originalReleaseDate": str})
+    elif file == r"financial\trans.csv":
+        df = pd.read_csv(file,dtype={"bank":str})
+    else:
+        df = pd.read_csv(file)
     return df.columns.tolist()
 
 
 def process_Product(file):
-    collection = file.split("/")[0]
-    product = file.split("/")[-1]
+    collection = Path(file).parts[0]
+    product = Path(file).parts[1]
 
     if _data_exists(collection,product):
         columns = _getColumns(file)
@@ -87,6 +97,11 @@ def identifyColumns():
     return llm.invoke(messages, config={"callbacks": [callback]})
 
 
+
 if __name__ == '__main__':
-    file = "old/EDGAR_2023_GHG/GHG_per_capita_by_country_2023.csv"
-    main(file)
+    files = glob.glob("california_schools/*.csv")
+    for file in files:
+        print(file)
+        process_Product(file)
+    #file = "old/EDGAR_2023_GHG/GHG_per_capita_by_country_2023.csv"
+    #main(file)

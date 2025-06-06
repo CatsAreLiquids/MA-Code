@@ -1,11 +1,97 @@
-- name: EDGAR_2024_GHG
+- name: california_schools
   products:
-    - GHG_totals_by_country
-    - LULUCF_macroregions
-    - GHG_per_GDP_by_country
-    - GHG_per_capita_by_country
-    - GHG_by_sector_and_country
-- name: Sales_Data
+    - frpm
+    - satscores
+    - schools
+- name: card_games
   products:
-    - sales_data_23
-    - customer_data_23
+    - cards
+    - sets
+    - set_translations
+    - rulings
+    - legalities
+    - foreign_data
+- name: codebase_community
+    products:
+      - badges
+      - comments
+      - votes
+      - users
+      - tags
+      - posts
+      - postLinks
+      - postHistory
+- name: debit_card_specializing
+    products:
+      - customers
+      - gasstations
+      - yearmonth
+      - transactions_1k
+      - products
+- name: european_football_2
+    products:
+      - Country
+      - League
+      - Team_Attributes
+      - Team
+      - Player_Attributes
+      - Player
+      - Match
+- name: financial
+    products:
+      - account
+      - card
+      - client
+      - disp
+      - district
+      - loan
+      - trans
+      - order
+- name: formula_1
+    products:
+      - circuits
+      - constructorResults
+      - constructors
+      - constructorStandings
+      - drivers
+      - driverStandings
+      - lapTimes
+      - pitStops
+      - qualifying
+      - races
+      - results
+      - status
+      - seasons
+- name: student_club
+    products:
+      - Attendance
+      - Budget
+      - Event
+      - Expense
+      - Income
+      - Major
+      - Member
+      - Zip_Code
+- name: superhero
+    products:
+      - alignment
+      - attribute
+      - colour
+      - gender
+      - hero_attribute
+      - hero_power
+      - publisher
+      - race
+      - superhero
+      - superpower
+- name: thrombosis_prediction
+    products:
+      - Examination
+      - Laboratory
+      - Patient
+- name: toxicology
+    products:
+      - atom
+      - bond
+      - connected
+      - molecule

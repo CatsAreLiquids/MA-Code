@@ -185,6 +185,6 @@ if __name__ == "__main__":
     db = models.getVectorStore("DB_PEDIA")
     print(db.similarity_search("Apollo astronauts who walked on the Moon"))
 
-    #delete(id = None,collection="DB_PEDIA")
+    delete(id = None)
     #get_docs_score(query = "",max= 10,filter={"type": {"$eq": "function_text"}})
     #add_Functions("getNRows")

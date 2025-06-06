@@ -9,6 +9,7 @@ import langchain_openai
 import yaml
 import ast
 
+
 def _getDataProduct(agent_result):
     """
     :param agent_result:
@@ -79,26 +80,10 @@ l = {"combine":{"p1":({"name": "sales_data_23", "url": "http://127.0.0.1:5000/pr
 
 #agent_result = json.loads(l)
 #execute(agent_result)
-df = pd.read_csv("Backend/data/old/Sales_Data/sales_data_23.csv")
-df = df[df['category']=='toys'].groupby(["shopping_mall"])['quantity'].sum()
-file = 'http://127.0.0.1:5000/products/Sales_Data/customer_data_23'
-if 'http' in file:
-    file = file.split("/")[-1]
-
-print(file)
-print(len({}))
-
-#df = pd.read_csv("GHG_per_GDP_by_country.csv")
-file = "Sales_Data/customer_data_23"
-if "/" in file:
-    file = file.split("/")[-1]
-print(file)
-
-l = {{"plans":[[{{"function":"http://127.0.0.1:5200/retrieve","values":{{"product":"http://127.0.0.1:5000/products/Sales_Data/sales_data_23","columns":["invoice_no","customer_id","category","quantity","price","invoice_date","shopping_mall"]}} }},{{"function":"http://127.0.0.1:5200/filter","values":{{"columns":"category","criteria":{{"category":"book"}} }} }},{{"function":"http://127.0.0.1:5200/sum","values":{{"group_by":"shopping_mall","column":"quantity"}} }},{{"function":"http://127.0.0.1:5200/sortby","values":{{"columns":"quantity","order":"descending"}} }}]],"combination":[]}}
-l = {"plans":[
-	[
-		{"function":"http://127.0.0.1:5200/retrieve","values":{"product":"http://127.0.0.1:5000/products/Sales_Data/sales_data_23","columns":["invoice_no","customer_id","category","quantity","price","invoice_date","shopping_mall"]}},
-		{"function":"http://127.0.0.1:5200/filter","values":{"columns":["category"],"values":["books"]}},
-		{"function":"http://127.0.0.1:5200/sum","values":{"group_by":"shopping_mall","column":"quantity"}},
-		{"function":"http://127.0.0.1:5200/sortby","values":{"column":"quantity","order":"descending"}}
-]],"combination":[]}
+df = pd.read_csv("Backend/data/california_schools/schools.csv",dtype={"CharterNum":str})
+df = pd.read_csv("Backend/data/card_games/cards.csv",dtype={"duelDeck":str,"flavorName":str,"frameVersion":str,"loyalty":str,"originalReleaseDate":str})
+df = pd.read_csv("Backend/data/financial/trans.csv",dtype={"bank":str})
+#cards.csv 39,50
+#cards.csv 39,50
+#trans
+print(r"financial\trans.csv")
