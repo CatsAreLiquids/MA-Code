@@ -31,6 +31,7 @@ def _init_bm25(config, collection):
         docs = get_docs("", 10000, config['filter'], collection)
     else:
         docs = get_docs("", 10000, collection=collection)
+
     return BM25Retriever.from_documents(docs)
 
 
@@ -41,13 +42,13 @@ def _add_Function(functionName: str, description: dict):
     for k, v in description.items():
         text += f"{k}: {v}\n"
 
-    doc = [Document(page_content=text, metadata={"type": "function_text", "id": str(uuid.uuid4())})]
+    doc = [Document(page_content=text, metadata={"type": "function", "id": str(uuid.uuid4())})]
     vector_store.add_documents(doc)
 
 
 def add_Functions(functionName: str | None):
     try:
-        with open("../data/Catalogs/function_catalog_text_only.yml") as stream:
+        with open("../data/Catalogs/function_catalog.yml") as stream:
             data = yaml.safe_load(stream)
             if functionName is not None:
                 _add_Function(functionName, data[functionName])
@@ -139,9 +140,9 @@ def get_docs_score(query, max: int, filter=None):
 
 def get_docs(query, max: int, filter=None, collection=None):
     vector_store = models.getVectorStore(collection)
-    res = vector_store.similarity_search_with_score(query, k=max, filter=filter)
-    for i in res:
-        print(i)
+    #res = vector_store.similarity_search_with_score(query, k=max, filter=filter)
+    #for i in res:
+    #    print(i)
 
     return vector_store.similarity_search(query, k=max, filter=filter)
 
@@ -244,7 +245,7 @@ def getChain(prompt, config):
     else:
         retriever = vector_store.as_retriever()
 
-    bm25_retriever = _init_bm25(config)
+    bm25_retriever = _init_bm25(config,None)
 
     ensemble_retriever = EnsembleRetriever(k=5,
                                            retrievers=[bm25_retriever, retriever], weights=[0.6, 0.4]
@@ -268,7 +269,7 @@ def getChain(prompt, config):
 
 
 def reorder1(docs):
-    print(docs)
+    pass
 
 
 if __name__ == "__main__":
@@ -283,7 +284,9 @@ if __name__ == "__main__":
         """
     multiLevelChain("What is the ratio of customers who pay in EUR against customers who pay in CZK?", prompt,
                     {"filter": {"type": {"$eq": "product"}}})
+
+    add_Functions("getNRows")
     # delete(id = None)
-    # get_docs_score(query = "magic",max= 30)#,filter={"type": {"$eq": "product"}}
+    get_docs_score(query = "",max= 30,filter={"type": {"$eq": "function"}})#,filter={"type": {"$eq": "product"}}
     # add_Functions("getNRows")
     # add_docs("california_schools",None)

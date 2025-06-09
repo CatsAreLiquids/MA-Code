@@ -12,7 +12,6 @@ port = int(os.environ.get('PORT', 5000))
 def getCatalog():
     content = json.loads(request.data)
     file = content['file']
-
     if "/" in file:
         file = file.split("/")[-1]
 
@@ -21,8 +20,8 @@ def getCatalog():
             catalog = yaml.safe_load(stream)
     except FileNotFoundError:
         return "could not find the main catalog"
-
     for collection in catalog:
+        collection = catalog[collection]
         if file in collection['products']:
             try:
                 with open("../data/Catalogs/" + collection['name'] + ".yml") as stream:

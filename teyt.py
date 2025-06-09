@@ -10,89 +10,26 @@ import yaml
 import ast
 
 
-def _getDataProduct(agent_result):
-    """
-    :param agent_result:
-    :return:
-    """
+def getCatalog(file):
+    if "/" in file:
+        file = file.split("/")[-1]
+
     try:
-        return util.getData(agent_result['url'])
-    except:
-        return "could not access data product is the URL correct ?"
+        with open("Backend/data/Catalogs/catalog.yml") as stream:
+            catalog = yaml.safe_load(stream)
+    except FileNotFoundError:
+        return "could not find the main catalog"
+    for collection in catalog:
+        collection =  catalog[collection]
+        if file in collection['products']:
+            try:
+                with open("Backend/data/Catalogs/" + collection['name'] + ".yml") as stream:
+                    collection_dict = yaml.safe_load(stream)
+                    print(file)
+                    return collection_dict[file]
+            except FileNotFoundError:
+                return "could not find the specific collection catalog"
+            except KeyError:
+                return collection_dict
 
-def applyFunction(df, function, values):
-    if function in aggregations:
-        return aggregations[function](df, values)
-    if function in filters:
-        return filters[function](df, values)
-
-    return df
-
-def _executeBlocks(df,plan):
-    try:
-        plan = ast.literal_eval(plan)
-        for elem in plan:
-            if 'values' in elem:
-                values = elem['values']
-            else:
-                values = None
-            df = applyFunction(df, elem['function'], values)
-    except:
-        pass
-
-    return df
-
-def execute(plan):
-
-    if 'combine' in plan:
-        df = _getDataProduct(plan['combine']['p1'][0])
-        df = _executeBlocks(df, plan['combine']['p1'][1])
-
-        df2 = _getDataProduct(plan['combine']['p2'][0])
-        df2 = _executeBlocks(df2, plan['combine']['p2'][1])
-
-        df = _combineProducts(df,df2,plan['column'],plan['type'],plan['values'])
-
-    else:
-        df = _getDataProduct(plan['execute']['p1'][0])
-        df = _executeBlocks(df,plan['execute']['p1'][1])
-
-    return df
-
-def _combineProducts(first,second, column,type,value):
-
-    if type =="select":
-        first = first[first[column].isin(value)]
-    if type == "join":
-        first = first.join(second,on=column)
-        if value is not None:
-            first = first[first[column].isin(value)]
-    return first
-
-
-def mean(df,filter_dict):
-    if "group_by" in filter_dict:
-        df = df.groupby(by=filter_dict['group_by'])
-
-    return df[filter_dict['column']].mean()
-
-l = {"combine":{"p1":({"name": "sales_data_23", "url": "http://127.0.0.1:5000/products/Sales_Data/sales_data_23"},[{"function":"sum","values":{"column":"price","group_by":["category"]}}]),"p2":({"name": "customer_data_23", "url": "http://127.0.0.1:5000/products/Sales_Data/customer_data_23"},[{"function":"filter","values":{"gender":"Women","age":{"min":38}}}])},"column":"customer_id","type":"select","values":["None"]}
-
-#agent_result = json.loads(l)
-#execute(agent_result)
-df = pd.read_csv("Backend/data/california_schools/schools.csv",dtype={"CharterNum":str})
-df = pd.read_csv("Backend/data/card_games/cards.csv",dtype={"duelDeck":str,"flavorName":str,"frameVersion":str,"loyalty":str,"originalReleaseDate":str})
-df = pd.read_csv("Backend/data/financial/trans.csv",dtype={"bank":str})
-#cards.csv 39,50
-#cards.csv 39,50
-#trans
-print(r"financial\trans.csv")
-
-with open("Backend/data/Catalogs/catalog.yml") as stream:
-    catalog = yaml.safe_load(stream)
-    catalog = catalog[collection_name]
-    print(catalog)
-    catalog["description"] = response
-    print(catalog)
-    {'collection_name': 'debit_card_specializing',
-     'reason': "The 'customers' dataset within this collection highlights the currency preferences of SMEs and Latin American markets, which can provide the necessary data to calculate the ratio of customers who pay in EUR against those who pay in CZK."}
+print(getCatalog('customers'))
