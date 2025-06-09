@@ -87,3 +87,12 @@ df = pd.read_csv("Backend/data/financial/trans.csv",dtype={"bank":str})
 #cards.csv 39,50
 #trans
 print(r"financial\trans.csv")
+
+with open("Backend/data/Catalogs/catalog.yml") as stream:
+    catalog = yaml.safe_load(stream)
+    catalog = catalog[collection_name]
+    print(catalog)
+    catalog["description"] = response
+    print(catalog)
+    {'collection_name': 'debit_card_specializing',
+     'reason': "The 'customers' dataset within this collection highlights the currency preferences of SMEs and Latin American markets, which can provide the necessary data to calculate the ratio of customers who pay in EUR against those who pay in CZK."}

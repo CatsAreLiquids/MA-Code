@@ -5,61 +5,26 @@ import pandas as pd
 from pathlib import Path
 from datetime import datetime
 from tqdm import tqdm
-
-def productRetriever(query):
-    sys_prompt = """Your task is to help find the best fitting data product. You are provided with a user query .
-                Provide the most likely fitting data products, always provide the data products name and why it would fit this query
-        Context: {context} 
-        Answer:
-    """
-    mod_query = f"I am looking for data products that can answer the query: '{query}'"
-    config = {"filter": {"type": {"$eq": "product"}}}
-
-    return vector_db.getEvaluationChain(sys_prompt, config,mod_query)
+from numpy.random import default_rng
 
 
-def functionRetriever(query,type):
-    """
-    Searches and returns Data files aboout the functions accesible for the processing. Only usefull when trying to identify a function
-    Args:
-        step: a specific step in an execution plan, describing some kind of agreggation,transformation or filtering
-    Returns:
-        a text descrbing potential functions
-    """
-    sys_prompt = """Your task is to find a the top 2 fitting functions that could solve problem described in the provided step.
-                Provide the most fitting function and its full description. Your answer is mewant to be short and precise exclude any additional examples.
+functions = {"product": productRetriever, "function": functionRetriever,"function_text":functionRetriever, "db_pedia": db_pediaRetriever,}
 
-                Context: {context} 
-                Answer:
-    """
-    mod_query = f"I am looking for a function that can solve the following problem for me :{query}"
-    config = {"filter": {"type": {"$eq": type}}}
-    return vector_db.getEvaluationChain(sys_prompt, config,mod_query)
-
-def db_pediaRetriever(query):
-    """
-    Searches and returns Data files aboout the functions accesible for the processing. Only usefull when trying to identify a function
-    Args:
-        step: a specific step in an execution plan, describing some kind of agreggation,transformation or filtering
-    Returns:
-        a text descrbing potential functions
-    """
-    sys_prompt = """Your task is to help find the best fitting data entry. You are provided with a user query .
-                Provide the most likely fitting data entry, always provide the data entrys name and why it would fit this query
-        Context: {context} 
-        Answer:
-    """
-    mod_query = f"I am looking for a data entry that can solve the following problem for me :{query}"
-    config = None
-    return vector_db.getEvaluationChain(sys_prompt, config,mod_query,collection="DB_PEDIA")
+def run_test(config:Dict, file,num_of_querys=None):
+    df = pd.read_csv(file,converters={'retrieved_docs': pd.eval,'products': pd.eval,"correct_context":pd.eval})
 
 
-def run_test(file):
-    df = pd.read_csv(file,converters={'retrieved_docs': pd.eval,'names': pd.eval,"correct_context":pd.eval})
-    functions = {"product": productRetriever, "function": functionRetriever,"function_text":functionRetriever, "db_pedia": db_pediaRetriever,}
+    if num_of_querys is not None:
+        if num_of_querys > len(df):
+            print(f"Less querys than askewd for, file has max {len(df)} queries. Wont proceed")
+            return
+        else:
+            rng = default_rng()
+            numbers = rng.choice(len(df), size=num_of_querys, replace=False)
 
+    df_tmp = df.loc[numbers]
     answer, context = [],[]
-    for index, row in tqdm(df.iterrows()):
+    for index, row in tqdm(df_tmp.iterrows()):
         if 'skip' in df.columns:
             skip = row["skip"]
         else:
@@ -71,16 +36,15 @@ def run_test(file):
                 res = functions[row["type"]](row["query"])
             answer.append(res["response"])
             context.append(res["docs"])
-            print(res["docs"])
         else:
             answer.append([""])
             context.append([""])
 
-    df["response"] = answer
-    df["retrieved_docs"] = context
+    df_tmp["response"] = answer
+    df_tmp["retrieved_docs"] = context
 
     timestamp = datetime.now().strftime("%Y-%m-%d-%H-%M")
-    df.to_csv(f"runs/{Path(Path(file).name).stem}_{timestamp}.csv",index=False,encoding='utf8')
+    df_tmp.to_csv(f"runs/{Path(Path(file).name).stem}_{timestamp}.csv",index=False,encoding='utf8')
 
 def run_score(file):
     #df = pd.read_csv(file)
@@ -100,23 +64,17 @@ def run_score(file):
     df["precision"] = precision
     df["recall"] = recall
     df["f1"] = f1
-    print(df.head())
-    #df.to_csv(file, index=False)
+    df.to_csv(file, index=False)
 
-def helper(val):
-    return val.replace('""','"')
-
-def helper(val):
-    return val.replace('“','"')
 
 
 if __name__ == "__main__":
-
-
+    config = {"file":"bird_mini_dev/bird_minidev_questions.csv","num_of_querys":None,"retriever":"multilevel"}
 
     #file= "dbpedia_entity/semantic_queries.csv"
-    #run_test(file)
-    file = "runs/semantic_queries_2025-06-05-15-21.csv"
-    #run_score(file)
+    file = "bird_mini_dev/bird_minidev_questions.csv"
+    #run_test(file,10)
+    file = "runs/bird_minidev_questions_2025-06-09-11-08.csv"
+    run_score(file)
     df = pd.read_csv(file)
     print(df[["mmr","precision","recall","f1"]].describe())

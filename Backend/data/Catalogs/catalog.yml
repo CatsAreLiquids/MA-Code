@@ -1,97 +1,210 @@
-- name: california_schools
+california_schools:
+  description: The "california_schools" data collection encompasses a variety of datasets
+    focused on educational institutions in Alameda County, California, during the
+    2014-2015 academic year. It includes the "frpm" dataset, which provides insights
+    into student enrollment and eligibility for free meal programs, highlighting the
+    socioeconomic status of the student population. The "satscores" dataset offers
+    performance metrics for SAT scores, allowing comparisons between individual schools
+    and the district as a whole. Additionally, the "schools" dataset presents comprehensive
+    information about both active and closed schools, including contact details and
+    operational characteristics, thereby painting a detailed picture of the educational
+    landscape in the region.
+  name: california_schools
   products:
-    - frpm
-    - satscores
-    - schools
-- name: card_games
+  - frpm
+  - satscores
+  - schools
+card_games:
+  description: 'The "card_games" data collection encompasses a variety of datasets
+    related to the trading card game Magic: The Gathering. It includes detailed information
+    about specific cards, such as "Ancestor''s Chosen" and "Angel of Mercy," along
+    with their attributes, legal statuses in different formats, and gameplay rulings.
+    Additionally, the collection features translations of card sets in multiple languages,
+    providing insights into the game''s international reach. Overall, this collection
+    serves as a comprehensive resource for understanding card characteristics, legal
+    frameworks, and linguistic adaptations within the game.'
+  name: card_games
   products:
-    - cards
-    - sets
-    - set_translations
-    - rulings
-    - legalities
-    - foreign_data
-- name: codebase_community
-    products:
-      - badges
-      - comments
-      - votes
-      - users
-      - tags
-      - posts
-      - postLinks
-      - postHistory
-- name: debit_card_specializing
-    products:
-      - customers
-      - gasstations
-      - yearmonth
-      - transactions_1k
-      - products
-- name: european_football_2
-    products:
-      - Country
-      - League
-      - Team_Attributes
-      - Team
-      - Player_Attributes
-      - Player
-      - Match
-- name: financial
-    products:
-      - account
-      - card
-      - client
-      - disp
-      - district
-      - loan
-      - trans
-      - order
-- name: formula_1
-    products:
-      - circuits
-      - constructorResults
-      - constructors
-      - constructorStandings
-      - drivers
-      - driverStandings
-      - lapTimes
-      - pitStops
-      - qualifying
-      - races
-      - results
-      - status
-      - seasons
-- name: student_club
-    products:
-      - Attendance
-      - Budget
-      - Event
-      - Expense
-      - Income
-      - Major
-      - Member
-      - Zip_Code
-- name: superhero
-    products:
-      - alignment
-      - attribute
-      - colour
-      - gender
-      - hero_attribute
-      - hero_power
-      - publisher
-      - race
-      - superhero
-      - superpower
-- name: thrombosis_prediction
-    products:
-      - Examination
-      - Laboratory
-      - Patient
-- name: toxicology
-    products:
-      - atom
-      - bond
-      - connected
-      - molecule
+  - cards
+  - sets
+  - set_translations
+  - rulings
+  - legalities
+  - foreign_data
+codebase_community:
+  description: The "codebase_community" data collection encompasses a variety of datasets
+    that capture user interactions and contributions within an educational and programming
+    context. It includes information on user recognition through badges, feedback
+    via comments, and detailed histories of posts related to Bayesian modeling and
+    statistical methods. Additionally, the collection features data on post relationships,
+    user profiles, tagging systems, and voting activities, providing a comprehensive
+    overview of community engagement and content relevance. This rich dataset allows
+    for in-depth analysis of user behavior, topic popularity, and the dynamics of
+    online discussions.
+  name: codebase_community
+  products:
+  - badges
+  - comments
+  - votes
+  - users
+  - tags
+  - posts
+  - postLinks
+  - postHistory
+debit_card_specializing:
+  description: The "debit_card_specializing" data collection encompasses various datasets
+    that provide insights into customer segments, gas station types, product descriptions,
+    transaction records, and consumption trends. The "customers" dataset highlights
+    the currency preferences of SMEs and Latin American markets, while the "gasstations"
+    dataset categorizes gas stations in the Czech Republic by pricing segments. The
+    "products" dataset offers descriptions related to fuel types and data entry methods.
+    Additionally, the "transactions_1k" dataset records customer purchases at gas
+    stations, and the "yearmonth" dataset tracks consumption trends over time, making
+    this collection valuable for analyzing market behaviors and trends in the fuel
+    industry.
+  name: debit_card_specializing
+  products:
+  - customers
+  - gasstations
+  - yearmonth
+  - transactions_1k
+  - products
+european_football_2:
+  description: The "european_football_2" data collection encompasses a comprehensive
+    array of datasets related to football in Belgium and England. It includes information
+    on countries, leagues, matches, players, teams, and their respective attributes,
+    providing a rich resource for sports analytics. The datasets cover various aspects
+    such as league structures, match statistics from the 2008/2009 season, player
+    performance metrics, and team attributes over time. This collection is ideal for
+    researchers and analysts interested in exploring football dynamics, player comparisons,
+    and team strategies within these two prominent European football markets.
+  name: european_football_2
+  products:
+  - Country
+  - League
+  - Team_Attributes
+  - Team
+  - Player_Attributes
+  - Player
+  - Match
+financial:
+  description: The "financial" data collection encompasses a variety of datasets that
+    provide insights into different aspects of financial activities and demographics.
+    It includes information on district fees, card types and issuance dates, client
+    demographics, and the relationships between clients and their accounts. Additionally,
+    the collection features loan details, transaction records, and district-specific
+    socio-economic data, allowing for a comprehensive analysis of financial behaviors
+    and trends within specific regions. This diverse array of datasets is valuable
+    for understanding the financial landscape and demographic characteristics in the
+    Czech Republic.
+  name: financial
+  products:
+  - account
+  - card
+  - client
+  - disp
+  - district
+  - loan
+  - trans
+  - order
+formula_1:
+  description: The "formula_1" data collection encompasses a comprehensive array of
+    datasets related to the Formula 1 racing series, providing insights into various
+    aspects of the sport. It includes detailed information about racing circuits,
+    constructors, drivers, race results, and standings, allowing for an in-depth analysis
+    of performance and competition. Key datasets such as "circuits," "drivers," and
+    "results" offer essential context and statistics, while others like "lapTimes"
+    and "pitStops" facilitate a closer examination of race strategies. This collection
+    serves as a valuable resource for fans, researchers, and analysts interested in
+    the dynamics of Formula 1 racing.
+  name: formula_1
+  products:
+  - circuits
+  - constructorResults
+  - constructors
+  - constructorStandings
+  - drivers
+  - driverStandings
+  - lapTimes
+  - pitStops
+  - qualifying
+  - races
+  - results
+  - status
+  - seasons
+student_club:
+  description: The "student_club" data collection encompasses a variety of datasets
+    that provide insights into the operations and financial management of a student
+    organization. It includes attendance records linking members to their participation,
+    budget details outlining expenses for events, and information on meetings held
+    throughout 2020. Additionally, the collection features records of income from
+    dues, a breakdown of expenses incurred, and profiles of members, including their
+    academic majors. Lastly, geographic data related to Holtsville, New York, adds
+    a contextual layer for demographic analysis. Overall, this collection serves as
+    a comprehensive resource for understanding the structure and activities of the
+    student club.
+  name: student_club
+  products:
+  - Attendance
+  - Budget
+  - Event
+  - Expense
+  - Income
+  - Major
+  - Member
+  - Zip_Code
+superhero:
+  description: The "superhero" data collection encompasses a variety of datasets that
+    provide insights into the characteristics and classifications of superheroes.
+    It includes information on alignment, attributes, colors, gender, and races, as
+    well as specific details about individual superheroes, their powers, and the publishers
+    associated with them. Each dataset is structured to facilitate analysis, with
+    clear categorizations such as 'Good' and 'Bad' for alignment, and various superpowers
+    like "Agility" and "Accelerated Healing." This collection serves as a valuable
+    resource for exploring superhero demographics, abilities, and representation in
+    popular culture.
+  name: superhero
+  products:
+  - alignment
+  - attribute
+  - colour
+  - gender
+  - hero_attribute
+  - hero_power
+  - publisher
+  - race
+  - superhero
+  - superpower
+thrombosis_prediction:
+  description: The "thrombosis_prediction" data collection comprises three datasets
+    that collectively provide a comprehensive overview of patient examinations, laboratory
+    results, and demographic information related to thrombosis and autoimmune disorders.
+    The "Examination" dataset details medical examination results, including laboratory
+    tests and diagnoses for two patients, highlighting conditions such as Mixed Connective
+    Tissue Disease and Systemic Lupus Erythematosus. The "Laboratory" dataset offers
+    historical biochemical and hematological test results from the early 1990s, essential
+    for evaluating metabolic and organ function. Lastly, the "Patient" dataset presents
+    demographic and medical history information for female patients, including their
+    diagnoses and treatment timelines, contributing to a better understanding of the
+    patient population affected by these conditions.
+  name: thrombosis_prediction
+  products:
+  - Examination
+  - Laboratory
+  - Patient
+toxicology:
+  description: The toxicology data collection encompasses several datasets that provide
+    insights into molecular structures and their components. The "atom" dataset details
+    the elemental composition of specific molecules, while the "bond" dataset focuses
+    on the types of bonds associated with these molecules. Additionally, the "connected"
+    dataset explores the relationships between atoms and their bonds, offering a deeper
+    understanding of molecular connectivity. Lastly, the "molecule" dataset presents
+    a minimalistic classification, which may require further context for interpretation.
+    Together, these datasets serve as a valuable resource for researchers in chemistry
+    and molecular biology.
+  name: toxicology
+  products:
+  - atom
+  - bond
+  - connected
+  - molecule

@@ -54,7 +54,7 @@ def prep_eval():
 
         names.append(names)
         contexts.append(context)
-    df["names"] = names
+    df["products"] = names
     df["correct context"] = contexts
 
     df.to_csv("semantic_queries.csv", index=False)
