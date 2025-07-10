@@ -1,0 +1,7 @@
+,response,agent_error,ast_error,executer_error,planRecall,jaccard,planPrecision,schemaAdherence,time
+0,"{""plans"":[{""function"":""http://127.0.0.1:5200/retrieve"",""values"":{""product"":""http://127.0.0.1:5000/products/Superhero_Data/superhero_dataset"",""columns"":[""full_name"",""eye_color""]}},{""function"":""http://127.0.0.1:5200/filter"",""values"":{""conditions"":{""full_name"":""Karen Beecher-Duncan""},""columns"":[""full_name"",""eye_color""]}},{""function"":""http://127.0.0.1:5200/returnResult"",""values"":{""columns"":[""eye_color""]}}],""combination"":[]}",0,0.0,,0.0,0.0,0.0,0.0,-64.9151451587677
+1,,1,,,,,,,
+2,,1,,,,,,,
+3,"{""plans"":[{""function"":""http://127.0.0.1:5200/retrieve"",""values"":{""product"":""http://127.0.0.1:5000/products/Race_Data/results"",""columns"":[""race_no"",""year""]}},{""function"":""http://127.0.0.1:5200/retrieve"",""values"":{""product"":""http://127.0.0.1:5000/products/Seasons/seasons_data"",""columns"":[""year"",""season_page""]}},{""function"":""http://127.0.0.1:5200/filter"",""values"":{""columns"":[""race_no""],""criteria"":{""race_no"":901}}},{""function"":""http://127.0.0.1:5200/filter"",""values"":{""columns"":[""year"",""season_page""],""criteria"":{""year"":""extracted_year""}}},{""function"":""http://127.0.0.1:5200/returnResult"",""values"":{""columns"":[""year"",""season_page""]}}],""combination"":[{""column"":""year"",""type"":""equals"",""values"":[""None""]}]}",0,0.0,,0.0,0.0,0.0,0.0,-188.395765542984
+4,,1,,,,,,,
+5,,1,,,,,,,

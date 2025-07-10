@@ -1,6 +1,8 @@
 import ast
+import itertools
 import os
 
+import pandas as pd
 from langchain_core.documents import Document
 from langchain_postgres import PGVector
 from langchain_postgres.vectorstores import PGVector
@@ -22,17 +24,22 @@ from Backend import models
 from dotenv import load_dotenv
 import yaml
 import numpy as np
+import copy
 
+from numpy import dot
+from numpy.linalg import norm
+from collections import defaultdict
+import seaborn as sns
+import matplotlib
+import matplotlib.pyplot as plt
+import numpy as np
+
+import matplotlib
+import matplotlib as mpl
+matplotlib.use('TkAgg')
 load_dotenv()
 
 
-def _init_bm25(config, collection):
-    if config is not None:
-        docs = get_docs("", 10000, config['filter'], collection)
-    else:
-        docs = get_docs("", 10000, collection=collection)
-
-    return BM25Retriever.from_documents(docs)
 
 
 def _add_Function(functionName: str, description: dict):
@@ -42,7 +49,7 @@ def _add_Function(functionName: str, description: dict):
     for k, v in description.items():
         text += f"{k}: {v}\n"
 
-    doc = [Document(page_content=text, metadata={"type": "function", "id": str(uuid.uuid4())})]
+    doc = [Document(page_content=text, metadata={"type": "function", "id": str(uuid.uuid4()),"name":functionName})]
     vector_store.add_documents(doc)
 
 
@@ -63,13 +70,31 @@ def add_Functions(functionName: str | None):
     for k, v in data.items():
         _add_Function(k, v)
 
+def _add_FunctionTest(data):
+    vector_store = models.getVectorStore()
 
-def _add_doc(productName: str, description: dict):
+    text = f"function name:"
+    for k, v in data.items():
+        functionName = k
+        text += f" {k}:\n {v}\n"
+
+    doc = [Document(page_content=text, metadata={"type": "function_name", "id": str(uuid.uuid4()),"name":functionName})]
+    vector_store.add_documents(doc)
+
+def add_Functions_Test(functionName: str | None):
+    datas = json.load(open(f"../data/metadata_function_name.json"))
+
+    for data in datas:
+            _add_FunctionTest(data)
+
+
+def _add_doc(productName: str, description: dict,collection):
     vector_store = models.getVectorStore()
 
     tags = description["tags"]
     meta_dict = {"tags": tags,
                  "type": "product",
+                 "collection":collection,
                  "id": str(uuid.uuid4())}
 
     doc = Document(page_content=description["description"], metadata=meta_dict)
@@ -81,7 +106,7 @@ def add_docs(collection, productName: str | None):
         data = json.load(open(f"../data/{collection}/metadata_automatic.json"))
         if productName is not None:
             print(data[productName])
-            _add_doc(productName, data[productName])
+            _add_doc(productName, data[productName],collection)
             return
     except FileNotFoundError:
         print(f"Could not find the product describtions at /data/{collection}/. Wont proceed")
@@ -91,7 +116,7 @@ def add_docs(collection, productName: str | None):
         return
 
     for k, v in data.items():
-        _add_doc(k, v)
+        _add_doc(k, v,collection)
 
 
 def _add_collection(collection_name, description):
@@ -147,146 +172,64 @@ def get_docs(query, max: int, filter=None, collection=None):
     return vector_store.similarity_search(query, k=max, filter=filter)
 
 
-def getEvaluationChain(sys_prompt, config, input, collection=None):
-    vector_store = models.getVectorStore(collection)
-    llm = models.get_LLM()
-    if config is not None:
-        retriever = vector_store.as_retriever(search_type="mmr", search_kwargs=config)
-    else:
-        retriever = vector_store.as_retriever()
-
-    bm25_retriever = _init_bm25(config, collection)
-
-    ensemble_retriever = EnsembleRetriever(k=5,
-                                           retrievers=[bm25_retriever, retriever], weights=[0.6, 0.4]
-                                           )
-
-    reorder = LongContextReorder()
-
-    docs = ensemble_retriever.invoke(input)
-    docs = [doc.page_content for doc in docs]
-    fdocs = reorder.transform_documents(docs)
-    fdocs = "\n\n".join(doc for doc in fdocs)
-
-    sys_prompt = PromptTemplate.from_template(sys_prompt).format(context=fdocs)
-    messages = [
-        ("system", sys_prompt),
-        ("human", input),
-    ]
-
-    llm = models.get_LLM()
-
-    return {"response": llm.invoke(messages).content, "docs": docs}
 
 
-def multiLevelChain(query, prompt, config):
-    db_outer = models.getVectorStore("collection_level")
-    llm = models.get_structured_LLM()
-
-    cot = True
-    if cot:
-        collection_prompt = """Your task is to find the data collection that can answer a users query, in a valid json format return the collections name and why and how it can answer the query
-            your response should look like this: {{'collection_name': 'name','reason':'reason'}}
-            Context: {context} 
-            Answer:
-        """
-    else:
-        collection_prompt = """Your task is to find the data collection that can answer a users query, in a valid json format return the collections name
-                your response should look like this: {{'collection_name': 'name','reason':'reason'}}
-                    Context: {context} 
-                    Answer:
-            """
-
-    retriever = db_outer.as_retriever()
-    docs = retriever.invoke(query)
-    fdocs = [doc.page_content for doc in docs]
-    fdocs = "\n\n".join(doc for doc in fdocs)
-    sys_prompt = PromptTemplate.from_template(collection_prompt).format(context=fdocs)
-    messages = [
-        ("system", sys_prompt),
-        ("human", query),
-    ]
-    response = llm.invoke(messages)
-    collection = response["collection_name"]
-
-    if config is None:
-        config = {"collection_name": {"$eq": collection}}
-        standard_retriever = models.getVectorStore().as_retriever(search_type="mmr")
-    else:
-        standard_retriever = models.getVectorStore().as_retriever(search_type="mmr", search_kwargs=config)
-        config["filter"]["collection_name"] = {"$eq": collection}
-
-    collection_only_retriever = models.getVectorStore().as_retriever(search_type="mmr", search_kwargs=config)
-
-    ensemble_retriever = EnsembleRetriever(k=8,
-                                           retrievers=[standard_retriever, collection_only_retriever],
-                                           weights=[0.5, 0.5])
-    def format_docs(docs):
-        reorder = LongContextReorder()
-        docs = reorder.transform_documents(docs)
-        return "\n\n".join(doc.page_content for doc in docs)
-
-    prompt = PromptTemplate.from_template(prompt)
-
-    rag_chain = (
-            {"context": ensemble_retriever | format_docs, "question": RunnablePassthrough()}
-            | prompt
-            | llm
-            | StrOutputParser()
-    )
-    return rag_chain
 
 
-def getChain(prompt, config):
-    vector_store = models.getVectorStore()
-    llm = models.get_LLM()
-    if config is not None:
-        retriever = vector_store.as_retriever(search_type="mmr", search_kwargs=config)
-    else:
-        retriever = vector_store.as_retriever()
 
-    bm25_retriever = _init_bm25(config,None)
+def evalEmbbeds(docs):
 
-    ensemble_retriever = EnsembleRetriever(k=5,
-                                           retrievers=[bm25_retriever, retriever], weights=[0.6, 0.4]
-                                           )
+    emb_func = models.get_embeddings()
 
-    prompt = PromptTemplate.from_template(prompt)
+    docs = get_docs(query = "",max= 30,filter={"type": {"$eq": "function_NoManual"}})
+    df_dict = defaultdict(list)
+    for doc in docs:
+        df_dict[doc.metadata["name"]]
 
-    def format_docs(docs):
-        reorder = LongContextReorder()
-        docs = reorder.transform_documents(docs)
-        return "\n\n".join(doc.page_content for doc in docs)
+    for doc in docs:
+        self_emb = emb_func.embed_query(doc.page_content)
+        for doc2 in docs:
+            other_emb = emb_func.embed_query(doc2.page_content)
+            cos_sim = dot(self_emb, other_emb) / (norm(self_emb) * norm(other_emb))
+            df_dict[doc.metadata["name"]].append(cos_sim)
 
-    rag_chain = (
-            {"context": ensemble_retriever | format_docs, "question": RunnablePassthrough()}
-            | prompt
-            | llm
-            | StrOutputParser()
-    )
+    names = [doc.metadata["name"] for doc in docs]
+    df = pd.DataFrame(df_dict)
+    df["function"] = names
+    df = df.set_index('function')
+    df.to_csv("functions_cos_sim_NoManual.csv")
 
-    return rag_chain
+def stuff():
+    df = pd.read_csv("functions_cos_sim_NoManual.csv")
+    ax = plt.axes()
 
-
-def reorder1(docs):
-    pass
-
+    heatmap= sns.heatmap(df.loc[:, df.columns != "function"],yticklabels=df["function"].tolist(),cmap=sns.cubehelix_palette(as_cmap=True),vmin=0)
+    fig = heatmap.get_figure()
+    fig.tight_layout()
+    fig.savefig("NoManual.png")
 
 if __name__ == "__main__":
     # add_collections()
-    db = models.getVectorStore("collection_level")
-    # get_docs("",15,filter=None,collection="collection_level")
+    db = models.getVectorStore()
+    #add_Functions_Test(None)
+    #print(rephrase_query("retrieve drivers dataset","State code numbers of top 3 yougest drivers. How many Netherlandic drivers among them?"))
+
+
+    print(get_docs("",15,filter=None,collection="collection_level"))
     prompt = """Your task is to help find the best fitting data product. You are provided with a user query .
                     Provide the most likely fitting data products, always provide the data products name and why it would fit this query
             Question: {question} 
             Context: {context} 
             Answer:
         """
-    multiLevelChain("What is the ratio of customers who pay in EUR against customers who pay in CZK?", prompt,
-                    {"filter": {"type": {"$eq": "product"}}})
+    #multiLevelChain("What is the ratio of customers who pay in EUR against customers who pay in CZK?", prompt,
+    #                {"filter": {"type": {"$eq": "product"}}})
 
-    add_Functions("getNRows")
-    # delete(id = None)
-    get_docs_score(query = "",max= 30,filter={"type": {"$eq": "function"}})#,filter={"type": {"$eq": "product"}}
-    # add_Functions("getNRows")
-    # add_docs("california_schools",None)
+    #add_Functions("sortby")
+    #delete(id = ["6ae8dcee-a32f-44cd-a31c-de0c8b088a62"])
+    #get_docs_score(query = "",max= 30,filter={"type": {"$eq": "function_name"}})#,filter={"type": {"$eq": "product"}}
+    #delete(id=['77b63c2e-cbcd-4a4a-82fc-f70aff8cef03','ef29f026-556c-4b3b-b40a-c4c3535b0798','5636a715-7631-4629-9f67-0cf5ceb92f32','162c47f8-6165-444c-99a1-5e241e6bc103','1a2e0673-9a8c-431e-a615-f8c97eb737ce','d0e7c96a-4879-4fa1-8c4f-90d18934d744'])
+    #add_Functions(None)
+    #add_docs("california_schools",None)
+    #evalEmbbeds("")
+    #stuff()

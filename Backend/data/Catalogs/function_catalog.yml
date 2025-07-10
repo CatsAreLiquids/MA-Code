@@ -4,34 +4,86 @@
     filter_dict:
       - group_by: "a list of coulmns in the dataframe, can be None"
       - columns: "a list of columns for hicht the sum should be calculated, cant be None"
+  mean:
+    base_api: http://127.0.0.1:5200/mean
+    description: "Calcuates the mean of a dataframe based on a list of group_by columns and"
+    filter_dict:
+      - group_by: "a list of coulmns in the dataframe, can be None"
+      - columns: "a list of columns for hicht the mean should be calculated, cant be None"
+  diffrence:
+    base_api: http://127.0.0.1:5200/diffrence
+    description: "Calcuates diffrence between multiple data sources"
+    filter_dict:
+      - source_A: "The data source from which source_B is subtracted"
+      - source_B: "The data source which is subtracted from source_A"
+  division:
+    base_api: http://127.0.0.1:5200/division
+    description: "Calcuates division of multiple data sources"
+    filter_dict:
+      - source_A: "The data source which is divided by source_B"
+      - source_B: "The data source which divides source_A"
+  multiplication:
+    base_api: http://127.0.0.1:5200/multiplication
+    description: "Calcuates multiplication of multiple data sources"
+    filter_dict:
+      - source_A: "The data source which is multiplied with source_B"
+      - source_B: "The data source which is multiplied with source_A"
+  sum_multiple:
+    base_api: http://127.0.0.1:5200/sum_multiple
+    description: "Calcuates summation of multiple data sources"
+    filter_dict:
+      - source_A: "The data source which is added to source_B"
+      - source_B: "The data source which is added to source_A"
   max:
     base_api: http://127.0.0.1:5200/max
     description: "Retrieves the maximum value for a list of specified columns in a dataframe"
+    return_type: "single value"
     filter_dict:
-      - columns: "a list of columns for hich the maximum should be retrieved"
-      - type: "either column to return the column name or value to return the value"
+      - columns: "a list of columns for which the maximum should be retrieved"
+      - rows: "number of rows to be returned"
+  min:
+    base_api: http://127.0.0.1:5200/min
+    description: "Retrieves the maximum value for a list of specified columns in a dataframe"
+    return_type: "single value"
+    filter_dict:
+      - columns: "a list of columns for which the minimum should be retrieved"
+      - rows: "number of rows to be returned"
   filter:
     base_api: http://127.0.0.1:5200/filter
     description: "filters a data product based on the provided filterdict, it filters row wise keeping all input columns"
     filter_dict:
       - conditions: "a dict ith the corresponding columns and their values"
     example: "{'condition':{'location':'berlin','year':{'min':2002,'max':2007}}"
-  getRows:
-    base_api: http://127.0.0.1:5200/getRows
-    description: "Retrieves specififed data rows in a list format"
+  getValues:
+    base_api: http://127.0.0.1:5200/getValues
+    description: "Retrieves specififed data values in a list format"
     filter_dict:
       - columns: "a column on wihich to match"
-      - values: "a dict ith a value to match if None returns the all columns from columns"
+      - values: "a dict with a value to match if None returns the all columns from columns"
     example: "filter_dict:{'values':'None','column':'customer_id'}"
   sortby:
     base_api: http://127.0.0.1:5200/sortby
-    description: "sorts the data based on a the provided columns and"
+    description: "sorts the data based on a the provided columns and either ascending or descending"
     filter_dict:
       - columns: "a column on which the sorting is based on"
       - ascending: "'True' if the data is sorted ascending, 'False' for descending"
-  getNRows:
-    base_api: http://127.0.0.1:5200/getNRows
-    description: "returns either the top or bottom N rows"
+  count:
+    base_api: http://127.0.0.1:5200/count
+    description: "counts the occurences of a specific value or values"
     filter_dict:
-      - top: "either 'True' or 'False', if 'True' return the top rows if 'False' returns the bottom Rows"
-      - n: "Number of rows to be returned"
+      - columns: "a column in which the value to count is present"
+      - value: "the value to count "
+  returnResult:
+    description: "retrieves or extracts  the previously computed data, specified  by the columns in a dataframe"
+    filter_dict:
+      - columns: "which columns to retrun/extract"
+  retrieve:
+    description: "retrieves the specified data product, takes the data products name and a list of requested columns as arguments"
+    filter_dict:
+      - product: "product url"
+  combine:
+    description: "combines to data products via a join"
+    filter_dict:
+      - columns_left: "which columns of the first data product to match on"
+      - columns_right: "which columns of the second data product to match on"
+      - type: "equal or unequal"

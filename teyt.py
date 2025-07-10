@@ -9,7 +9,11 @@ import langchain_openai
 import yaml
 import ast
 
-
+from langchain_core.runnables import RunnableLambda
+from langchain_core.prompts import PromptTemplate
+from Backend import models
+from dotenv import load_dotenv
+load_dotenv()
 def getCatalog(file):
     if "/" in file:
         file = file.split("/")[-1]
@@ -32,4 +36,20 @@ def getCatalog(file):
             except KeyError:
                 return collection_dict
 
-print(getCatalog('customers'))
+def rephrase_query_prod(step,org):
+    sys_prompt = """Your goal is to rephrase a short description of a processing step into a longer more complete query which can be used to query a vector store
+    The goal is to identify a data product, use the context provided by the original query to extend the provided step
+    Only provide the reformulated query"""
+
+    input_prompt= PromptTemplate.from_template(""" The task I am currently trying to achieve is:{step}, the original query is: {org}""")
+    input_prompt = input_prompt.format( step=step, org=org)
+    messages = [
+        ("system", sys_prompt),
+        ("human", input_prompt),
+    ]
+    llm = models.get_LLM()
+    return llm.invoke(messages).content
+
+org = "What is Copycat's race?"
+step = "retrieve race dataset"
+print(rephrase_query_prod(step, org))

@@ -49,6 +49,7 @@ def call_max():
     if isinstance(df,pd.Series) or isinstance(df,pd.DataFrame):
         return {'data': df.to_json()}
     else:
+        print(df)
         return {'data': json.dumps(df)}
 
 @app.route('/combine', methods=['PUT'])
@@ -67,7 +68,7 @@ def call_combine():
 
     df = aggregation.combineProducts(df1,df2, content['args'])
 
-    {'data': df.to_json()}
+    return {'data': df.to_json()}
 
 @app.route('/getRows', methods=['PUT'])
 def call_rows():
@@ -120,10 +121,17 @@ def call_getNRows():
 
 @app.route('/retrieve', methods=['PUT'])
 def call_retrieve():
-    pass
 
-    #return {'data': df.to_json()}
+    return {'data': "True"}
 
+@app.route('/count', methods=['PUT'])
+def call_count():
+    content = json.loads(request.data)
+
+    df = pd.read_json(io.StringIO(content['data']))
+    df = aggregation.count(df, content['args'])
+
+    return {'data': df.to_json()}
 
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=port)

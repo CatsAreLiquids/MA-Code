@@ -5,7 +5,13 @@ import requests
 import io
 
 
-def getData(url,columns=None):
+def getData(func_dict):
+    url = func_dict["product"]
+    if "column" in func_dict:
+        columns = func_dict["column"]
+    else: columns = None
+
+
     response = requests.get(url)
     content = json.loads(response.text)
 
@@ -58,6 +64,7 @@ def _putDataProductCombination(first,second, function):
 
     response = requests.put('http://127.0.0.1:5200/combine',
                             json={"data_1": first.to_json(),"data_2": second.to_json() ,"args": json.dumps(function)})
+
     content = json.loads(response.text)
 
     try:
@@ -75,14 +82,12 @@ def _executeProcessing(df, plan):
 
 def executeStep(plan):
 
-    print(plan)
     retrieve = plan[0]
     df = getData(retrieve['values']['product'],retrieve['values']['columns'])
 
     for elem in plan[1:]:
-        print(elem)
         df = _putDataProduct(df, elem)
-        print(df)
+
     return df
 
 
@@ -92,12 +97,9 @@ def execute(agent_result):
     frames = {}
 
     for i in range(len(plan)):
-        print(plan[i]["product"])
         df = _getDataProduct(plan[i]["product"])
         if isinstance(df,str):
-            print(df)
             return None
-        print(plan[i]["transformation"])
         df = _executeProcessing(df, plan[i]["transformation"])
         frames["df_" + str(i)] = df
 
@@ -115,24 +117,77 @@ def execute(agent_result):
 
 def execute_new(agent_result):
     plans = agent_result['plans']
-    combination = agent_result['combination']
+
     frames = {}
     i = 0
     for elem in plans:
-        print(elem)
-        if elem['function'] == 'http://127.0.0.1:5200/retrieve':
-            df = getData(elem['values']['product'], elem['values']['columns'])
-            i+=1
+        if isinstance(elem,list):
+            for elem_elem in elem:
+                print(elem_elem)
+                if elem_elem['function'] == 'http://127.0.0.1:5200/retrieve':
+                    df = getData(elem_elem['values'])
+                else:
+                    df = _putDataProduct(df, elem_elem)
+            frames["df_" + str(i)] = df
+            i += 1
+
         else:
-            df = _putDataProduct(df, elem)
-        frames["df_" + str(i)] = df
+            print(elem)
+            if elem['function'] == 'http://127.0.0.1:5200/retrieve':
+                df = getData(elem['values'])
+            else:
+                df = _putDataProduct(df, elem)
+            frames["df_" + str(i)] = df
+            i += 1
 
-    if len(plans) -1 != len(combination): #& len(combination[0]) != 0:
-        return frames
+    #if len(plans) -1 != len(combination): #& len(combination[0]) != 0:
+    #    return frames
 
-    previous = frames["df_0"]
-    for i in range(len(combination)):
-        new = frames["df_"+str(i+1)]
-        previous = _putDataProductCombination(previous,new,combination[i])
+    if 'combination' in agent_result :
+        combination = agent_result['combination']
+    else:
+        combination = []
+
+    if len(combination) >= 1:
+        print("test")
+        previous = frames["df_0"]
+        for i in range(len(combination)):
+            new = frames["df_"+str(i+1)]
+            previous = _putDataProductCombination(previous,new,combination[i])
+    else:
+        previous = frames[f"df_{len(frames)-1}"]
 
     return previous
+
+if __name__ == "__main__":
+    plan = {"plans":[[{"function":"http://127.0.0.1:5200/retrieve","values":{"product":"http://127.0.0.1:5000/products/superhero/superhero"}},{"function":"http://127.0.0.1:5200/filter","values":{"conditions":{"full_name":"Karen Beecher-Duncan"}}}],[{"function":"http://127.0.0.1:5200/retrieve","values":{"product":"http://127.0.0.1:5000/products/superhero/colour"}}]] ,"combination":[{"columns_left":"eye_colour_id","columns_right":"id","type":"equals","values":["None"]} ] }
+    plan = {"plans": [[{"function": "http://127.0.0.1:5200/retrieve",
+                 "values": {"product": "http://127.0.0.1:5000/products/superhero/superhero", }},
+                {"function": "http://127.0.0.1:5200/filter", "values": {"conditions": {"superhero_name": "Copycat"}}}],
+               [{"function": "http://127.0.0.1:5200/retrieve",
+                 "values": {"product": "http://127.0.0.1:5000/products/superhero/race", }},
+                {"function": "http://127.0.0.1:5200/filter", "values": {"conditions": {"superhero_name": "Copycat"}}}]],
+     "combination": [{"columns_left": "race_id", "columns_right": "id", "type": "equals", "values": ["None"]}]}
+    plan = {"plans":[[{"function":"http://127.0.0.1:5200/retrieve","values":{"product":"http://127.0.0.1:5000/products/formula_1/qualifying"}},{"function":"http://127.0.0.1:5200/filter","values":{"conditions":{"raceId":45,"q3":{"max":"1:34","min":"1:33"}}}}],[{"function":"http://127.0.0.1:5200/retrieve","values":{"product":"http://127.0.0.1:5000/products/formula_1/drivers"}}]],"combination": [{"columns_left": "driverId", "columns_right": "driverId", "type": "equals", "values": ["None"]}]}
+    plan = {"plans": [[{"function": "http://127.0.0.1:5200/retrieve", "values": {"product": "http://127.0.0.1:5000/products/formula_1/races"}},{"function": "http://127.0.0.1:5200/filter", "values": {"raceId": 901}}],[{"function": "http://127.0.0.1:5200/retrieve","values":{"product": "http://127.0.0.1:5000/products/formula_1/seasons"}}]],"combination":[{"columns_left": "year", "columns_right": "year", "type": "equals", "values": ["None"]}]}
+    plan = {"plans": [[{"function": "http://127.0.0.1:5200/retrieve","values": {"product": "http://127.0.0.1:5000/products/formula_1/drivers"}}],[{"function": "http://127.0.0.1:5200/retrieve","values": {"product": "http://127.0.0.1:5000/products/formula_1/results"}},{"function": "http://127.0.0.1:5200/sum", "values": {"group_by": "driverId", "column": "points"}},{"function": "http://127.0.0.1:5200/max", "values": {"columns": "driverId", "rows": 1}}]], "combination": [{"columns_left": "driverId", "columns_right": "driverId", "type": "equals", "values": ["None"]}]}
+    plan = {"plans":[[{"function":"http://127.0.0.1:5200/retrieve","values":{"product":"http://127.0.0.1:5000/products/formula_1/drivers"}},{"function": "http://127.0.0.1:5200/filter", "values": {"conditions": {"forename": "Lewis","surname": "Hamilton"}}}],[{"function": "http://127.0.0.1:5200/retrieve","values": {"product": "http://127.0.0.1:5000/products/formula_1/results"}}],[{"function": "http://127.0.0.1:5200/retrieve", "values": {"product": "http://127.0.0.1:5000/products/formula_1/races"}},{"function": "http://127.0.0.1:5200/filter", "values": {"conditions": {"year": "2008","name": "Chinese Grand Prix"}}}]],"combination": [{"columns_left": "driverId", "columns_right": "driverId", "type": "equals", "values": ["None"]},{"columns_left": "raceId", "columns_right": "raceId", "type": "equals", "values": ["None"]}]}
+
+    #TODO need aggregation column
+    plan = {"plans":[[{"function":"http://127.0.0.1:5200/retrieve","values":{"product":"http://127.0.0.1:5000/products/formula_1/races"}},{"function":"http://127.0.0.1:5200/filter","values":{"conditions":{"name":"Bahrain Grand Prix","year":2007}}}],[{"function":"http://127.0.0.1:5200/retrieve","values":{"product":"http://127.0.0.1:5000/products/formula_1/results"}},{"function":"http://127.0.0.1:5200/filter","values":{"conditions":{"time":"empty"}}}]],"combination": [{"columns_left": "raceId", "columns_right": "raceId", "type": "equals", "values": ["None"]}]}
+
+    plan = {"plans":[[{"function":"http://127.0.0.1:5200/retrieve","values":{"product":"http://127.0.0.1:5000/products/card_games/sets"}},{"function":"http://127.0.0.1:5200/filter","values":{"conditions":{"name":"Eighth Edition"}}}],[{"function":"http://127.0.0.1:5200/retrieve","values":{"product":"http://127.0.0.1:5000/products/card_games/set_translations"}},{"function":"http://127.0.0.1:5200/filter","values":{"conditions":{"language":"Chinese Simplified"}}}]],"combination": [{"columns_left": "code", "columns_right": "setCode", "type": "equals", "values": ["None"]}]}
+    plan = {"plans":[[{"function":"http://127.0.0.1:5200/retrieve","values":{"product":"http://127.0.0.1:5000/products/european_football_2/Player"}},{"function":"http://127.0.0.1:5200/filter","values":{"conditions":{"player_name":"Pietro Marino"}}}],[{"function":"http://127.0.0.1:5200/retrieve","values":{"product":"http://127.0.0.1:5000/products/european_football_2/Player_Attributes"}},{"function":"http://127.0.0.1:5200/mean","values":{"group_by":["player_api_id"],"columns":["overall_rating"]}}]],"combination": [{"columns_left": "player_api_id", "columns_right": "player_api_id", "type": "equals", "values": ["None"]}]}
+    plan = {"plans":[[{"function":"http://127.0.0.1:5200/retrieve","values":{"product":"http://127.0.0.1:5000/products/student_club/Attendance"}},{"function":"http://127.0.0.1:5200/count","values":{"group_by":["link_to_member"],"columns":["link_to_member"]}},{"function":"http://127.0.0.1:5200/filter","values":{"conditions":{"count":{"min":7}}}}],[{"function":"http://127.0.0.1:5200/retrieve","values":{"product":"http://127.0.0.1:5000/products/student_club/Member"}}]],"combination": [{"columns_left": "link_to_member", "columns_right": "member_id", "type": "equals", "values": ["None"]}]}
+    plan = {"plans":[{"function":"http://127.0.0.1:5200/retrieve","values":{"product":"http://127.0.0.1:5000/products/student_club/Income"}},{"function":"http://127.0.0.1:5200/filter","values":{"date_received":"2019-09-14","source":"Fundraising"}}],"combination":[]}
+    plan = {"plans":[[{"function":"http://127.0.0.1:5200/retrieve","values":{"product":"http://127.0.0.1:5000/products/european_football_2/Match"}},{"function":"http://127.0.0.1:5200/filter","values":{"season":"2015/2016"}},{"function":"http://127.0.0.1:5200/count","values":{"group_by":["league_id"],"columns":["league_id"]}},{"function":"http://127.0.0.1:5200/max","values":{"rows":4,"columns":["count"]}}],[{"function":"http://127.0.0.1:5200/retrieve","values":{"product":"http://127.0.0.1:5000/products/european_football_2/League"}}]],"combination": [{"columns_left": "league_id", "columns_right": "id", "type": "equals", "values": ["None"]}]}
+    plan = {"plans":[[{"function":"http://127.0.0.1:5200/retrieve","values":{"product":"http://127.0.0.1:5000/products/european_football_2/Player_Attributes"}},{"function":"http://127.0.0.1:5200/max","values":{"column":"overall_rating","rows":1}}],[{"function":"http://127.0.0.1:5200/retrieve","values":{"product":"http://127.0.0.1:5000/products/european_football_2/Player"}}]],"combination": [{"columns_left": "player_api_id", "columns_right": "player_api_id", "type": "equals", "values": ["None"]}]}
+    plan = {"plans":[{"function":"http://127.0.0.1:5200/retrieve","values":{"product":"http://127.0.0.1:5000/products/card_games/cards"}},{"function":"http://127.0.0.1:5200/filter","values":{"conditions":{"cardKingdomFoilId":"not empty","cardKingdomId":"not empty"}}}]}
+    plan= {"plans":[{"function":"http://127.0.0.1:5200/retrieve","values":{"product":"http://127.0.0.1:5000/products/card_games/cards"}},{"function":"http://127.0.0.1:5200/filter","values":{"conditions":{"cardKingdomFoilId":"not empty","cardKingdomId":"not empty","borderColor":"borderless"}}}]}
+
+    plan = {"plans":[[{"function":"http://127.0.0.1:5200/retrieve","values":{"product":"http://127.0.0.1:5000/products/superhero/superhero"}}],[{"function":"http://127.0.0.1:5200/retrieve","values":{"product":"http://127.0.0.1:5000/products/superhero/gender"}},{"function":"http://127.0.0.1:5200/filter","values":{"conditions":{"gender":"male"}}}],[{"function":"http://127.0.0.1:5200/retrieve","values":{"product":"http://127.0.0.1:5000/products/superhero/hero_power"}}],[{"function":"http://127.0.0.1:5200/retrieve","values":{"product":"http://127.0.0.1:5000/products/superhero/superpower"}}]],"combination": [{"columns_left": "gender_id", "columns_right": "id", "type": "equals", "values": ["None"]},{"columns_left": "id", "columns_right": "hero_id", "type": "equals", "values": ["None"]},{"columns_left": "power_id", "columns_right": "id", "type": "equals", "values": ["None"]}]}
+    plan = {"plans":[[{"function":"http://127.0.0.1:5200/retrieve","values":{"product":"http://127.0.0.1:5000/products/european_football_2/Match"}},{"function":"http://127.0.0.1:5200/count","values":{"group_by":["league_id"],"column":"league_id"}},{"function":"http://127.0.0.1:5200/max","values":{"column":"count","rows":1}}],[{"function":"http://127.0.0.1:5200/retrieve","values":{"product":"http://127.0.0.1:5000/products/european_football_2/League"}}]],"combination": [{"columns_left": "league_id", "columns_right": "id", "type": "equals", "values": ["None"]}]}
+
+    #plan = {"plans":[[{"function":"http://127.0.0.1:5200/retrieve","values":{"product":"http://127.0.0.1:5000/products/student_club/Attendance"}},{"function":"http://127.0.0.1:5200/count","values":{"group_by":["link_to_member"],"columns":["link_to_member"]}},{"function":"http://127.0.0.1:5200/filter","values":{"conditions":{"count":{"min":7}}}}],[{"function":"http://127.0.0.1:5200/retrieve","values":{"product":"http://127.0.0.1:5000/products/student_club/Member"}}]],"combination": [{"columns_left": "link_to_member", "columns_right": "member_id", "type": "equals", "values": ["None"]}]}
+
+    print("result",execute_new(plan))

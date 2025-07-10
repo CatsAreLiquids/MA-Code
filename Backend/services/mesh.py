@@ -22,6 +22,7 @@ def getCatalog():
         return "could not find the main catalog"
     for collection in catalog:
         collection = catalog[collection]
+        print(collection['products'])
         if file in collection['products']:
             try:
                 with open("../data/Catalogs/" + collection['name'] + ".yml") as stream:
@@ -33,6 +34,27 @@ def getCatalog():
             except KeyError:
                 return collection_dict
 
+@app.route('/catalog/collection', methods=['GET'])
+def getCatalogCollection():
+    content = json.loads(request.data)
+    file = content['file']
+    if "/" in file:
+        file = file.split("/")[-1]
+
+    try:
+        with open("../data/Catalogs/catalog.yml") as stream:
+            catalog = yaml.safe_load(stream)
+    except FileNotFoundError:
+        return "could not find the main catalog"
+    for collection in catalog:
+        if file == collection:
+            collection = catalog[collection]
+            try:
+                with open("../data/Catalogs/" + collection['name'] + ".yml") as stream:
+                    collection_dict = yaml.safe_load(stream)
+                    return collection_dict
+            except FileNotFoundError:
+                return "could not find the specific collection catalog"
 
 @app.route('/catalog/columns', methods=['GET'])
 def getCatalogColumns():

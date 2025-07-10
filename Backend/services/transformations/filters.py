@@ -21,25 +21,23 @@ def _rangeFilter(df, column, range_dict):
         mask = df[column].ge(range_dict['min'])
     elif 'max' in range_dict:
         mask = df[column].le(range_dict['max'])
-
+    print("test",df[mask])
     return df[mask]
 
 
 def applyFilter(df, filter_dict):
     filter_dict = ast.literal_eval(filter_dict)
 
-
     if 'conditions' in filter_dict:
         filter_dict = filter_dict['conditions']
-        print(filter_dict)
     elif 'columns' in filter_dict:
         filter_dict = filter_dict['columns']
-        print(filter_dict)
 
     if isinstance(filter_dict,list):
         filter_dict = filter_dict[0]
-    print(filter_dict)
+
     for key, val in filter_dict.items():
+
         if isinstance(val, dict):
             df = _rangeFilter(df, key, val)
         elif isinstance(val, list):
@@ -50,12 +48,23 @@ def applyFilter(df, filter_dict):
                 if isinstance(val, str):
                     if val == 'max':
                         return getMax(df,{'columns':key})
-                    val = val.lower()
-                    df = df[df[key].str.lower() == val]
+                    elif val =="empty":
+                        idx = np.where(df[key].isna()==True)[0].tolist()
+                        df = df.loc[:,idx]
+                    elif val =="not empty":
+
+                        df = df.dropna(subset=[key])
+                    else:
+                        val = val.lower()
+                        try:
+                            df = df[df[key].str.lower() == val]
+                        except AttributeError:
+                            df[key]= df[key].astype(str)
+                            df = df[df[key].str.lower() == val]
                 else:
                     df = df[df[key] == val]
             except KeyError:
-                df
+                return df
     return df
 
 
@@ -87,18 +96,45 @@ def _getInDf(df, column):
 
 def getMax(df, filter_dict):
     filter_dict = ast.literal_eval(filter_dict)
-    if isinstance(df, pd.Series):
-        df = df.to_frame()
-        return {"value":str(df.max()[0]),filter_dict['column']:df.idxmax()[0]}
-    try:
-        return df[filter_dict['column']].max()
-    except KeyError:
-        return df
+
+    if 'column' in filter_dict:
+        key = 'column'
+    else:
+        key = 'columns'
+
+    if "rows" in filter_dict:
+        return df.nlargest(filter_dict["rows"],filter_dict[key])
+    else:
+        if isinstance(df, pd.Series):
+            df = df.to_frame()
+            return {"value":str(df.max()[0]),filter_dict[key]:df.idxmax()[0]}
+        try:
+            return df[df[filter_dict[key]].idxmax()]
+        except KeyError:
+            return df
+
+def getMin(df, filter_dict):
+    filter_dict = ast.literal_eval(filter_dict)
+
+    if 'column' in filter_dict:
+        key = 'column'
+    else:
+        key = 'columns'
+
+    if "rows" in filter_dict:
+        return df.nsmallest(filter_dict["rows"],filter_dict[key])
+    else:
+        if isinstance(df, pd.Series):
+            df = df.to_frame()
+            return {"value":str(df.max()[0]),filter_dict[key]:df.idxmin()[0]}
+        try:
+            return df[df[filter_dict[key]].idxmin()]
+        except KeyError:
+            return df
 
 
 def getRows(df, filter_dict):
     filter_dict = ast.literal_eval(filter_dict)
-    print(filter_dict)
     if filter_dict['columns'] in df:
         if (filter_dict['values'] is not None) and (filter_dict['values'] != "None"):
 

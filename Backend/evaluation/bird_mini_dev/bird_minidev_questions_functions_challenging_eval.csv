@@ -1,0 +1,437 @@
+Unnamed: 0,question_id,query,difficulty,function,collection,step,correct_context
+0,955,"What is the average time in seconds of champion for each year, before year 1975?",challenging,retrieve,formula_1,retrieve seasons dataset,"function name:retrieve
+description: retrieves the specified data product, takes the data products name and a list of requested columns as arguments
+filter_dict: [{'product': 'product url'}]
+"
+1,955,"What is the average time in seconds of champion for each year, before year 1975?",challenging,filter,formula_1,filter for years before 1975,"function name:filter
+base_api: http://127.0.0.1:5200/filter
+description: filters a data product based on the provided filterdict, it filters row wise keeping all input columns
+filter_dict: [{'conditions': 'a dict ith the corresponding columns and their values'}]
+example: {'condition':{'location':'berlin','year':{'min':2002,'max':2007}}
+"
+2,955,"What is the average time in seconds of champion for each year, before year 1975?",challenging,retrieve,formula_1,retrieve lapTimes dataset,"function name:retrieve
+description: retrieves the specified data product, takes the data products name and a list of requested columns as arguments
+filter_dict: [{'product': 'product url'}]
+"
+3,955,"What is the average time in seconds of champion for each year, before year 1975?",challenging,filter,formula_1,filter lap times for winning drivers before 1975,"function name:filter
+base_api: http://127.0.0.1:5200/filter
+description: filters a data product based on the provided filterdict, it filters row wise keeping all input columns
+filter_dict: [{'conditions': 'a dict ith the corresponding columns and their values'}]
+example: {'condition':{'location':'berlin','year':{'min':2002,'max':2007}}
+"
+4,955,"What is the average time in seconds of champion for each year, before year 1975?",challenging,mean,formula_1,calculate average lap times for each year from lapTimes dataset,"function name:mean
+base_api: http://127.0.0.1:5200/sum
+description: Calcuates the mean of a dataframe based on a list of group_by columns and
+filter_dict: [{'group_by': 'a list of coulmns in the dataframe, can be None'}, {'columns': 'a list of columns for hicht the mean should be calculated, cant be None'}]
+"
+5,955,"What is the average time in seconds of champion for each year, before year 1975?",challenging,combine,formula_1,combine average lap times from lapTimes dataset with years from seasons dataset,"function name:combine
+description: combines to data products via a join
+filter_dict: [{'columns_left': 'which columns of the first data product to match on'}, {'columns_right': 'which columns of the second data product to match on'}, {'type': 'equal or unequal'}]
+"
+6,955,"What is the average time in seconds of champion for each year, before year 1975?",challenging,returnResult,formula_1,return finished product,"function name:returnResult
+description: retrieves or extracts  the previously computed data, specified  by the columns in a dataframe
+filter_dict: [{'columns': 'which columns to retrun/extract'}]
+"
+7,990,What is the constructor reference name of the champion in the 2009 Singapore Grand Prix? Please give its website.,challenging,retrieve,formula_1,retrieve race data,"function name:retrieve
+description: retrieves the specified data product, takes the data products name and a list of requested columns as arguments
+filter_dict: [{'product': 'product url'}]
+"
+8,990,What is the constructor reference name of the champion in the 2009 Singapore Grand Prix? Please give its website.,challenging,retrieve,formula_1,retrieve constructor standings data,"function name:retrieve
+description: retrieves the specified data product, takes the data products name and a list of requested columns as arguments
+filter_dict: [{'product': 'product url'}]
+"
+9,990,What is the constructor reference name of the champion in the 2009 Singapore Grand Prix? Please give its website.,challenging,getValues,formula_1,extract the constructorId,"function name:getValues
+base_api: http://127.0.0.1:5200/getValues
+description: Retrieves specififed data values in a list format
+filter_dict: [{'columns': 'a column on wihich to match'}, {'values': 'a dict with a value to match if None returns the all columns from columns'}]
+example: filter_dict:{'values':'None','column':'customer_id'}
+"
+10,990,What is the constructor reference name of the champion in the 2009 Singapore Grand Prix? Please give its website.,challenging,retrieve,formula_1,retrieve constructor data,"function name:retrieve
+description: retrieves the specified data product, takes the data products name and a list of requested columns as arguments
+filter_dict: [{'product': 'product url'}]
+"
+11,990,What is the constructor reference name of the champion in the 2009 Singapore Grand Prix? Please give its website.,challenging,combine,formula_1,combine the constructor reference name and website,"function name:combine
+description: combines to data products via a join
+filter_dict: [{'columns_left': 'which columns of the first data product to match on'}, {'columns_right': 'which columns of the second data product to match on'}, {'type': 'equal or unequal'}]
+"
+12,990,What is the constructor reference name of the champion in the 2009 Singapore Grand Prix? Please give its website.,challenging,returnResult,formula_1,return finished product,"function name:returnResult
+description: retrieves or extracts  the previously computed data, specified  by the columns in a dataframe
+filter_dict: [{'columns': 'which columns to retrun/extract'}]
+"
+13,416,What percentage of cards without power are in French?,challenging,retrieve,card_games,"Retrieve ""superpower"" dataset","function name:retrieve
+description: retrieves the specified data product, takes the data products name and a list of requested columns as arguments
+filter_dict: [{'product': 'product url'}]
+"
+14,416,What percentage of cards without power are in French?,challenging,filter,card_games,Filter for cards without power,"function name:filter
+base_api: http://127.0.0.1:5200/filter
+description: filters a data product based on the provided filterdict, it filters row wise keeping all input columns
+filter_dict: [{'conditions': 'a dict ith the corresponding columns and their values'}]
+example: {'condition':{'location':'berlin','year':{'min':2002,'max':2007}}
+"
+15,416,What percentage of cards without power are in French?,challenging,retrieve,card_games,"Retrieve ""foreign_data"" dataset","function name:retrieve
+description: retrieves the specified data product, takes the data products name and a list of requested columns as arguments
+filter_dict: [{'product': 'product url'}]
+"
+16,416,What percentage of cards without power are in French?,challenging,filter,card_games,Filter for cards that are in French,"function name:filter
+base_api: http://127.0.0.1:5200/filter
+description: filters a data product based on the provided filterdict, it filters row wise keeping all input columns
+filter_dict: [{'conditions': 'a dict ith the corresponding columns and their values'}]
+example: {'condition':{'location':'berlin','year':{'min':2002,'max':2007}}
+"
+17,416,What percentage of cards without power are in French?,challenging,combine,card_games,"Combine filtered cards from ""superpower"" and ""foreign_data""","function name:combine
+description: combines to data products via a join
+filter_dict: [{'columns_left': 'which columns of the first data product to match on'}, {'columns_right': 'which columns of the second data product to match on'}, {'type': 'equal or unequal'}]
+"
+18,416,What percentage of cards without power are in French?,challenging,,card_games,Calculate the percentage of French cards without power from the total cards without power,
+19,416,What percentage of cards without power are in French?,challenging,returnResult,card_games,Return finished product,"function name:returnResult
+description: retrieves or extracts  the previously computed data, specified  by the columns in a dataframe
+filter_dict: [{'columns': 'which columns to retrun/extract'}]
+"
+20,1028,"In Scotland Premier League, which away team won the most during the 2010 season?",challenging,retrieve,european_football_2,retrieve League Dataset,"function name:retrieve
+description: retrieves the specified data product, takes the data products name and a list of requested columns as arguments
+filter_dict: [{'product': 'product url'}]
+"
+21,1028,"In Scotland Premier League, which away team won the most during the 2010 season?",challenging,filter,european_football_2,filter for Scotland Premier League,"function name:filter
+base_api: http://127.0.0.1:5200/filter
+description: filters a data product based on the provided filterdict, it filters row wise keeping all input columns
+filter_dict: [{'conditions': 'a dict ith the corresponding columns and their values'}]
+example: {'condition':{'location':'berlin','year':{'min':2002,'max':2007}}
+"
+22,1028,"In Scotland Premier League, which away team won the most during the 2010 season?",challenging,retrieve,european_football_2,retrieve Match Dataset,"function name:retrieve
+description: retrieves the specified data product, takes the data products name and a list of requested columns as arguments
+filter_dict: [{'product': 'product url'}]
+"
+23,1028,"In Scotland Premier League, which away team won the most during the 2010 season?",challenging,filter,european_football_2,filter for matches from the 2010 season,"function name:filter
+base_api: http://127.0.0.1:5200/filter
+description: filters a data product based on the provided filterdict, it filters row wise keeping all input columns
+filter_dict: [{'conditions': 'a dict ith the corresponding columns and their values'}]
+example: {'condition':{'location':'berlin','year':{'min':2002,'max':2007}}
+"
+24,1028,"In Scotland Premier League, which away team won the most during the 2010 season?",challenging,filter,european_football_2,filter for away team wins,"function name:filter
+base_api: http://127.0.0.1:5200/filter
+description: filters a data product based on the provided filterdict, it filters row wise keeping all input columns
+filter_dict: [{'conditions': 'a dict ith the corresponding columns and their values'}]
+example: {'condition':{'location':'berlin','year':{'min':2002,'max':2007}}
+"
+25,1028,"In Scotland Premier League, which away team won the most during the 2010 season?",challenging,sum,european_football_2,calculate the number of wins for each away team,"function name:sum
+base_api: http://127.0.0.1:5200/sum
+description: Calcuates the sum of a dataframe based on a list of group_by columns and
+filter_dict: [{'group_by': 'a list of coulmns in the dataframe, can be None'}, {'columns': 'a list of columns for hicht the sum should be calculated, cant be None'}]
+"
+26,1028,"In Scotland Premier League, which away team won the most during the 2010 season?",challenging,,european_football_2,identify the away team with the most wins,
+27,1028,"In Scotland Premier League, which away team won the most during the 2010 season?",challenging,combine,european_football_2,combine results from Match Dataset and Team Dataset for team identification,"function name:combine
+description: combines to data products via a join
+filter_dict: [{'columns_left': 'which columns of the first data product to match on'}, {'columns_right': 'which columns of the second data product to match on'}, {'type': 'equal or unequal'}]
+"
+28,1028,"In Scotland Premier League, which away team won the most during the 2010 season?",challenging,returnResult,european_football_2,return finished product,"function name:returnResult
+description: retrieves or extracts  the previously computed data, specified  by the columns in a dataframe
+filter_dict: [{'columns': 'which columns to retrun/extract'}]
+"
+29,1084,"Among the players born before the year 1986, how many of them would remain in his position and defense while the team attacked?",challenging,retrieve,european_football_2,retrieve Player data,"function name:retrieve
+description: retrieves the specified data product, takes the data products name and a list of requested columns as arguments
+filter_dict: [{'product': 'product url'}]
+"
+30,1084,"Among the players born before the year 1986, how many of them would remain in his position and defense while the team attacked?",challenging,filter,european_football_2,filter for players born before 1986,"function name:filter
+base_api: http://127.0.0.1:5200/filter
+description: filters a data product based on the provided filterdict, it filters row wise keeping all input columns
+filter_dict: [{'conditions': 'a dict ith the corresponding columns and their values'}]
+example: {'condition':{'location':'berlin','year':{'min':2002,'max':2007}}
+"
+31,1084,"Among the players born before the year 1986, how many of them would remain in his position and defense while the team attacked?",challenging,retrieve,european_football_2,retrieve Player_Attributes data,"function name:retrieve
+description: retrieves the specified data product, takes the data products name and a list of requested columns as arguments
+filter_dict: [{'product': 'product url'}]
+"
+32,1084,"Among the players born before the year 1986, how many of them would remain in his position and defense while the team attacked?",challenging,filter,european_football_2,filter for defenders in Player_Attributes,"function name:filter
+base_api: http://127.0.0.1:5200/filter
+description: filters a data product based on the provided filterdict, it filters row wise keeping all input columns
+filter_dict: [{'conditions': 'a dict ith the corresponding columns and their values'}]
+example: {'condition':{'location':'berlin','year':{'min':2002,'max':2007}}
+"
+33,1084,"Among the players born before the year 1986, how many of them would remain in his position and defense while the team attacked?",challenging,combine,european_football_2,combine filtered Player data and filtered Player_Attributes data,"function name:combine
+description: combines to data products via a join
+filter_dict: [{'columns_left': 'which columns of the first data product to match on'}, {'columns_right': 'which columns of the second data product to match on'}, {'type': 'equal or unequal'}]
+"
+34,1084,"Among the players born before the year 1986, how many of them would remain in his position and defense while the team attacked?",challenging,,european_football_2,analyze combined data for players who remain in position and defense during attacks,
+35,1084,"Among the players born before the year 1986, how many of them would remain in his position and defense while the team attacked?",challenging,returnResult,european_football_2,return finished product,"function name:returnResult
+description: retrieves or extracts  the previously computed data, specified  by the columns in a dataframe
+filter_dict: [{'columns': 'which columns to retrun/extract'}]
+"
+36,1241,"For patients with abnormal platelet level, state the number of patients with lower than normal range. How is it compare to the number of patients with higher than normal range?",challenging,retrieve,thrombosis_prediction,retrieve Examination Dataset,"function name:retrieve
+description: retrieves the specified data product, takes the data products name and a list of requested columns as arguments
+filter_dict: [{'product': 'product url'}]
+"
+37,1241,"For patients with abnormal platelet level, state the number of patients with lower than normal range. How is it compare to the number of patients with higher than normal range?",challenging,filter,thrombosis_prediction,filter for patients with abnormal platelet levels,"function name:filter
+base_api: http://127.0.0.1:5200/filter
+description: filters a data product based on the provided filterdict, it filters row wise keeping all input columns
+filter_dict: [{'conditions': 'a dict ith the corresponding columns and their values'}]
+example: {'condition':{'location':'berlin','year':{'min':2002,'max':2007}}
+"
+38,1241,"For patients with abnormal platelet level, state the number of patients with lower than normal range. How is it compare to the number of patients with higher than normal range?",challenging,count,thrombosis_prediction,count patients with lower than normal range,"function name:count
+base_api: http://127.0.0.1:5200/count
+description: counts the occurences of a specific value or values
+filter_dict: [{'columns': 'a column in which the value to count is present'}, {'value': 'the value to count '}]
+"
+39,1241,"For patients with abnormal platelet level, state the number of patients with lower than normal range. How is it compare to the number of patients with higher than normal range?",challenging,count,thrombosis_prediction,count patients with higher than normal range,"function name:count
+base_api: http://127.0.0.1:5200/count
+description: counts the occurences of a specific value or values
+filter_dict: [{'columns': 'a column in which the value to count is present'}, {'value': 'the value to count '}]
+"
+40,1241,"For patients with abnormal platelet level, state the number of patients with lower than normal range. How is it compare to the number of patients with higher than normal range?",challenging,,thrombosis_prediction,compare the counts of patients with lower and higher than normal ranges,
+41,1241,"For patients with abnormal platelet level, state the number of patients with lower than normal range. How is it compare to the number of patients with higher than normal range?",challenging,returnResult,thrombosis_prediction,return finished product,"function name:returnResult
+description: retrieves or extracts  the previously computed data, specified  by the columns in a dataframe
+filter_dict: [{'columns': 'which columns to retrun/extract'}]
+"
+42,1168,"The oldest SJS patient's medical laboratory work was completed on what date, and what age was the patient when they initially arrived at the hospital?",challenging,retrieve,thrombosis_prediction,retrieve Patient dataset,"function name:retrieve
+description: retrieves the specified data product, takes the data products name and a list of requested columns as arguments
+filter_dict: [{'product': 'product url'}]
+"
+43,1168,"The oldest SJS patient's medical laboratory work was completed on what date, and what age was the patient when they initially arrived at the hospital?",challenging,filter,thrombosis_prediction,filter for SJS patients,"function name:filter
+base_api: http://127.0.0.1:5200/filter
+description: filters a data product based on the provided filterdict, it filters row wise keeping all input columns
+filter_dict: [{'conditions': 'a dict ith the corresponding columns and their values'}]
+example: {'condition':{'location':'berlin','year':{'min':2002,'max':2007}}
+"
+44,1168,"The oldest SJS patient's medical laboratory work was completed on what date, and what age was the patient when they initially arrived at the hospital?",challenging,,thrombosis_prediction,identify the oldest SJS patient and extract their birth date and first date of treatment,
+45,1168,"The oldest SJS patient's medical laboratory work was completed on what date, and what age was the patient when they initially arrived at the hospital?",challenging,retrieve,thrombosis_prediction,retrieve Laboratory dataset,"function name:retrieve
+description: retrieves the specified data product, takes the data products name and a list of requested columns as arguments
+filter_dict: [{'product': 'product url'}]
+"
+46,1168,"The oldest SJS patient's medical laboratory work was completed on what date, and what age was the patient when they initially arrived at the hospital?",challenging,filter,thrombosis_prediction,filter for laboratory work dates related to the oldest SJS patient,"function name:filter
+base_api: http://127.0.0.1:5200/filter
+description: filters a data product based on the provided filterdict, it filters row wise keeping all input columns
+filter_dict: [{'conditions': 'a dict ith the corresponding columns and their values'}]
+example: {'condition':{'location':'berlin','year':{'min':2002,'max':2007}}
+"
+47,1168,"The oldest SJS patient's medical laboratory work was completed on what date, and what age was the patient when they initially arrived at the hospital?",challenging,min,thrombosis_prediction,identify the date of the oldest laboratory work completed,"function name:min
+base_api: http://127.0.0.1:5200/min
+description: Retrieves the maximum value for a list of specified columns in a dataframe
+return_type: single value
+filter_dict: [{'columns': 'a list of columns for which the minimum should be retrieved'}, {'rows': 'number of rows to be returned'}]
+"
+48,1168,"The oldest SJS patient's medical laboratory work was completed on what date, and what age was the patient when they initially arrived at the hospital?",challenging,,thrombosis_prediction,calculate the age of the oldest SJS patient at the time of arrival using their birth date and first date of treatment,
+49,1168,"The oldest SJS patient's medical laboratory work was completed on what date, and what age was the patient when they initially arrived at the hospital?",challenging,combine,thrombosis_prediction,combine the date of the oldest laboratory work and the age of the patient,"function name:combine
+description: combines to data products via a join
+filter_dict: [{'columns_left': 'which columns of the first data product to match on'}, {'columns_right': 'which columns of the second data product to match on'}, {'type': 'equal or unequal'}]
+"
+50,1168,"The oldest SJS patient's medical laboratory work was completed on what date, and what age was the patient when they initially arrived at the hospital?",challenging,returnResult,thrombosis_prediction,return finished product,"function name:returnResult
+description: retrieves or extracts  the previously computed data, specified  by the columns in a dataframe
+filter_dict: [{'columns': 'which columns to retrun/extract'}]
+"
+51,1242,"For laboratory examinations take in 1984, list all patients below 50 years old with normal platelet level.",challenging,retrieve,thrombosis_prediction,Retrieve Patient Dataset,"function name:retrieve
+description: retrieves the specified data product, takes the data products name and a list of requested columns as arguments
+filter_dict: [{'product': 'product url'}]
+"
+52,1242,"For laboratory examinations take in 1984, list all patients below 50 years old with normal platelet level.",challenging,filter,thrombosis_prediction,Filter for Patients Below 50 Years Old in 1984,"function name:filter
+base_api: http://127.0.0.1:5200/filter
+description: filters a data product based on the provided filterdict, it filters row wise keeping all input columns
+filter_dict: [{'conditions': 'a dict ith the corresponding columns and their values'}]
+example: {'condition':{'location':'berlin','year':{'min':2002,'max':2007}}
+"
+53,1242,"For laboratory examinations take in 1984, list all patients below 50 years old with normal platelet level.",challenging,retrieve,thrombosis_prediction,Retrieve Laboratory Dataset,"function name:retrieve
+description: retrieves the specified data product, takes the data products name and a list of requested columns as arguments
+filter_dict: [{'product': 'product url'}]
+"
+54,1242,"For laboratory examinations take in 1984, list all patients below 50 years old with normal platelet level.",challenging,filter,thrombosis_prediction,Filter for Normal Platelet Levels,"function name:filter
+base_api: http://127.0.0.1:5200/filter
+description: filters a data product based on the provided filterdict, it filters row wise keeping all input columns
+filter_dict: [{'conditions': 'a dict ith the corresponding columns and their values'}]
+example: {'condition':{'location':'berlin','year':{'min':2002,'max':2007}}
+"
+55,1242,"For laboratory examinations take in 1984, list all patients below 50 years old with normal platelet level.",challenging,combine,thrombosis_prediction,Combine Patient Data and Laboratory Data,"function name:combine
+description: combines to data products via a join
+filter_dict: [{'columns_left': 'which columns of the first data product to match on'}, {'columns_right': 'which columns of the second data product to match on'}, {'type': 'equal or unequal'}]
+"
+56,1242,"For laboratory examinations take in 1984, list all patients below 50 years old with normal platelet level.",challenging,returnResult,thrombosis_prediction,Return Finished Product,"function name:returnResult
+description: retrieves or extracts  the previously computed data, specified  by the columns in a dataframe
+filter_dict: [{'columns': 'which columns to retrun/extract'}]
+"
+57,586,Which user added a bounty amount of 50 to the post title mentioning variance?,challenging,retrieve,codebase_community,retrieve Votes Dataset,"function name:retrieve
+description: retrieves the specified data product, takes the data products name and a list of requested columns as arguments
+filter_dict: [{'product': 'product url'}]
+"
+58,586,Which user added a bounty amount of 50 to the post title mentioning variance?,challenging,filter,codebase_community,filter for entries with BountyAmount of 50,"function name:filter
+base_api: http://127.0.0.1:5200/filter
+description: filters a data product based on the provided filterdict, it filters row wise keeping all input columns
+filter_dict: [{'conditions': 'a dict ith the corresponding columns and their values'}]
+example: {'condition':{'location':'berlin','year':{'min':2002,'max':2007}}
+"
+59,586,Which user added a bounty amount of 50 to the post title mentioning variance?,challenging,retrieve,codebase_community,retrieve PostHistory Dataset,"function name:retrieve
+description: retrieves the specified data product, takes the data products name and a list of requested columns as arguments
+filter_dict: [{'product': 'product url'}]
+"
+60,586,Which user added a bounty amount of 50 to the post title mentioning variance?,challenging,filter,codebase_community,"filter for posts with titles mentioning ""variance""","function name:filter
+base_api: http://127.0.0.1:5200/filter
+description: filters a data product based on the provided filterdict, it filters row wise keeping all input columns
+filter_dict: [{'conditions': 'a dict ith the corresponding columns and their values'}]
+example: {'condition':{'location':'berlin','year':{'min':2002,'max':2007}}
+"
+61,586,Which user added a bounty amount of 50 to the post title mentioning variance?,challenging,combine,codebase_community,combine UserId from Votes Dataset with UserId from PostHistory Dataset,"function name:combine
+description: combines to data products via a join
+filter_dict: [{'columns_left': 'which columns of the first data product to match on'}, {'columns_right': 'which columns of the second data product to match on'}, {'type': 'equal or unequal'}]
+"
+62,586,Which user added a bounty amount of 50 to the post title mentioning variance?,challenging,returnResult,codebase_community,return finished product,"function name:returnResult
+description: retrieves or extracts  the previously computed data, specified  by the columns in a dataframe
+filter_dict: [{'columns': 'which columns to retrun/extract'}]
+"
+63,1464,Write the full names of students who received funds on the date of 9/9/2019 and include the amount received.,challenging,retrieve,student_club,retrieve Income Dataset,"function name:retrieve
+description: retrieves the specified data product, takes the data products name and a list of requested columns as arguments
+filter_dict: [{'product': 'product url'}]
+"
+64,1464,Write the full names of students who received funds on the date of 9/9/2019 and include the amount received.,challenging,filter,student_club,filter for records with date_received on 9/9/2019,"function name:filter
+base_api: http://127.0.0.1:5200/filter
+description: filters a data product based on the provided filterdict, it filters row wise keeping all input columns
+filter_dict: [{'conditions': 'a dict ith the corresponding columns and their values'}]
+example: {'condition':{'location':'berlin','year':{'min':2002,'max':2007}}
+"
+65,1464,Write the full names of students who received funds on the date of 9/9/2019 and include the amount received.,challenging,getValues,student_club,extract full names of students and amount received from filtered records,"function name:getValues
+base_api: http://127.0.0.1:5200/getValues
+description: Retrieves specififed data values in a list format
+filter_dict: [{'columns': 'a column on wihich to match'}, {'values': 'a dict with a value to match if None returns the all columns from columns'}]
+example: filter_dict:{'values':'None','column':'customer_id'}
+"
+66,1464,Write the full names of students who received funds on the date of 9/9/2019 and include the amount received.,challenging,combine,student_club,combine full names and amounts received from Income Dataset,"function name:combine
+description: combines to data products via a join
+filter_dict: [{'columns_left': 'which columns of the first data product to match on'}, {'columns_right': 'which columns of the second data product to match on'}, {'type': 'equal or unequal'}]
+"
+67,1464,Write the full names of students who received funds on the date of 9/9/2019 and include the amount received.,challenging,returnResult,student_club,return finished product,"function name:returnResult
+description: retrieves or extracts  the previously computed data, specified  by the columns in a dataframe
+filter_dict: [{'columns': 'which columns to retrun/extract'}]
+"
+68,253,List the elements of all the triple bonds.,challenging,retrieve,toxicology,retrieve bond dataset,"function name:retrieve
+description: retrieves the specified data product, takes the data products name and a list of requested columns as arguments
+filter_dict: [{'product': 'product url'}]
+"
+69,253,List the elements of all the triple bonds.,challenging,filter,toxicology,filter for triple bonds,"function name:filter
+base_api: http://127.0.0.1:5200/filter
+description: filters a data product based on the provided filterdict, it filters row wise keeping all input columns
+filter_dict: [{'conditions': 'a dict ith the corresponding columns and their values'}]
+example: {'condition':{'location':'berlin','year':{'min':2002,'max':2007}}
+"
+70,253,List the elements of all the triple bonds.,challenging,,toxicology,extract elements associated with triple bonds,
+71,253,List the elements of all the triple bonds.,challenging,returnResult,toxicology,return finished product,"function name:returnResult
+description: retrieves or extracts  the previously computed data, specified  by the columns in a dataframe
+filter_dict: [{'columns': 'which columns to retrun/extract'}]
+"
+72,249,What are the elements of the atoms of TR144_8_19?,challenging,retrieve,toxicology,retrieve atom dataset,"function name:retrieve
+description: retrieves the specified data product, takes the data products name and a list of requested columns as arguments
+filter_dict: [{'product': 'product url'}]
+"
+73,249,What are the elements of the atoms of TR144_8_19?,challenging,filter,toxicology,filter for elements of TR144_8_19,"function name:filter
+base_api: http://127.0.0.1:5200/filter
+description: filters a data product based on the provided filterdict, it filters row wise keeping all input columns
+filter_dict: [{'conditions': 'a dict ith the corresponding columns and their values'}]
+example: {'condition':{'location':'berlin','year':{'min':2002,'max':2007}}
+"
+74,249,What are the elements of the atoms of TR144_8_19?,challenging,retrieve,toxicology,retrieve connected dataset,"function name:retrieve
+description: retrieves the specified data product, takes the data products name and a list of requested columns as arguments
+filter_dict: [{'product': 'product url'}]
+"
+75,249,What are the elements of the atoms of TR144_8_19?,challenging,combine,toxicology,combine elements from atom dataset and connectivity information from connected dataset,"function name:combine
+description: combines to data products via a join
+filter_dict: [{'columns_left': 'which columns of the first data product to match on'}, {'columns_right': 'which columns of the second data product to match on'}, {'type': 'equal or unequal'}]
+"
+76,249,What are the elements of the atoms of TR144_8_19?,challenging,returnResult,toxicology,return finished product,"function name:returnResult
+description: retrieves or extracts  the previously computed data, specified  by the columns in a dataframe
+filter_dict: [{'columns': 'which columns to retrun/extract'}]
+"
+77,206,What elements are in the TR004_8_9 bond atoms?,challenging,retrieve,toxicology,retrieve Connected Dataset,"function name:retrieve
+description: retrieves the specified data product, takes the data products name and a list of requested columns as arguments
+filter_dict: [{'product': 'product url'}]
+"
+78,206,What elements are in the TR004_8_9 bond atoms?,challenging,filter,toxicology,"filter for bond identifier ""TR004_8_9""","function name:filter
+base_api: http://127.0.0.1:5200/filter
+description: filters a data product based on the provided filterdict, it filters row wise keeping all input columns
+filter_dict: [{'conditions': 'a dict ith the corresponding columns and their values'}]
+example: {'condition':{'location':'berlin','year':{'min':2002,'max':2007}}
+"
+79,206,What elements are in the TR004_8_9 bond atoms?,challenging,retrieve,toxicology,retrieve Bond Dataset,"function name:retrieve
+description: retrieves the specified data product, takes the data products name and a list of requested columns as arguments
+filter_dict: [{'product': 'product url'}]
+"
+80,206,What elements are in the TR004_8_9 bond atoms?,challenging,filter,toxicology,"filter for bond types associated with ""TR004_8_9""","function name:filter
+base_api: http://127.0.0.1:5200/filter
+description: filters a data product based on the provided filterdict, it filters row wise keeping all input columns
+filter_dict: [{'conditions': 'a dict ith the corresponding columns and their values'}]
+example: {'condition':{'location':'berlin','year':{'min':2002,'max':2007}}
+"
+81,206,What elements are in the TR004_8_9 bond atoms?,challenging,retrieve,toxicology,retrieve Laboratory Dataset,"function name:retrieve
+description: retrieves the specified data product, takes the data products name and a list of requested columns as arguments
+filter_dict: [{'product': 'product url'}]
+"
+82,206,What elements are in the TR004_8_9 bond atoms?,challenging,,toxicology,extract relevant biochemical information related to elements,
+83,206,What elements are in the TR004_8_9 bond atoms?,challenging,combine,toxicology,combine elements from Connected Dataset and Bond Dataset,"function name:combine
+description: combines to data products via a join
+filter_dict: [{'columns_left': 'which columns of the first data product to match on'}, {'columns_right': 'which columns of the second data product to match on'}, {'type': 'equal or unequal'}]
+"
+84,206,What elements are in the TR004_8_9 bond atoms?,challenging,combine,toxicology,combine elements from Laboratory Dataset with previous results,"function name:combine
+description: combines to data products via a join
+filter_dict: [{'columns_left': 'which columns of the first data product to match on'}, {'columns_right': 'which columns of the second data product to match on'}, {'type': 'equal or unequal'}]
+"
+85,206,What elements are in the TR004_8_9 bond atoms?,challenging,returnResult,toxicology,return finished product,"function name:returnResult
+description: retrieves or extracts  the previously computed data, specified  by the columns in a dataframe
+filter_dict: [{'columns': 'which columns to retrun/extract'}]
+"
+86,1526,"For the customer who paid 634.8 in 2012/8/25, what was the consumption decrease rate from Year 2012 to 2013?",challenging,retrieve,debit_card_specializing,"retrieve transaction data from ""transactions_1k""","function name:retrieve
+description: retrieves the specified data product, takes the data products name and a list of requested columns as arguments
+filter_dict: [{'product': 'product url'}]
+"
+87,1526,"For the customer who paid 634.8 in 2012/8/25, what was the consumption decrease rate from Year 2012 to 2013?",challenging,filter,debit_card_specializing,filter for the transaction on 2012/8/25 with payment of 634.8,"function name:filter
+base_api: http://127.0.0.1:5200/filter
+description: filters a data product based on the provided filterdict, it filters row wise keeping all input columns
+filter_dict: [{'conditions': 'a dict ith the corresponding columns and their values'}]
+example: {'condition':{'location':'berlin','year':{'min':2002,'max':2007}}
+"
+88,1526,"For the customer who paid 634.8 in 2012/8/25, what was the consumption decrease rate from Year 2012 to 2013?",challenging,getValues,debit_card_specializing,extract customer ID from the filtered transaction,"function name:getValues
+base_api: http://127.0.0.1:5200/getValues
+description: Retrieves specififed data values in a list format
+filter_dict: [{'columns': 'a column on wihich to match'}, {'values': 'a dict with a value to match if None returns the all columns from columns'}]
+example: filter_dict:{'values':'None','column':'customer_id'}
+"
+89,1526,"For the customer who paid 634.8 in 2012/8/25, what was the consumption decrease rate from Year 2012 to 2013?",challenging,retrieve,debit_card_specializing,"retrieve consumption data from ""yearmonth""","function name:retrieve
+description: retrieves the specified data product, takes the data products name and a list of requested columns as arguments
+filter_dict: [{'product': 'product url'}]
+"
+90,1526,"For the customer who paid 634.8 in 2012/8/25, what was the consumption decrease rate from Year 2012 to 2013?",challenging,filter,debit_card_specializing,filter for consumption data for the extracted customer ID for the years 2012 and 2013,"function name:filter
+base_api: http://127.0.0.1:5200/filter
+description: filters a data product based on the provided filterdict, it filters row wise keeping all input columns
+filter_dict: [{'conditions': 'a dict ith the corresponding columns and their values'}]
+example: {'condition':{'location':'berlin','year':{'min':2002,'max':2007}}
+"
+91,1526,"For the customer who paid 634.8 in 2012/8/25, what was the consumption decrease rate from Year 2012 to 2013?",challenging,,debit_card_specializing,calculate the consumption decrease rate from 2012 to 2013,
+92,1526,"For the customer who paid 634.8 in 2012/8/25, what was the consumption decrease rate from Year 2012 to 2013?",challenging,returnResult,debit_card_specializing,return finished product,"function name:returnResult
+description: retrieves or extracts  the previously computed data, specified  by the columns in a dataframe
+filter_dict: [{'columns': 'which columns to retrun/extract'}]
+"
+93,36,Under whose administration is the school with the highest number of students scoring 1500 or more on the SAT? Indicate their full names.,challenging,retrieve,california_schools,Retrieve SAT scores data,"function name:retrieve
+description: retrieves the specified data product, takes the data products name and a list of requested columns as arguments
+filter_dict: [{'product': 'product url'}]
+"
+94,36,Under whose administration is the school with the highest number of students scoring 1500 or more on the SAT? Indicate their full names.,challenging,filter,california_schools,Filter for students scoring 1500 or more,"function name:filter
+base_api: http://127.0.0.1:5200/filter
+description: filters a data product based on the provided filterdict, it filters row wise keeping all input columns
+filter_dict: [{'conditions': 'a dict ith the corresponding columns and their values'}]
+example: {'condition':{'location':'berlin','year':{'min':2002,'max':2007}}
+"
+95,36,Under whose administration is the school with the highest number of students scoring 1500 or more on the SAT? Indicate their full names.,challenging,sum,california_schools,Calculate the number of students scoring 1500 or more,"function name:sum
+base_api: http://127.0.0.1:5200/sum
+description: Calcuates the sum of a dataframe based on a list of group_by columns and
+filter_dict: [{'group_by': 'a list of coulmns in the dataframe, can be None'}, {'columns': 'a list of columns for hicht the sum should be calculated, cant be None'}]
+"
+96,36,Under whose administration is the school with the highest number of students scoring 1500 or more on the SAT? Indicate their full names.,challenging,max,california_schools,Identify the school with the highest number of students,"function name:max
+base_api: http://127.0.0.1:5200/max
+description: Retrieves the maximum value for a list of specified columns in a dataframe
+return_type: single value
+filter_dict: [{'columns': 'a list of columns for which the maximum should be retrieved'}, {'rows': 'number of rows to be returned'}]
+"
+97,36,Under whose administration is the school with the highest number of students scoring 1500 or more on the SAT? Indicate their full names.,challenging,retrieve,california_schools,Retrieve administrative details,"function name:retrieve
+description: retrieves the specified data product, takes the data products name and a list of requested columns as arguments
+filter_dict: [{'product': 'product url'}]
+"
+98,36,Under whose administration is the school with the highest number of students scoring 1500 or more on the SAT? Indicate their full names.,challenging,combine,california_schools,Combine the school information with administrative details,"function name:combine
+description: combines to data products via a join
+filter_dict: [{'columns_left': 'which columns of the first data product to match on'}, {'columns_right': 'which columns of the second data product to match on'}, {'type': 'equal or unequal'}]
+"
+99,36,Under whose administration is the school with the highest number of students scoring 1500 or more on the SAT? Indicate their full names.,challenging,returnResult,california_schools,Return the full names of the administration,"function name:returnResult
+description: retrieves or extracts  the previously computed data, specified  by the columns in a dataframe
+filter_dict: [{'columns': 'which columns to retrun/extract'}]
+"
