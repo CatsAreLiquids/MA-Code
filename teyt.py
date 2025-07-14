@@ -52,12 +52,39 @@ def rephrase_query_prod(step,org):
 
 org = "What is Copycat's race?"
 step = "retrieve race dataset"
-print(rephrase_query_prod(step, org))
 
-a = pd.DataFrame({"a":[1,2],"b":[3,4]})
-b =np.asarray(pd.DataFrame({"a":[1],"b":[3]}))
-print(b)
-print(b==a)
-print((a == b).all(1).any())
+#print(rephrase_query_prod(step, org))
+
+a =set([(1,2),(2,3)])
+b = set([(1,2),(5,4)])
+print(a&b)
+print(a-b)
+print(b-a)
+
+def _get_df(product, collection):
+    response = requests.get(f"http://127.0.0.1:5000/products/{collection}/{product}")
+    content = json.loads(response.text)
+    df = pd.read_json(io.StringIO(content['data']))
+    return df
 
 
+def q_892():
+    df1 = _get_df("drivers", "formula_1")
+    df2 = _get_df("results", "formula_1")
+    df2 = df2.groupby(by=["driverId"])
+    df2 = df2["points"].sum()
+    df2 = df2.nlargest(n=1)
+
+    res = df1.merge(df2, suffixes=["", "_y"], left_on="driverId", right_on='driverId')
+    res.drop(res.filter(regex='_y$').columns, axis=1, inplace=True)
+    print(res.columns)
+    res = res.drop(labels=["points"],axis=1)
+    res.to_csv("sql_result_892.csv",index=False)
+    """
+    {"plans": [{"function": "http://127.0.0.1:5200/retrieve","filter_dict": {"product": "http://127.0.0.1:5000/products/formula_1/drivers"}},
+               {"function": "http://127.0.0.1:5200/retrieve","filter_dict": {"product": "http://127.0.0.1:5000/products/formula_1/results"}},
+               {"function": "http://127.0.0.1:5200/sum", "filter_dict": {"group_by": "driverId", "column": "points"}},
+               {"function": "http://127.0.0.1:5200/max", "filter_dict": {"columns": "driverId", "rows": 1}},
+               {"function":'combination', 'filter_dict': {"columns_left": "driverId", "columns_right": "driverId", "type": "equals", "values": ["None"]}}]}
+    """
+q_892()

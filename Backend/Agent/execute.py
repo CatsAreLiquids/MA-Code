@@ -136,7 +136,7 @@ def execute_new(agent_result):
         else:
             df = _putDataProduct(df, elem)
             frames["df_" + str(i)] = df
-        #print(frames["df_" + str(i)])
+        #print(frames["df_" + str(i)],type(frames["df_" + str(i)]))
 
     return frames["df_" + str(i)]
 
@@ -179,9 +179,11 @@ if __name__ == "__main__":
                                        'values': ['None']}},
                    {"function": "http://127.0.0.1:5200/sum", "values": {"group_by": "superhero_name", "column": "weight_kg"}}]}
     #{"function":'combination', 'filter_dict': {"columns_left": "code", "columns_right": "setCode", "type": "equals", "values": ["None"]}}
-    l ={"plans":[{"function":"http://127.0.0.1:5200/retrieve","filter_dict":{"product":"http://127.0.0.1:5000/products/toxicology/bond"}},
-{"function":"http://127.0.0.1:5200/count","filter_dict":{"columns":"bond_id","unique":"False","group_by":["bond_type"]}},
-{"function":"http://127.0.0.1:5200/max","filter_dict":{"columns":"count","rows":1}}]}
+    l ={"plans": [{"function": "http://127.0.0.1:5200/retrieve","filter_dict": {"product": "http://127.0.0.1:5000/products/formula_1/drivers"}},
+               {"function": "http://127.0.0.1:5200/retrieve","filter_dict": {"product": "http://127.0.0.1:5000/products/formula_1/results"}},
+               {"function": "http://127.0.0.1:5200/sum", "filter_dict": {"group_by": "driverId", "column": "points"}},
+               {"function": "http://127.0.0.1:5200/max", "filter_dict": {"columns": "driverId", "rows": 1}},
+               {"function":'combination', 'filter_dict': {"columns_left": "driverId", "columns_right": "driverId", "type": "equals", "values": ["None"]}}]}
 
 
 
@@ -189,4 +191,5 @@ if __name__ == "__main__":
 
 
 
-    #print("result",execute_new(l))
+
+    print("result",execute_new(l))

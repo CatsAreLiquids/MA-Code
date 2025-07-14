@@ -12,7 +12,6 @@ import duckdb
 import requests
 import json
 import io
-import sql_results
 
 load_dotenv()
 pd.set_option('display.max_columns', None)
@@ -32,25 +31,55 @@ def eval_rows(ref, test):
 
     for i in range(test.shape[0]):
         tmp = np.asarray(test.iloc[i])
-        if (ref == tmp).all(1).any():
-            tp += 1
-        else:
-            fp += 1
+        try:
+            if (ref == tmp).all(1).any():
+                tp += 1
+            else:
+                fp += 1
+        except ValueError:
+            print(ref.shape,tmp.shape)
+            if (ref == tmp).all().any():
+                tp += 1
+            else:
+                fp += 1
 
     for i in range(ref.shape[0]):
         tmp = np.asarray(ref.iloc[i])
-        if (test == tmp).all(1).any():
-            pass
-        else:
-            fn += 1
+        try:
+            if (test == tmp).all(1).any():
+                pass
+            else:
+                fn += 1
+        except ValueError:
+            print(test.shape,tmp.shape)
+            if (test == tmp).all().any():
+                pass
+            else:
+                fn += 1
+
+    try :
+        p = tp / (tp + fp)
+    except ZeroDivisionError:
+        p = 0
+
+    try :
+        r = tp / (tp + fn)
+    except ZeroDivisionError:
+        r = 0
+
+    return p, r
+
+
+def eval_by_index(ref, test,columns):
+
+    ref = set(ref[columns].tolist())
+    test = set(test[columns].tolist())
+
+    tp = len(ref & test)
+    fn = len(ref - test)
+    fp = len(test - ref)
 
     return tp / (tp + fp), tp / (tp + fn)
-
-
-def eval_columns(ref, test):
-    ref = ref.to_list()
-    test = test.to_list()
-
 
 def test_plan(file):
     df = pd.read_csv(file)
@@ -58,25 +87,24 @@ def test_plan(file):
     precision = []
     recall = []
     time_ = []
-    p = {"plans":[{"function":"http://127.0.0.1:5200/retrieve","filter_dict":{"product":"http://127.0.0.1:5000/products/card_games/cards"}},{"function":"http://127.0.0.1:5200/filter","filter_dict":{"conditions":{"cardKingdomFoilId":"not empty","cardKingdomId":"not empty"}}}]}
-    t = sql_results.res_dict["340"]
-    pre, re = eval_rows(t, p)
-    """
+
+
     for index, row in df.iterrows():
+        print(row['question_id'])
         start = time.time()
         p = execute.execute_new(ast.literal_eval(row["plan"]))
         end = time.time()
-        t = sql_results.res_dict[str(row["question_id"])]
-        pre, re = eval_rows(t, p)
-        #except:
-        #    print("meh")
-        #    pre= 0
-        #    re = 0
+        t = pd.read_csv(f"results/sql_result_{row['question_id']}.csv")
+        if row['type'] == "index":
+            pre, re = eval_by_index(t, p,row['columns'])
+        else:
+            pre, re = eval_rows(t, p)
+
         precision.append(pre)
         recall.append(re)
         time_.append(end-start)
         print(end-start)
-    """
+
     df["precision"] = precision
     df["recall"] = recall
 
