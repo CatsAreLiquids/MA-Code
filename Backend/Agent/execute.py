@@ -41,7 +41,6 @@ def _getDataProduct(url):
 
 # TODO manage when data is to big
 def _putDataProduct(df, function):
-
     if 'values' in function:
         args = json.dumps(function['values'])
     if 'filter_dict' in function:
@@ -119,45 +118,27 @@ def execute_new(agent_result):
     plans = agent_result['plans']
 
     frames = {}
-    i = 0
+    i = -1
     for elem in plans:
-        if isinstance(elem,list):
-            for elem_elem in elem:
-                print(elem_elem)
-                if elem_elem['function'] == 'http://127.0.0.1:5200/retrieve':
-                    df = getData(elem_elem['values'])
-                else:
-                    df = _putDataProduct(df, elem_elem)
-            frames["df_" + str(i)] = df
+        #print(elem)
+        if elem['function'] == 'http://127.0.0.1:5200/retrieve':
+            df = getData(elem['filter_dict'])
             i += 1
+            frames["df_" + str(i)] = df
+        elif elem['function'] == "combination":
+            previous = frames["df_" + str(i - 1)]
+            new = frames["df_" + str(i)]
+            df = _putDataProductCombination(previous, new, elem['filter_dict'])
+
+            i += 1
+            frames["df_" + str(i)] = df
 
         else:
-            print(elem)
-            if elem['function'] == 'http://127.0.0.1:5200/retrieve':
-                df = getData(elem['values'])
-            else:
-                df = _putDataProduct(df, elem)
+            df = _putDataProduct(df, elem)
             frames["df_" + str(i)] = df
-            i += 1
+        #print(frames["df_" + str(i)])
 
-    #if len(plans) -1 != len(combination): #& len(combination[0]) != 0:
-    #    return frames
-
-    if 'combination' in agent_result :
-        combination = agent_result['combination']
-    else:
-        combination = []
-
-    if len(combination) >= 1:
-        print("test")
-        previous = frames["df_0"]
-        for i in range(len(combination)):
-            new = frames["df_"+str(i+1)]
-            previous = _putDataProductCombination(previous,new,combination[i])
-    else:
-        previous = frames[f"df_{len(frames)-1}"]
-
-    return previous
+    return frames["df_" + str(i)]
 
 if __name__ == "__main__":
     plan = {"plans":[[{"function":"http://127.0.0.1:5200/retrieve","values":{"product":"http://127.0.0.1:5000/products/superhero/superhero"}},{"function":"http://127.0.0.1:5200/filter","values":{"conditions":{"full_name":"Karen Beecher-Duncan"}}}],[{"function":"http://127.0.0.1:5200/retrieve","values":{"product":"http://127.0.0.1:5000/products/superhero/colour"}}]] ,"combination":[{"columns_left":"eye_colour_id","columns_right":"id","type":"equals","values":["None"]} ] }
@@ -189,5 +170,23 @@ if __name__ == "__main__":
     plan = {"plans":[[{"function":"http://127.0.0.1:5200/retrieve","values":{"product":"http://127.0.0.1:5000/products/european_football_2/Match"}},{"function":"http://127.0.0.1:5200/count","values":{"group_by":["league_id"],"column":"league_id"}},{"function":"http://127.0.0.1:5200/max","values":{"column":"count","rows":1}}],[{"function":"http://127.0.0.1:5200/retrieve","values":{"product":"http://127.0.0.1:5000/products/european_football_2/League"}}]],"combination": [{"columns_left": "league_id", "columns_right": "id", "type": "equals", "values": ["None"]}]}
 
     #plan = {"plans":[[{"function":"http://127.0.0.1:5200/retrieve","values":{"product":"http://127.0.0.1:5000/products/student_club/Attendance"}},{"function":"http://127.0.0.1:5200/count","values":{"group_by":["link_to_member"],"columns":["link_to_member"]}},{"function":"http://127.0.0.1:5200/filter","values":{"conditions":{"count":{"min":7}}}}],[{"function":"http://127.0.0.1:5200/retrieve","values":{"product":"http://127.0.0.1:5000/products/student_club/Member"}}]],"combination": [{"columns_left": "link_to_member", "columns_right": "member_id", "type": "equals", "values": ["None"]}]}
+    l = {'plans': [{'function': 'http://127.0.0.1:5200/retrieve',
+                    'filter_dict': {'product': 'http://127.0.0.1:5000/products/superhero/superhero'}},
+                   {"function": "http://127.0.0.1:5200/filter", "values": {"conditions": {"superhero_name": "Copycat"}}},
+                   {'function': 'http://127.0.0.1:5200/retrieve',
+                    'filter_dict': {'product': 'http://127.0.0.1:5000/products/superhero/race'}}, {"function":
+                       'combination', 'filter_dict':{'columns_left': 'race_id', 'columns_right': 'id', 'type': 'equals',
+                                       'values': ['None']}},
+                   {"function": "http://127.0.0.1:5200/sum", "values": {"group_by": "superhero_name", "column": "weight_kg"}}]}
+    #{"function":'combination', 'filter_dict': {"columns_left": "code", "columns_right": "setCode", "type": "equals", "values": ["None"]}}
+    l ={"plans":[{"function":"http://127.0.0.1:5200/retrieve","filter_dict":{"product":"http://127.0.0.1:5000/products/toxicology/bond"}},
+{"function":"http://127.0.0.1:5200/count","filter_dict":{"columns":"bond_id","unique":"False","group_by":["bond_type"]}},
+{"function":"http://127.0.0.1:5200/max","filter_dict":{"columns":"count","rows":1}}]}
 
-    print("result",execute_new(plan))
+
+
+
+
+
+
+    #print("result",execute_new(l))

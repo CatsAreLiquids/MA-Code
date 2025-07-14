@@ -180,13 +180,33 @@ def collectContext():
     df["correct_context"] = correc_context
     #df.to_csv("bird_minidev_questions_functions_simple_eval.csv", index=False)
 
+def ground_truth_sql():
+    df1 = pd.read_csv("bird_minidev_questions.csv")
+    df2 = pd.read_csv("prototype_eval.csv")
+
+    res_df = df1.join(df2, rsuffix="_r",how="inner")
+    res_df = res_df.drop(columns=['plan','correc_context', 'correct_context', 'question_id_r', 'query_r',
+                                  'difficulty_r','description ','type','collection','difficulty'])
+
+    data = json.load(open("mini_dev_mysql.json"))
+    df = pd.DataFrame(data)
+
+    res_df = res_df.join(df, rsuffix="_r", how="inner")
+    print(res_df.columns)
+    res_df = res_df.drop(columns=['dataset', 'question', 'evidence', 'question_id_r','difficulty' ])
+    print(res_df.columns)
+    res_df.to_csv("product_sql.csv",index=False)
+
+
+
 
 if __name__ == "__main__":
     # createTestFile()
     # createEval()
     #createFunc_Gen_Eval()
     df = pd.read_csv("bird_minidev_questions.csv")
+    #ground_truth_sql()
     #createTestset()
     #create_function_retrieval("bird_minidev_questions_eval.csv")
-    print(createBreakdown("Name the user that commented 'thank you user93!'"))
+    print(createBreakdown("Rank schools by their average score in Writing where the score is greater than 499, showing their charter numbers."))
     #collectContext()

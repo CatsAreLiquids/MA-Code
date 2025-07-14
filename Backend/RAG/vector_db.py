@@ -227,7 +227,7 @@ if __name__ == "__main__":
 
     #add_Functions("sortby")
     #delete(id = ["6ae8dcee-a32f-44cd-a31c-de0c8b088a62"])
-    #get_docs_score(query = "",max= 30,filter={"type": {"$eq": "function_name"}})#,filter={"type": {"$eq": "product"}}
+    get_docs_score(query = "",max= 30,filter={"type": {"$eq": "function_NoManual"}})#,filter={"type": {"$eq": "product"}}
     #delete(id=['77b63c2e-cbcd-4a4a-82fc-f70aff8cef03','ef29f026-556c-4b3b-b40a-c4c3535b0798','5636a715-7631-4629-9f67-0cf5ceb92f32','162c47f8-6165-444c-99a1-5e241e6bc103','1a2e0673-9a8c-431e-a615-f8c97eb737ce','d0e7c96a-4879-4fa1-8c4f-90d18934d744'])
     #add_Functions(None)
     #add_docs("california_schools",None)

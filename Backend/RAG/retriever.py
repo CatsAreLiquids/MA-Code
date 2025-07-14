@@ -232,6 +232,36 @@ def getEvaluationChain(sys_prompt, config, query,collection=None):
 
     return {"response": llm.invoke(messages).content, "docs": docs}
 
+def product_rag(query):
+    sys_prompt = """Your task is to help find the best fitting data product. You are provided with a user query.
+                Provide the most likely fitting data product, always provide the data products name and why it would fit this query.
+                Only provide one data product
+        Context: {context} 
+        The output should be a valid json with 'name': as the data product name and 'reason':
+    """
+    vector_store = models.getVectorStore()
+    llm = models.get_structured_LLM()
+
+    config = {"filter": {"type": {"$eq": "product"}}}
+    retriever = vector_store.as_retriever(search_kwargs=config,k=5)
+
+    bm25_retriever = _init_bm25(config,None)
+    ensemble_retriever = EnsembleRetriever(k=5,
+                                           retrievers=[bm25_retriever, retriever], weights=[0.5, 0.5]
+                                           )
+
+
+    docs = ensemble_retriever.invoke(query)
+    docs = [doc.page_content for doc in docs]
+
+    sys_prompt = PromptTemplate.from_template(sys_prompt).format(context=docs)
+    messages = [
+        ("system", sys_prompt),
+        ("human", query),
+    ]
+
+    return llm.invoke(messages)
+
 
 def collection_rag( query,config):
     collection = "collection_level"
@@ -263,7 +293,6 @@ def collection_rag( query,config):
         ("system", sys_prompt),
         ("human", query),
     ]
-
 
     return  llm.invoke(messages)
 

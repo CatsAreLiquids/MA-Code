@@ -17,48 +17,6 @@ from langchain_community.callbacks import get_openai_callback
 from Backend import models
 from Backend.Agent import execute
 from Backend.RAG import vector_db,retriever
-@tool
-def getCatalogItem(file):
-    """
-        Retrieves the data catalog entry for specific data product
-        file: the file name of a specific data product
-        :return: dict containing all information about the data product
-    """
-
-    if 'http' in file:
-        file = file.split("/")[-1]
-
-    response = requests.get("http://127.0.0.1:5000/catalog", json={"file": file})
-    return json.loads(response.text)
-
-@tool(parse_docstring=True)
-def getFunctionCatalog(func_name):
-    """
-    Retrieves the function catalog entry with further information
-    Args:
-        func_name: the name of a function
-    Returns:
-         a dict describing the function
-    """
-
-    response = requests.get("http://127.0.0.1:5200/catalog", json={"function_name": func_name})
-    return json.loads(response.text)
-
-@tool(parse_docstring=True)
-def getCatalogColumns(file):
-    """
-    Retrieves the data catalog entry for specific data product
-    Args:
-        file: the file name of a specific data product
-    Returns:
-         a list of all column names in the data product
-    """
-
-    if 'http' in file:
-        file = file.split("/")[-1]
-
-    response = requests.get("http://127.0.0.1:5000/catalog/columns", json={"file": file})
-    return json.loads(response.text)
 
 
 @tool(parse_docstring=True)
@@ -76,8 +34,9 @@ def functionRetriever(step):
                 Context: {context} 
                 Answer:
     """
+
     mod_query = f"I am looking for a function that can solve the following problem for me :{step}"
-    config = {"filter":{"type":{"$eq":"function"}}}
+    config = {"filter":{"type":{"$eq":"function_NoManual"}}}
     retrieval_chain = retriever.getChain(prompt,config)
     return retrieval_chain.invoke(mod_query)
 
@@ -92,48 +51,21 @@ def productRetrieverStep(query, step):
     Returns:
         a text descrbing potential functions
     """
-    prompt = """Your task is to help find the best fitting data product. You are provided with a user query and a specific product that is searched for.
-                Provide the most likely fitting data products, always provide the data products name and why it would fit this query
-                
-        Question: {question} 
-        Context: {context} 
-        Answer:
-    """
-    mod_query = f"I am looking for data products that can answer the query: '{query}'\n Specifically the retrieval question {step} "
-    config = {"filter": {"type": {"$eq": "product"}}}
 
-    retrieval_chain = retriever.getChain(prompt,config)
-    return retrieval_chain.invoke(mod_query)
+    mod_query = f"I am looking for data products that can answer the query: '{query}'\n Specifically the retrieval question {step} "
+    #mod_query = f"I am looking for data products that can answer the query: '{step}'"
+
+    product = retriever.product_rag(mod_query)
+    print(product)
+    return product["name"]
+
 
 @tool(parse_docstring=True)
-def productRetriever(query):
-    """
-    Returns the describtion of a suitable dataproducts to answer the query. Only usefull when trying to retrieve data
-    Args:
-        query: a natural languge user query
-    Returns:
-        a text descrbing potential functions
-    """
-    prompt = """Your task is to help find the best fitting data product. You are provided with a user query .
-                Provide the most likely fitting data products, always provide the data products name and why it would fit this query
-        Question: {question} 
-        Context: {context} 
-        Answer:
-    """
-    mod_query = f"I am looking for data products that can answer the query: '{query}'"
-    config = {"filter": {"type": {"$eq": "product"}}}
-
-    retrieval_chain = retriever.getChain(prompt,config)
-    return retrieval_chain.invoke(mod_query)
-
-
-@tool(parse_docstring=False)
-def breakDownQuery(query: str):
+def breakDownQuery(query):
     """
     Breaks down a user query into its multiple steps
     Args:
         query:  a natural languge query
-        prod_descriptions: information about potentially fitting data products
     Returns:
         a list of steps necerssary to solve the query
     """
@@ -149,19 +81,18 @@ def breakDownQuery(query: str):
 
     sys_prompt = """ Your task is to explain how you would slove the provided query. For this break it down into sepereate retrieval, computation and combination steps.
                 You will be provided with information for fitting data products, keep the steps short but combine them if possible.
-                The word retrieve is reserved for when you need to get a data product
-                Multiple filter steps for the same product should be combined into one step 
+                The word retrieve is reserved for when you need to get a data product.
+                Multiple filter steps for the same product should be combined into one step. 
+                User returnResult for providing the finished product
                 Always do all steps necerssary for one product in a row.
                 When combining data always list both names 
                 
-                Return the steps as a orderd list.
                 Example: All customer data of customers who have bought at least 1 book
                 result: ["retrieve sales data","filter for customers who have bought 1 book","retrieve customer data","combine customers from sales data and custmer data","return finished product"] 
-                Example: The mall with the highest books sales
-                result: ["retrieve sales data","filter for book sales","calculate book sales and group by mall","combine customers from sales data and custmer data","return finished product"] 
                 
                 Return a valid json with the 'plan': generated list of steps, and the reasoning as 'explanation': why these steps are needed and in which order
         """
+
     input_prompt = PromptTemplate.from_template("""
                 User Query:{query}
                 product catalog :{catalog}
@@ -177,17 +108,25 @@ def breakDownQuery(query: str):
     return response["plan"]
 
 
-@tool(parse_docstring=False)
-def transformRetrieval(step: str, prod_description: str, columns: list[str]):
+@tool(parse_docstring=True)
+def generate_retrieve(step, product_name):
     """
     Breaks down a user query into its multiple steps
     Args:
         step:  a retrieval step in a query that is being solved
-        prod_description: a data product description can be retrieved with the getCatalogItems Tool
-        columns: relevant columns for the query
+        product_name: the name of the data product
     Returns:
         a dict containing a function api and its parameters
     """
+
+    # Retrieve corresponding data catalog
+
+    if 'http' in product_name:
+        product_name = file.split("/")[-1]
+
+    response = requests.get("http://127.0.0.1:5000/catalog", json={"file": product_name})
+    catalog = json.loads(response.text)
+
     sys_prompt = """ Your task is generate a retrieval step, follow the example below:
                     
                     Example:
@@ -203,17 +142,15 @@ def transformRetrieval(step: str, prod_description: str, columns: list[str]):
                     - invoice_date
                     - shopping_mall
 
-                    {{"function":"http://127.0.0.1:5200/retrieve","filter_dict":{{"product":"http://127.0.0.1:5000/products/Sales_Data/customer_data_23" }} }}
+                    Result: {{"function":"http://127.0.0.1:5200/retrieve","filter_dict":{{"product":http://127.0.0.1:5000/products/Sales_Data/sales_data_23 }} }}
                     
-                    The result should be a vaild json with "function": the api to call and "filter_dict" : a dict containin the key product and the product api
-                    
- """
+                    The result should be a vaild json with "function": the api to call and "filter_dict" : a dict containin the key product and the product api       
+    """
     input_prompt = PromptTemplate.from_template("""
                 step:{step}
-                prod_description: {prod_description}
-                columns: {columns}
+                catalog: {catalog}
                 """)
-    input_prompt = input_prompt.format(step=step, prod_description=prod_description, columns=columns)
+    input_prompt = input_prompt.format(step=step, catalog=catalog)
     messages = [
         ("system", sys_prompt),
         ("human", input_prompt),
@@ -251,33 +188,11 @@ def generate_function_call(step: str,function_name:str):
                     **Filter Dictionary**:
                     - `group_by`: A list of columns in the dataframe (can be None).
                     - `columns`: A list of columns for which the sum should be calculated (cannot be None).
-                    columns: ["invoice_no","customer_id","category","quantity","price","invoice_date","shopping_mall"]
                     
-                    result : {{"function":"http://127.0.0.1:5200/sum","values":{{"group_by":"shopping_mall","column":"quantity"}}
+                    result : {{"function":"http://127.0.0.1:5200/sum","filter_dict":{{"group_by":"shopping_mall","column":"quantity"}}
                     
-                    Example:
-                    step: identify the mall with the highest total items sold
-                    func_description:
-                    **Description**: The `max` function retrieves the maximum value for a specified list of columns in a dataframe. It requires a filter dictionary that includes the columns for which the maximum values should be retrieved.
-                    **API Endpoint**: `http://127.0.0.1:5200/max`
-                    **Filter Dictionary**: 
-                    - `columns`: A list of columns for which the maximum should be retrieved.
-                    columns: ["invoice_no","customer_id","category","quantity","price","invoice_date","shopping_mall"]
-                    
-                    result : {{"function":"http://127.0.0.1:5200/max","values":{{"column":"shopping_mall"}} }}
-                    
-                    Example:
-                    step: retrieve sales data from sales_data_23
-                    func_description:
-                    The most fitting function is **retrieve**. 
-                    **Description**: The `retrieve` function retrieves the specified data product by taking the data product's name and a list of requested columns as arguments. It allows users to access specific data points efficiently. 
-                    **Filter Dictionary**: 
-                    - `{'product': 'api of the data product'}`
-                    - `{'columns': 'list of columns to retrieve'}`
-                    columns: ["invoice_no","customer_id","category","quantity","price","invoice_date","shopping_mall"]
-                    
-                    result : {{"function":"http://127.0.0.1:5200/retrieve","values":{{"columns":["invoice_no","customer_id","category","quantity","price","invoice_date","shopping_mall"],"product":"http://127.0.0.1:5000/products/Sales_Data/customer_data_23" }} }}
-        """
+                    The result should be a vaild json with "function": the api to call and "filter_dict" : a dict containin the key product and the product api
+                    """
     input_prompt = PromptTemplate.from_template("""
                 step:{step}
                 func_description: {func_description}
@@ -293,26 +208,35 @@ def generate_function_call(step: str,function_name:str):
     return llm.invoke(messages)
 
 
-@tool(parse_docstring=False)
-def transformCombination(step: str,  columns_left: list[str],columns_right: list[str]):
+@tool(parse_docstring=True)
+def generate_combination(step,first_product_name,second_product_name):
     """
-    Breaks down a user query into its multiple steps
+    Creates a the combination step
     Args:
         step:  a step in a query that is being solved
-        func_description: a describtion of the function, get it from the functionRetriever tool
-        columns: a list of columns in a data product that is needed to solve step
+        first_product_name: name of the first product that should be combined can be found with the productRetrieverStep tool
+        second_product_name: name of the second product that should be combined can be found with the productRetrieverStep tool
     Returns:
         a dict containing a function api and its parameters
     """
-    sys_prompt = """ Your task is to combine all previously gatherd data into a preset output. use the following examples as a guide:
-                     Make sure that you only use 
+    response = requests.get("http://127.0.0.1:5000/catalog/columns", json={"file": first_product_name})
+    columns_left = json.loads(response.text)
+
+    response = requests.get("http://127.0.0.1:5000/catalog/columns", json={"file": second_product_name})
+    columns_right = json.loads(response.text)
+
+    sys_prompt = """ Your task is to combine all previously gatherd data into a preset output. 
+                    The you are give a description of the step, and the list of all columns of the first data product and the second data product
+                    use the following examples as a guide:
+                     
                     Example:
-                    step: combine customers from sales data and custmer data
-                    columns_left: [customer_id]
-                    columns_right: [customer_id]
+                    step: combine customers from sales data and customer data
+                    columns_left: [invoice_no,customer_id,category,quantity,price,invoice_date,shopping_mall]
+                    columns_right: [customer_id,gender,age,payment_method]
 
-                    result : "combination":[{{"column":"customer_id","type":"equals","values":["None"]}} ]
-
+                    result : {{"function":"combination","filter_dict":{{"columns_left":"customer_id","columns_right":"customer_id","type":"equals","values":["None"]}} }}
+                    
+                    The result should be a vaild json with "function":"combination" and "filter_dict" containing the keys columns_left,columns_right,type and values set to the corresponding value
                      """
     input_prompt = PromptTemplate.from_template("""
                 step:{step}
@@ -325,7 +249,45 @@ def transformCombination(step: str,  columns_left: list[str],columns_right: list
         ("human", input_prompt),
     ]
 
-    llm = models.get_LLM()
+    llm = models.get_structured_LLM()
+
+    return llm.invoke(messages)
+
+@tool(parse_docstring=True,return_direct=True)
+def generate_output(steps, function_calls):
+    """
+    Breaks down a user query into its multiple steps
+    Args:
+        function_calls:  a list the output from the generate_function_call Tool or generate_combination Tool
+        steps: the list of steps necerssary to solve the problem
+    Returns:
+        a dict containing a function api and its parameters
+    """
+    sys_prompt = """ Your task is to combine all previously gatherd data into a preset output. 
+                    The result should be a orderd list of function calls according to the steps 
+                    
+                    Example:
+                    steps: ["retrieve sales data","filter for book sales","group sales by shoping mall","sort sales by quantity descending"]
+                    function_calls:[{{"function":"http://127.0.0.1:5200/retrieve","filter_dict":{{"product":"http://127.0.0.1:5000/products/Sales_Data/sales_data_23"}} }},
+                    {{"function":"http://127.0.0.1:5200/sum","filter_dict":{{"group_by":"shopping_mall","column":"quantity"}} }},
+                    {{"function":"http://127.0.0.1:5200/filter","filter_dict":{{"columns":"category","criteria":{{"category":"book"}} }} }}
+                    {{"function":"http://127.0.0.1:5200/sortby","filter_dict":{{"columns":"quantity","order":"descending"}} }}]
+                
+                    result: [{{"function":"http://127.0.0.1:5200/retrieve","filter_dict":{{"product":"http://127.0.0.1:5000/products/Sales_Data/sales_data_23"}} }},{{"function":"http://127.0.0.1:5200/filter","filter_dict":{{"columns":"category","criteria":{{"category":"book"}} }} }},{{"function":"http://127.0.0.1:5200/sum","filter_dict":{{"group_by":"shopping_mall","column":"quantity"}} }},{{"function":"http://127.0.0.1:5200/sortby","filter_dict":{{"columns":"quantity","order":"descending"}} }} ]
+                    
+                    the result should be a list of valid jsons with 'plans': list of function calls
+                     """
+    input_prompt = PromptTemplate.from_template("""
+                function_calls: {function_calls}
+                steps:{steps}
+                """)
+    input_prompt = input_prompt.format(steps=steps, function_calls=function_calls)
+    messages = [
+        ("system", sys_prompt),
+        ("human", input_prompt),
+    ]
+
+    llm = models.get_structured_LLM()
 
     return llm.invoke(messages)
 
@@ -336,13 +298,7 @@ def init_agent():
                     1. break down the query into its sub steps using the breakDownQuery tool
                     2. for each substep identfiy the necerssary function call using the functionRetriever and productRetriever tool
                     3. transfrom the output to fit the schema
-                
-                    Example:
-                    user:"The mall ith the most items sold"
-                    output:  {{"plans":[{{"function":"http://127.0.0.1:5200/retrieve","values":{{"product":"http://127.0.0.1:5000/products/Sales_Data/sales_data_23","columns":["invoice_no","customer_id","category","quantity","price","invoice_date","shopping_mall"]}} }},{{"function":"http://127.0.0.1:5200/filter","values":{{"columns":"category","criteria":{{"category":"book"}} }} }},{{"function":"http://127.0.0.1:5200/sum","values":{{"group_by":"shopping_mall","column":"quantity"}} }},{{"function":"http://127.0.0.1:5200/sortby","values":{{"columns":"quantity","order":"descending"}} }}],"combination":[] }}
-                    user: "All customer data of customers who have bought at least 1 book"
-                    output: {{"plans":[{{"function":"http://127.0.0.1:5200/retrieve","values":{{"product":"http://127.0.0.1:5000/products/Sales_Data/customer_data_23","columns":["customer_id","category"]}} }},{{"function":"http://127.0.0.1:5200/filter","values":{{"columns":{{"category":"book"}} }} }},{{"function":"http://127.0.0.1:5200/getRows","values":{{"filter_dict":{{"values":"None","column":"customer_id"}} }} }},{{"function":"http://127.0.0.1:5200/retrieve","values":{{"product":"http://127.0.0.1:5000/products/Sales_Data/sales_data_23","columns":["customer_id","gender","age","payment_method"]}} }}],"combination":[{{"column":"customer_id","type":"equals","values":["None"]}} ] }}
-                    Do only return the result, keep to the provided schema, and do not explain it 
+                    4. directly return the result of the generate_output tool
         """
     prompt = ChatPromptTemplate.from_messages(
         [
@@ -352,10 +308,10 @@ def init_agent():
         ]
     )
 
-    tools = [breakDownQuery, getCatalogItem,functionRetriever,productRetrieverStep,generate_function_call,getFunctionCatalog,transformRetrieval,transformCombination]
+    tools = [breakDownQuery, functionRetriever,productRetrieverStep,generate_function_call,generate_combination,generate_output,generate_retrieve]
 
     agent = create_tool_calling_agent(models.get_LLM(), tools, prompt)
-    return AgentExecutor(agent=agent, tools=tools, verbose=True)
+    return AgentExecutor(agent=agent, tools=tools, verbose=True,return_intermediate_steps=True)
 
 if __name__ == "__main__":
     #print(functionRetriever.invoke("filter sales data for the book category"))
@@ -385,14 +341,16 @@ if __name__ == "__main__":
         sql = "The mall with the highest books sales"
 
         #sql = "All customer data of customers who have bought at least 1 book"
-        sql = "What is the Simplified Chinese translation of the name of the set 'Eighth Edition'?"
+        sql = "What is Copycat's race?"
         #print(breakDownQuery.invoke({"query":sql}))
-        agent_result = agent_i.invoke({'input': sql})['output']
+        agent_result = agent_i.invoke({'input': sql})
+        plan = agent_result['output']
         #agent_result = {"plans":[{"function":"http://127.0.0.1:5200/retrieve","values":{"columns":["Text","UserId","UserDisplayName"],"product":"http://127.0.0.1:5000/products/codebase_community/comments"}},{"function":"http://127.0.0.1:5200/filter","values":{"conditions":{"Text":"thank you user93!"}}},{"function":"http://127.0.0.1:5200/sortby","values":{"columns":["UserId","UserDisplayName"],"ascending":"True"}},{"function":"http://127.0.0.1:5200/sum","values":{"group_by":null,"columns":["UserId","UserDisplayName"]}}],"combination":[]}
-        print(agent_result)
-        agent_result = ast.literal_eval(agent_result)
+        print(agent_result['output'])
+        #agent_result = ast.literal_eval(agent_result)
         #agent_result = {"plans":[[{"function":"http://127.0.0.1:5200/retrieve","values":{"product":"http://127.0.0.1:5000/products/Sales_Data/sales_data_23","columns":["invoice_no","customer_id","category","quantity","price","invoice_date","shopping_mall"]}},{"function":"http://127.0.0.1:5200/filter","values":{"conditions":{"category":"books"},"columns":["invoice_no","customer_id","category","quantity","price","invoice_date","shopping_mall"]}},{"function":"http://127.0.0.1:5200/sum","values":{"group_by":"shopping_mall","column":"quantity"}},{"function":"http://127.0.0.1:5200/sortby","values":{"columns":["shopping_mall","quantity"]}}]],"combination":[] }
         #agent_result = {"plans":[{"function":"http://127.0.0.1:5200/retrieve","values":{"product":"http://127.0.0.1:5000/products/Sales_Data/sales_data_23","columns":["invoice_no","customer_id","category","quantity","price","invoice_date","shopping_mall"]}},{"function":"http://127.0.0.1:5200/filter","values":{"columns":["customer_id","category"],"conditions":[{"column":"category","value":"book"}]}},{"function":"http://127.0.0.1:5200/retrieve","values":{"product":"http://127.0.0.1:5000/products/Sales_Data/customer_data","columns":["customer_id","gender","age","payment_method"]}}],"combination":[{"column":"customer_id","type":"equals","values":["None"]}]}
         #agent_result = {"plans":[{"function":"http://127.0.0.1:5200/retrieve","values":{"columns":["Text","UserId","UserDisplayName"],"product":"http://127.0.0.1:5000/products/codebase_community/comments"}},{"function":"http://127.0.0.1:5200/filter","values":{"columns":["Text"],"criteria":{"Text":"thank you user93!"}}},{"function":"http://127.0.0.1:5200/min","values":{"columns":["UserId","UserDisplayName"],"rows":1}},{"function":"http://127.0.0.1:5200/max","values":{"columns":["UserId","UserDisplayName"],"rows":1}}],"combination":[]}
 
-        print(execute.execute_new(agent_result))
+
+        print(execute.execute_new(plan))

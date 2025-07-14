@@ -1,0 +1,482 @@
+question_id,query,products,db_id,SQL
+1471,What is the ratio of customers who pay in EUR against customers who pay in CZK?,['customers'],debit_card_specializing,SELECT  CAST(SUM(CASE WHEN `Currency` = 'EUR' THEN 1 ELSE 0 END) AS DOUBLE) / SUM(CASE WHEN `Currency` = 'CZK' THEN 1 ELSE 0 END) FROM `customers`
+1472,"In 2012, who had the least consumption in LAM?","['yearmonth', 'customers']",debit_card_specializing,"SELECT
+  `T1`.`CustomerID`
+FROM `customers` AS `T1`
+INNER JOIN `yearmonth` AS `T2`
+  ON `T1`.`CustomerID` = `T2`.`CustomerID`
+WHERE
+  `T1`.`Segment` = 'LAM' AND SUBSTR(`T2`.`Date`, 1, 4) = '2012'
+GROUP BY
+  `T1`.`CustomerID`
+ORDER BY
+  SUM(`T2`.`Consumption`) ASC
+LIMIT 1"
+1473,What was the average monthly consumption of customers in SME for the year 2013?,"['yearmonth', 'customers']",debit_card_specializing,"SELECT
+  AVG(`T2`.`Consumption`) / 12
+FROM `customers` AS `T1`
+INNER JOIN `yearmonth` AS `T2`
+  ON `T1`.`CustomerID` = `T2`.`CustomerID`
+WHERE
+  SUBSTR(`T2`.`Date`, 1, 4) = '2013' AND `T1`.`Segment` = 'SME'"
+1476,What was the difference in gas consumption between CZK-paying customers and EUR-paying customers in 2012?,"['yearmonth', 'customers']",debit_card_specializing,"SELECT
+  SUM(CASE WHEN `T1`.`Currency` = 'CZK' THEN `T2`.`Consumption` ELSE 0 END) - SUM(CASE WHEN `T1`.`Currency` = 'EUR' THEN `T2`.`Consumption` ELSE 0 END)
+FROM `customers` AS `T1`
+INNER JOIN `yearmonth` AS `T2`
+  ON `T1`.`CustomerID` = `T2`.`CustomerID`
+WHERE
+  SUBSTR(`T2`.`Date`, 1, 4) = '2012'"
+1479,Which year recorded the most consumption of gas paid in CZK?,"['yearmonth', 'customers']",debit_card_specializing,"SELECT
+  SUBSTR(`T2`.`Date`, 1, 4)
+FROM `customers` AS `T1`
+INNER JOIN `yearmonth` AS `T2`
+  ON `T1`.`CustomerID` = `T2`.`CustomerID`
+WHERE
+  `T1`.`Currency` = 'CZK'
+GROUP BY
+  SUBSTR(`T2`.`Date`, 1, 4)
+ORDER BY
+  SUM(`T2`.`Consumption`) DESC
+LIMIT 1"
+1480,What was the gas consumption peak month for SME customers in 2013?,"['yearmonth', 'customers']",debit_card_specializing,"SELECT
+  SUBSTR(`T2`.`Date`, 5, 2)
+FROM `customers` AS `T1`
+INNER JOIN `yearmonth` AS `T2`
+  ON `T1`.`CustomerID` = `T2`.`CustomerID`
+WHERE
+  SUBSTR(`T2`.`Date`, 1, 4) = '2013' AND `T1`.`Segment` = 'SME'
+GROUP BY
+  SUBSTR(`T2`.`Date`, 5, 2)
+ORDER BY
+  SUM(`T2`.`Consumption`) DESC
+LIMIT 1"
+1481,"What is the difference in the annual average consumption of the customers with the least amount of consumption paid in CZK for 2013 between SME and LAM, LAM and KAM, and KAM and SME?","['yearmonth', 'customers']",debit_card_specializing,"SELECT
+  CAST(SUM(CASE WHEN `T1`.`Segment` = 'SME' THEN `T2`.`Consumption` ELSE 0 END) AS DOUBLE) / COUNT(`T1`.`CustomerID`) - CAST(SUM(CASE WHEN `T1`.`Segment` = 'LAM' THEN `T2`.`Consumption` ELSE 0 END) AS DOUBLE) / COUNT(`T1`.`CustomerID`),
+  CAST(SUM(CASE WHEN `T1`.`Segment` = 'LAM' THEN `T2`.`Consumption` ELSE 0 END) AS DOUBLE) / COUNT(`T1`.`CustomerID`) - CAST(SUM(CASE WHEN `T1`.`Segment` = 'KAM' THEN `T2`.`Consumption` ELSE 0 END) AS DOUBLE) / COUNT(`T1`.`CustomerID`),
+  CAST(SUM(CASE WHEN `T1`.`Segment` = 'KAM' THEN `T2`.`Consumption` ELSE 0 END) AS DOUBLE) / COUNT(`T1`.`CustomerID`) - CAST(SUM(CASE WHEN `T1`.`Segment` = 'SME' THEN `T2`.`Consumption` ELSE 0 END) AS DOUBLE) / COUNT(`T1`.`CustomerID`)
+FROM `customers` AS `T1`
+INNER JOIN `yearmonth` AS `T2`
+  ON `T1`.`CustomerID` = `T2`.`CustomerID`
+WHERE
+  `T1`.`Currency` = 'CZK'
+  AND `T2`.`Consumption` = (
+    SELECT
+      MIN(`Consumption`)
+    FROM `yearmonth`
+  )
+  AND `T2`.`Date` BETWEEN 201301 AND 201312"
+1482,"Which of the three segments—SME, LAM and KAM—has the biggest and lowest percentage increases in consumption paid in EUR between 2012 and 2013?","['yearmonth', 'customers']",debit_card_specializing,"SELECT
+  CAST((
+    SUM(
+      CASE
+        WHEN `T1`.`Segment` = 'SME' AND `T2`.`Date` LIKE '2013%'
+        THEN `T2`.`Consumption`
+        ELSE 0
+      END
+    ) - SUM(
+      CASE
+        WHEN `T1`.`Segment` = 'SME' AND `T2`.`Date` LIKE '2012%'
+        THEN `T2`.`Consumption`
+        ELSE 0
+      END
+    )
+  ) AS DOUBLE) * 100 / SUM(
+    CASE
+      WHEN `T1`.`Segment` = 'SME' AND `T2`.`Date` LIKE '2012%'
+      THEN `T2`.`Consumption`
+      ELSE 0
+    END
+  ),
+  CAST(SUM(
+    CASE
+      WHEN `T1`.`Segment` = 'LAM' AND `T2`.`Date` LIKE '2013%'
+      THEN `T2`.`Consumption`
+      ELSE 0
+    END
+  ) - SUM(
+    CASE
+      WHEN `T1`.`Segment` = 'LAM' AND `T2`.`Date` LIKE '2012%'
+      THEN `T2`.`Consumption`
+      ELSE 0
+    END
+  ) AS DOUBLE) * 100 / SUM(
+    CASE
+      WHEN `T1`.`Segment` = 'LAM' AND `T2`.`Date` LIKE '2012%'
+      THEN `T2`.`Consumption`
+      ELSE 0
+    END
+  ),
+  CAST(SUM(
+    CASE
+      WHEN `T1`.`Segment` = 'KAM' AND `T2`.`Date` LIKE '2013%'
+      THEN `T2`.`Consumption`
+      ELSE 0
+    END
+  ) - SUM(
+    CASE
+      WHEN `T1`.`Segment` = 'KAM' AND `T2`.`Date` LIKE '2012%'
+      THEN `T2`.`Consumption`
+      ELSE 0
+    END
+  ) AS DOUBLE) * 100 / SUM(
+    CASE
+      WHEN `T1`.`Segment` = 'KAM' AND `T2`.`Date` LIKE '2012%'
+      THEN `T2`.`Consumption`
+      ELSE 0
+    END
+  )
+FROM `customers` AS `T1`
+INNER JOIN `yearmonth` AS `T2`
+  ON `T1`.`CustomerID` = `T2`.`CustomerID`"
+1483,How much did customer 6 consume in total between August and November 2013?,['yearmonth'],debit_card_specializing,"SELECT
+  SUM(`Consumption`)
+FROM `yearmonth`
+WHERE
+  `CustomerID` = 6 AND `Date` BETWEEN '201308' AND '201311'"
+1484,"How many more ""discount"" gas stations does the Czech Republic have compared to Slovakia?",['gasstations'],debit_card_specializing,"SELECT
+  SUM(CASE WHEN `Country` = 'CZE' THEN 1 ELSE 0 END) - SUM(CASE WHEN `Country` = 'SVK' THEN 1 ELSE 0 END)
+FROM `gasstations`
+WHERE
+  `Segment` = 'Discount'"
+1486,"Is it true that more SMEs pay in Czech koruna than in euros? If so, how many more?",['customers'],debit_card_specializing,"SELECT
+  SUM(`Currency` = 'CZK') - SUM(`Currency` = 'EUR')
+FROM `customers`
+WHERE
+  `Segment` = 'SME'"
+1490,How many percent of LAM customer consumed more than 46.73?,"['yearmonth', 'customers']",debit_card_specializing,"SELECT
+  CAST(SUM(CASE WHEN `T2`.`Consumption` > 46.73 THEN 1 ELSE 0 END) AS DOUBLE) * 100 / COUNT(`T1`.`CustomerID`)
+FROM `customers` AS `T1`
+INNER JOIN `yearmonth` AS `T2`
+  ON `T1`.`CustomerID` = `T2`.`CustomerID`
+WHERE
+  `T1`.`Segment` = 'LAM'"
+1493,"In February 2012, what percentage of customers consumed more than 528.3?",['yearmonth'],debit_card_specializing,"SELECT
+  CAST(SUM(CASE WHEN `Consumption` > 528.3 THEN 1 ELSE 0 END) AS DOUBLE) * 100 / COUNT(`CustomerID`)
+FROM `yearmonth`
+WHERE
+  `Date` = '201202'"
+1498,What is the highest monthly consumption in the year 2012?,['yearmonth'],debit_card_specializing,"SELECT
+  SUM(`Consumption`)
+FROM `yearmonth`
+WHERE
+  SUBSTR(`Date`, 1, 4) = '2012'
+GROUP BY
+  SUBSTR(`Date`, 5, 2)
+ORDER BY
+  SUM(`Consumption`) DESC
+LIMIT 1"
+1500,"Please list the product description of the products consumed in September, 2013.","['products', 'transactions_1k', 'yearmonth']",debit_card_specializing,"SELECT
+  `T3`.`Description`
+FROM `transactions_1k` AS `T1`
+INNER JOIN `yearmonth` AS `T2`
+  ON `T1`.`CustomerID` = `T2`.`CustomerID`
+INNER JOIN `products` AS `T3`
+  ON `T1`.`ProductID` = `T3`.`ProductID`
+WHERE
+  `T2`.`Date` = '201309'"
+1501,"Please list the countries of the gas stations with transactions taken place in June, 2013.","['transactions_1k', 'gasstations', 'yearmonth']",debit_card_specializing,"SELECT DISTINCT
+  `T2`.`Country`
+FROM `transactions_1k` AS `T1`
+INNER JOIN `gasstations` AS `T2`
+  ON `T1`.`GasStationID` = `T2`.`GasStationID`
+INNER JOIN `yearmonth` AS `T3`
+  ON `T1`.`CustomerID` = `T3`.`CustomerID`
+WHERE
+  `T3`.`Date` = '201306'"
+1505,"Among the customers who paid in euro, how many of them have a monthly consumption of over 1000?","['yearmonth', 'customers']",debit_card_specializing,"SELECT
+  COUNT(*)
+FROM `yearmonth` AS `T1`
+INNER JOIN `customers` AS `T2`
+  ON `T1`.`CustomerID` = `T2`.`CustomerID`
+WHERE
+  `T2`.`Currency` = 'EUR' AND `T1`.`Consumption` > 1000.00"
+1506,Please list the product descriptions of the transactions taken place in the gas stations in the Czech Republic.,"['products', 'transactions_1k', 'gasstations']",debit_card_specializing,"SELECT DISTINCT
+  `T3`.`Description`
+FROM `transactions_1k` AS `T1`
+INNER JOIN `gasstations` AS `T2`
+  ON `T1`.`GasStationID` = `T2`.`GasStationID`
+INNER JOIN `products` AS `T3`
+  ON `T1`.`ProductID` = `T3`.`ProductID`
+WHERE
+  `T2`.`Country` = 'CZE'"
+1507,Please list the disparate time of the transactions taken place in the gas stations from chain no. 11.,"['transactions_1k', 'gasstations']",debit_card_specializing,"SELECT DISTINCT
+  `T1`.`Time`
+FROM `transactions_1k` AS `T1`
+INNER JOIN `gasstations` AS `T2`
+  ON `T1`.`GasStationID` = `T2`.`GasStationID`
+WHERE
+  `T2`.`ChainID` = 11"
+1509,"Among the transactions made in the gas stations in the Czech Republic, how many of them are taken place after 2012/1/1?","['transactions_1k', 'gasstations']",debit_card_specializing,"SELECT
+  COUNT(`T1`.`TransactionID`)
+FROM `transactions_1k` AS `T1`
+INNER JOIN `gasstations` AS `T2`
+  ON `T1`.`GasStationID` = `T2`.`GasStationID`
+WHERE
+  `T2`.`Country` = 'CZE'
+  AND DATE_FORMAT(CAST(`T1`.`Date` AS DATETIME), '%Y') >= '2012'"
+1514,What kind of currency did the customer paid at 16:25:00 in 2012/8/24?,"['transactions_1k', 'gasstations', 'customers']",debit_card_specializing,"SELECT DISTINCT
+  `T3`.`Currency`
+FROM `transactions_1k` AS `T1`
+INNER JOIN `gasstations` AS `T2`
+  ON `T1`.`GasStationID` = `T2`.`GasStationID`
+INNER JOIN `customers` AS `T3`
+  ON `T1`.`CustomerID` = `T3`.`CustomerID`
+WHERE
+  `T1`.`Date` = '2012-08-24' AND `T1`.`Time` = '16:25:00'"
+1515,What segment did the customer have at 2012/8/23 21:20:00?,"['transactions_1k', 'customers']",debit_card_specializing,"SELECT
+  `T2`.`Segment`
+FROM `transactions_1k` AS `T1`
+INNER JOIN `customers` AS `T2`
+  ON `T1`.`CustomerID` = `T2`.`CustomerID`
+WHERE
+  `T1`.`date` = '2012-08-23' AND `T1`.`time` = '21:20:00'"
+1521,"For all the transactions happened during 8:00-9:00 in 2012/8/26, how many happened in CZE?","['transactions_1k', 'gasstations']",debit_card_specializing,"SELECT
+  COUNT(`T1`.`TransactionID`)
+FROM `transactions_1k` AS `T1`
+INNER JOIN `gasstations` AS `T2`
+  ON `T1`.`GasStationID` = `T2`.`GasStationID`
+WHERE
+  `T1`.`Date` = '2012-08-26'
+  AND `T1`.`Time` BETWEEN '08:00:00' AND '09:00:00'
+  AND `T2`.`Country` = 'CZE'"
+1524,What's the nationality of the customer who spent 548.4 in 2012/8/24?,"['transactions_1k', 'gasstations']",debit_card_specializing,"SELECT
+  `T2`.`Country`
+FROM `transactions_1k` AS `T1`
+INNER JOIN `gasstations` AS `T2`
+  ON `T1`.`GasStationID` = `T2`.`GasStationID`
+WHERE
+  `T1`.`Date` = '2012-08-24' AND  `T1`.`Price` = 548.4"
+1525,What is the percentage of the customers who used EUR in 2012/8/25?,"['transactions_1k', 'customers']",debit_card_specializing,"SELECT
+  CAST(SUM(CASE WHEN `T2`.`Currency` = 'EUR' THEN 1 ELSE 0 END) AS DOUBLE) * 100 / COUNT(`T1`.`CustomerID`)
+FROM `transactions_1k` AS `T1`
+INNER JOIN `customers` AS `T2`
+  ON `T1`.`CustomerID` = `T2`.`CustomerID`
+WHERE
+  `T1`.`Date` = '2012-08-25'"
+1526,"For the customer who paid 634.8 in 2012/8/25, what was the consumption decrease rate from Year 2012 to 2013?","['yearmonth', 'gasstations', 'transactions_1k']",debit_card_specializing,"SELECT
+  CAST(SUM(CASE WHEN SUBSTR(`Date`, 1, 4) = '2012' THEN `Consumption` ELSE 0 END) - SUM(CASE WHEN SUBSTR(`Date`, 1, 4) = '2013' THEN `Consumption` ELSE 0 END) AS DOUBLE) / SUM(CASE WHEN SUBSTR(`Date`, 1, 4) = '2012' THEN `Consumption` ELSE 0 END)
+FROM `yearmonth`
+WHERE
+  `CustomerID` = (
+    SELECT
+      `T1`.`CustomerID`
+    FROM `transactions_1k` AS `T1`
+    INNER JOIN `gasstations` AS `T2`
+      ON `T1`.`GasStationID` = `T2`.`GasStationID`
+    WHERE
+      `T1`.`Date` = '2012-08-25' AND `T1`.`Price`  = 1513.12   )"
+1528,"What is the percentage of ""premium"" against the overall segment in Country = ""SVK""?",['gasstations'],debit_card_specializing,"SELECT
+  CAST(SUM(CASE WHEN `Country` = 'SVK' AND `Segment` = 'Premium' THEN 1 ELSE 0 END) AS DOUBLE) * 100 / SUM(CASE WHEN `Country` = 'SVK' THEN 1 ELSE 0 END)
+FROM `gasstations`"
+1529,"What is the amount spent by customer ""38508"" at the gas stations? How much had the customer spent in January 2012?","['transactions_1k', 'gasstations', 'yearmonth']",debit_card_specializing,"SELECT
+  SUM(`T1`.`Price` ),
+  SUM(CASE WHEN `T3`.`Date` = '201201' THEN `T1`.`Price` ELSE 0 END)
+FROM `transactions_1k` AS `T1`
+INNER JOIN `gasstations` AS `T2`
+  ON `T1`.`GasStationID` = `T2`.`GasStationID`
+INNER JOIN `yearmonth` AS `T3`
+  ON `T1`.`CustomerID` = `T3`.`CustomerID`
+WHERE
+  `T1`.`CustomerID` = '38508'"
+1531,Who is the top spending customer and how much is the average price per single item purchased by this customer? What currency was being used?,"['transactions_1k', 'customers', 'yearmonth']",debit_card_specializing,"SELECT
+  `T2`.`CustomerID`,
+  SUM(`T2`.`Price` / `T2`.`Amount`),
+  `T1`.`Currency`
+FROM `customers` AS `T1`
+INNER JOIN `transactions_1k` AS `T2`
+  ON `T1`.`CustomerID` = `T2`.`CustomerID`
+WHERE
+  `T2`.`CustomerID` = (
+    SELECT
+      `CustomerID`
+    FROM `yearmonth`
+    ORDER BY
+      `Consumption` DESC
+    LIMIT 1
+  )
+GROUP BY
+  `T2`.`CustomerID`,
+  `T1`.`Currency`"
+1533,For all the people who paid more than 29.00 per unit of product id No.5. Give their consumption status in the August of 2012.,"['transactions_1k', 'yearmonth']",debit_card_specializing,"SELECT
+  `T2`.`Consumption`
+FROM `transactions_1k` AS `T1`
+INNER JOIN `yearmonth` AS `T2`
+  ON `T1`.`CustomerID` = `T2`.`CustomerID`
+WHERE
+  `T1`.`Price` / `T1`.`Amount` > 29.00
+  AND `T1`.`ProductID` = 5
+  AND `T2`.`Date` = '201208'"
+1312,What's Angela Sanders's major?,"['major', 'member']",student_club,"SELECT
+  `T2`.`major_name`
+FROM `member` AS `T1`
+INNER JOIN `major` AS `T2`
+  ON `T1`.`link_to_major` = `T2`.`major_id`
+WHERE
+  `T1`.`first_name` = 'Angela' AND `T1`.`last_name` = 'Sanders'"
+1317,"Among the students from the Student_Club who attended the event ""Women's Soccer"", how many of them want a T-shirt that's in medium size?","['attendance', 'event', 'member']",student_club,"SELECT
+  COUNT(`T1`.`event_id`)
+FROM `event` AS `T1`
+INNER JOIN `attendance` AS `T2`
+  ON `T1`.`event_id` = `T2`.`link_to_event`
+INNER JOIN `member` AS `T3`
+  ON `T2`.`link_to_member` = `T3`.`member_id`
+WHERE
+  `T1`.`event_name` = 'Women''s Soccer' AND `T3`.`t_shirt_size` = 'Medium'"
+1322,"Among the events attended by more than 10 members of the Student_Club, how many of them are meetings?","['attendance', 'event']",student_club,"SELECT
+  `T1`.`event_name`
+FROM `event` AS `T1`
+INNER JOIN `attendance` AS `T2`
+  ON `T1`.`event_id` = `T2`.`link_to_event`
+GROUP BY
+  `T1`.`event_id`
+HAVING
+  COUNT(`T2`.`link_to_event`) > 10
+EXCEPT
+SELECT
+  `T1`.`event_name`
+FROM `event` AS `T1`
+WHERE
+  `T1`.`type` = 'Meeting'"
+1323,List all the names of events that had an attendance of over 20 students but were not fundraisers.,"['attendance', 'event']",student_club,SELECT `T1`.`event_name` FROM `event` AS `T1` INNER JOIN `attendance` AS `T2` ON `T1`.`event_id` = `T2`.`link_to_event` GROUP BY `T1`.`event_id` HAVING COUNT(`T2`.`link_to_event`) > 20 AND NOT EXISTS (SELECT 1 FROM `event` AS `E` WHERE `E`.`event_id` = `T1`.`event_id` AND `E`.`type` = 'Fundraiser')
+1331,What is the amount of the funds that the Vice President received?,"['income', 'member']",student_club,"SELECT
+  `T2`.`amount`
+FROM `member` AS `T1`
+INNER JOIN `income` AS `T2`
+  ON `T1`.`member_id` = `T2`.`link_to_member`
+WHERE
+  `T1`.`position` = 'Vice President'"
+1334,List the full name of the Student_Club members that grew up in Illinois state.,"['zip_code', 'member']",student_club,"SELECT
+  `T1`.`first_name`,
+  `T1`.`last_name`
+FROM `member` AS `T1`
+INNER JOIN `zip_code` AS `T2`
+  ON `T1`.`zip` = `T2`.`zip_code`
+WHERE
+  `T2`.`state` = 'Illinois'"
+1338,"Was each expense in October Meeting on October 8, 2019 approved?","['budget', 'event', 'expense']",student_club,"SELECT
+  `T3`.`approved`
+FROM `event` AS `T1`
+INNER JOIN `budget` AS `T2`
+  ON `T1`.`event_id` = `T2`.`link_to_event`
+INNER JOIN `expense` AS `T3`
+  ON `T2`.`budget_id` = `T3`.`link_to_budget`
+WHERE
+  `T1`.`event_name` = 'October Meeting' AND `T1`.`event_date` LIKE '2019-10-08%'"
+1339,Calculate the total average cost that Elijah Allen spent in the events on September and October.,"['expense', 'member']",student_club,"SELECT
+  AVG(`T2`.`cost`)
+FROM `member` AS `T1`
+INNER JOIN `expense` AS `T2`
+  ON `T1`.`member_id` = `T2`.`link_to_member`
+WHERE
+  `T1`.`last_name` = 'Allen'
+  AND `T1`.`first_name` = 'Elijah'
+  AND (
+    SUBSTR(`T2`.`expense_date`, 6, 2) = '09'
+    OR SUBSTR(`T2`.`expense_date`, 6, 2) = '10'
+  )"
+1340,Calculate the difference of the total amount spent in all events by the Student_Club in year 2019 and 2020.,"['budget', 'event']",student_club,"SELECT
+  SUM(CASE WHEN SUBSTR(`T1`.`event_date`, 1, 4) = '2019' THEN `T2`.`spent` ELSE 0 END) - SUM(CASE WHEN SUBSTR(`T1`.`event_date`, 1, 4) = '2020' THEN `T2`.`spent` ELSE 0 END) AS `num`
+FROM `event` AS `T1`
+INNER JOIN `budget` AS `T2`
+  ON `T1`.`event_id` = `T2`.`link_to_event`"
+1344,What was the notes of the fundraising on 2019/9/14?,['income'],student_club,"SELECT
+  `notes`
+FROM `income`
+WHERE
+  `source` = 'Fundraising' AND `date_received` = '2019-09-14'"
+1346,"Tell the phone number of ""Carlo Jacobs"".",['member'],student_club,"SELECT
+  `phone`
+FROM `member`
+WHERE
+  `first_name` = 'Carlo' AND `last_name` = 'Jacobs'"
+1350,"What is the status of the event which bought ""Post Cards, Posters"" on 2019/8/20?","['budget', 'expense']",student_club,"SELECT
+  `T1`.`event_status`
+FROM `budget` AS `T1`
+INNER JOIN `expense` AS `T2`
+  ON `T1`.`budget_id` = `T2`.`link_to_budget`
+WHERE
+  `T2`.`expense_description` = 'Post Cards, Posters'
+  AND `T2`.`expense_date` = '2019-08-20'"
+1351,What was Brent Thomason's major?,"['major', 'member']",student_club,"SELECT
+  `T2`.`major_name`
+FROM `member` AS `T1`
+INNER JOIN `major` AS `T2`
+  ON `T1`.`link_to_major` = `T2`.`major_id`
+WHERE
+  `T1`.`first_name` = 'Brent' AND `T1`.`last_name` = 'Thomason'"
+1352,"For all the club members from ""Business"" major, how many of them wear medium size t-shirt?","['major', 'member']",student_club,"SELECT
+  COUNT(`T1`.`member_id`)
+FROM `member` AS `T1`
+INNER JOIN `major` AS `T2`
+  ON `T1`.`link_to_major` = `T2`.`major_id`
+WHERE
+  `T2`.`major_name` = 'Business' AND `T1`.`t_shirt_size` = 'Medium'"
+1356,Which department was the President of the club in?,"['major', 'member']",student_club,"SELECT
+  `T2`.`department`
+FROM `member` AS `T1`
+INNER JOIN `major` AS `T2`
+  ON `T1`.`link_to_major` = `T2`.`major_id`
+WHERE
+  `T1`.`position` = 'President'"
+1357,State the date Connor Hilton paid his/her dues.,"['income', 'member']",student_club,"SELECT
+  `T2`.`date_received`
+FROM `member` AS `T1`
+INNER JOIN `income` AS `T2`
+  ON `T1`.`member_id` = `T2`.`link_to_member`
+WHERE
+  `T1`.`first_name` = 'Connor'
+  AND `T1`.`last_name` = 'Hilton'
+  AND `T2`.`source` = 'Dues'"
+1359,"How many times was the budget in Advertisement for ""Yearly Kickoff"" meeting more than ""October Meeting""?","['budget', 'event']",student_club,"SELECT
+  CAST(SUM(CASE WHEN `T2`.`event_name` = 'Yearly Kickoff' THEN `T1`.`amount` ELSE 0 END) AS DOUBLE) / SUM(CASE WHEN `T2`.`event_name` = 'October Meeting' THEN `T1`.`amount` ELSE 0 END)
+FROM `budget` AS `T1`
+INNER JOIN `event` AS `T2`
+  ON `T1`.`link_to_event` = `T2`.`event_id`
+WHERE
+  `T1`.`category` = 'Advertisement' AND `T2`.`type` = 'Meeting'"
+1361,What is the total cost of the pizzas for all the events?,['expense'],student_club,"SELECT
+  SUM(`cost`)
+FROM `expense`
+WHERE
+  `expense_description` = 'Pizza'"
+1362,"How many cities are there in Orange County, Virginia?",['zip_code'],student_club,"SELECT
+  COUNT(`city`)
+FROM `zip_code`
+WHERE
+  `county` = 'Orange County' AND `state` = 'Virginia'"
+1368,"What does the person with the phone number ""809-555-3360"" major in?","['major', 'member']",student_club,"SELECT
+  `T2`.`major_name`
+FROM `member` AS `T1`
+INNER JOIN `major` AS `T2`
+  ON `T1`.`link_to_major` = `T2`.`major_id`
+WHERE
+  `T1`.`phone` = '809-555-3360'"
+1371,"How many members attended the ""Women's Soccer"" event?","['attendance', 'event']",student_club,"SELECT
+  COUNT(`T2`.`link_to_member`)
+FROM `event` AS `T1`
+INNER JOIN `attendance` AS `T2`
+  ON `T1`.`event_id` = `T2`.`link_to_event`
+WHERE
+  `T1`.`event_name` = 'Women''s Soccer'"
+1375,"List all the members of the ""School of Applied Sciences, Technology and Education"" department.","['major', 'member']",student_club,"SELECT
+  `T1`.`first_name`,
+  `T1`.`last_name`
+FROM `member` AS `T1`
+INNER JOIN `major` AS `T2`
+  ON `T1`.`link_to_major` = `T2`.`major_id`
+WHERE
+  `T2`.`department` = 'School of Applied Sciences, Technology and Education'"
+1376,"Among all the closed events, which event has the highest spend-to-budget ratio?","['budget', 'event']",student_club,"SELECT
+  `T2`.`event_name`
+FROM `budget` AS `T1`
+INNER JOIN `event` AS `T2`
+  ON `T1`.`link_to_event` = `T2`.`event_id`
+WHERE
+  `T2`.`status` = 'Closed'
+ORDER BY
+  `T1`.`spent` / `T1`.`amount` DESC
+LIMIT 1"
+1378,What is the highest amount of budget spend for an event?,['budget'],student_club,"SELECT
+  MAX(`spent`)
+FROM `budget`"
+1380,What is the total amount of money spent for food?,['budget'],student_club,SELECT SUM(spent) FROM `budget` WHERE category = 'Food'

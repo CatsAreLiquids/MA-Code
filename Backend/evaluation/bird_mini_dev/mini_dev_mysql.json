@@ -3532,7 +3532,7 @@
     "db_id": "california_schools",
     "question": "Rank schools by their average score in Writing where the score is greater than 499, showing their charter numbers.",
     "evidence": "Valid charter number means the number is not null",
-    "SQL": "SELECT\n  `CharterNum`,\n  `AvgScrWrite`,\n  RANK() OVER (ORDER BY `AvgScrWrite` DESC) AS `WritingScoreRank`\nFROM `schools` AS `T1`\nINNER JOIN `satscores` AS `T2`\n  ON `T1`.`CDSCode` = `T2`.`cds`\nWHERE\n  `T2`.`AvgScrWrite` > 499 AND NOT `CharterNum` IS NULL",
+    "SQL": "SELECT\n  `CharterNum`,\n  `AvgScrWrite`,\n  RANK() OVER (ORDER BY `AvgScrWrite` DESC) AS `WritingScoreRank`\nFROM `schools` AS `T1`\nINNER JOIN `satscores` AS `T2`\n  ON `T1`.`39` = `T2`.`cds`\nWHERE\n  `T2`.`AvgScrWrite` > 499 AND NOT `CharterNum` IS NULL",
     "difficulty": "simple"
   },
   {

@@ -73,6 +73,7 @@
     filter_dict:
       - columns: "a column in which the value to count is present"
       - value: "the value to count "
+      - unique: "True if only distinct values should be counted, False otherwise"
   returnResult:
     description: "retrieves or extracts  the previously computed data, specified  by the columns in a dataframe"
     filter_dict:

@@ -21,7 +21,7 @@ def _rangeFilter(df, column, range_dict):
         mask = df[column].ge(range_dict['min'])
     elif 'max' in range_dict:
         mask = df[column].le(range_dict['max'])
-    print("test",df[mask])
+    print(df[mask])
     return df[mask]
 
 
@@ -39,20 +39,19 @@ def applyFilter(df, filter_dict):
     for key, val in filter_dict.items():
 
         if isinstance(val, dict):
+
             df = _rangeFilter(df, key, val)
         elif isinstance(val, list):
-            idx, msg = _matchValues(df, key, val)
-            df = df[idx]
+            df =  _matchValues(df, key, val)
         else:
             try:
                 if isinstance(val, str):
                     if val == 'max':
                         return getMax(df,{'columns':key})
                     elif val =="empty":
-                        idx = np.where(df[key].isna()==True)[0].tolist()
-                        df = df.loc[:,idx]
-                    elif val =="not empty":
+                        df = np.where(df[key].isna()==True)[0].tolist()
 
+                    elif val =="not empty":
                         df = df.dropna(subset=[key])
                     else:
                         val = val.lower()
@@ -70,25 +69,13 @@ def applyFilter(df, filter_dict):
 
 def _matchValues(df, column, values):
     idx = []
-    msg = ""
 
     for val in values:
-        if isinstance(val, str):
-            val = val.lower()
         mask = df[column] == val
         tmp = np.where(np.asarray(mask))[0].tolist()
-        if not tmp:
-            if msg == "":
-                msg = "could not find "
-            msg += f"{val}, "
-
         idx += tmp
 
-    if msg != "":
-        msg += f"in the {column} column"
-
-    return idx  # , msg
-
+    return df.iloc[idx]
 
 def _getInDf(df, column):
     pass
@@ -101,9 +88,9 @@ def getMax(df, filter_dict):
         key = 'column'
     else:
         key = 'columns'
-
-    if "rows" in filter_dict:
-        return df.nlargest(filter_dict["rows"],filter_dict[key])
+    if isinstance(df, pd.DataFrame):
+        if "rows" in filter_dict:
+            return df.nlargest(n=filter_dict["rows"],columns=filter_dict[key])
     else:
         if isinstance(df, pd.Series):
             df = df.to_frame()

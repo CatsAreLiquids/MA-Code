@@ -53,3 +53,11 @@ def rephrase_query_prod(step,org):
 org = "What is Copycat's race?"
 step = "retrieve race dataset"
 print(rephrase_query_prod(step, org))
+
+a = pd.DataFrame({"a":[1,2],"b":[3,4]})
+b =np.asarray(pd.DataFrame({"a":[1],"b":[3]}))
+print(b)
+print(b==a)
+print((a == b).all(1).any())
+
+

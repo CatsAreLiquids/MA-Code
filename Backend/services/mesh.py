@@ -22,12 +22,10 @@ def getCatalog():
         return "could not find the main catalog"
     for collection in catalog:
         collection = catalog[collection]
-        print(collection['products'])
         if file in collection['products']:
             try:
                 with open("../data/Catalogs/" + collection['name'] + ".yml") as stream:
                     collection_dict = yaml.safe_load(stream)
-                    print(file)
                     return collection_dict[file]
             except FileNotFoundError:
                 return "could not find the specific collection catalog"
@@ -58,7 +56,6 @@ def getCatalogCollection():
 
 @app.route('/catalog/columns', methods=['GET'])
 def getCatalogColumns():
-    print(request.data)
     content = json.loads(request.data)
     file = content['file']
 
@@ -72,11 +69,11 @@ def getCatalogColumns():
         return "could not find the main catalog"
 
     for collection in catalog:
-        if file in collection['products']:
+        print
+        if file in catalog[collection]['products']:
             try:
-                with open("../data/Catalogs/" + collection['name'] + ".yml") as stream:
+                with open("../data/Catalogs/" + collection + ".yml") as stream:
                     collection_dict = yaml.safe_load(stream)
-                    print(file)
                     return collection_dict[file]['columns']
             except FileNotFoundError:
                 return "could not find the specific collection catalog"
@@ -112,10 +109,10 @@ def get_frpm():
     return {'data': df.to_json()}
 
 
-@app.route('/products/california_schools/school', methods=['GET'])
+@app.route('/products/california_schools/schools', methods=['GET'])
 def get_school():
     # read from data catalog
-    df = pd.read_csv('../data/california_schools/school.csv')
+    df = pd.read_csv('../data/california_schools/schools.csv')
     return {'data': df.to_json()}
 
 

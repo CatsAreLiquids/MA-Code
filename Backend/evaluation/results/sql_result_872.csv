@@ -1,0 +1,2 @@
+qualifyId,raceId,driverId,constructorId,number,position,q1,q2,q3,driverRef,code,forename,surname,dob,nationality,url
+576,45,1,1,2,10,1:31.587,1:31.185,1:33.833,hamilton,HAM,Lewis,Hamilton,1985-01-07,British,http://en.wikipedia.org/wiki/Lewis_Hamilton

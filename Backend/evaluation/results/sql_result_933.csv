@@ -1,0 +1,2 @@
+driverId,driverRef,number,code,forename,surname,dob,nationality,url,resultId,raceId,constructorId,grid,position,positionText,positionOrder,points,laps,time,milliseconds,fastestLap,rank,fastestLapTime,fastestLapSpeed,statusId,year,round,circuitId,name,date
+1,hamilton,44.0,HAM,Lewis,Hamilton,1985-01-07,British,http://en.wikipedia.org/wiki/Lewis_Hamilton,329,34,1,1,1.0,1,1,10.0,56,1:31:57.403,5517403.0,13.0,1.0,1:36.325,203.722,1,2008,17,17,Chinese Grand Prix,2008-10-19

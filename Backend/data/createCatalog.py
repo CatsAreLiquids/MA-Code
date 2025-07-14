@@ -43,7 +43,7 @@ def _get_or_create(columns, api, collection, product):
         yaml.dump(data, yaml_file, default_flow_style=False)
 
 
-def _getColumns(file):
+def _get_columns(file):
 
     if file == "california_schools\schools.csv":
         df = pd.read_csv(file, dtype={"CharterNum": str})
@@ -58,7 +58,7 @@ def _getColumns(file):
     return df.columns.tolist()
 
 
-def process_Product(file):
+def process_product(file):
     collection = Path(file).parts[0]
     product = Path(file).parts[1]
 
@@ -80,7 +80,7 @@ def main(file):
     process_Product(file)
 
 
-def identifyColumns():
+def identify_columns():
     llm = models.get_LLM()
 
     sys_prompt = """ Your task is to rewrite a user query into an sql query.

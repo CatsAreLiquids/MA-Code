@@ -52,6 +52,21 @@ def call_max():
         print(df)
         return {'data': json.dumps(df)}
 
+@app.route('/min', methods=['PUT'])
+def call_min():
+    content = json.loads(request.data)
+
+    try:
+        df = pd.read_json(io.StringIO(content['data']))
+    except ValueError:
+        df = pd.Series(ast.literal_eval(content['data']))
+    df = filters.getMin(df, content['args'])
+
+    if isinstance(df,pd.Series) or isinstance(df,pd.DataFrame):
+        return {'data': df.to_json()}
+    else:
+        return {'data': json.dumps(df)}
+
 @app.route('/combine', methods=['PUT'])
 def call_combine():
     content = json.loads(request.data)
@@ -86,7 +101,11 @@ def call_mean():
     df = pd.read_json(io.StringIO(content['data']))
     df = aggregation.mean(df, content['args'])
 
-    return {'data': df.to_json()}
+    try:
+        data = df.to_json()
+    except AttributeError:
+        data = pd.Series(df).to_json()
+    return {'data': data}
 
 @app.route('/filter', methods=['PUT'])
 def call_filter():
@@ -105,7 +124,6 @@ def call_sortby():
         df = pd.read_json(io.StringIO(content['data']))
     except ValueError:
         df = pd.Series(ast.literal_eval(content['data']))
-
     df = misc.sortby(df, content['args'])
 
     return {'data': df.to_json()}
@@ -131,7 +149,12 @@ def call_count():
     df = pd.read_json(io.StringIO(content['data']))
     df = aggregation.count(df, content['args'])
 
-    return {'data': df.to_json()}
+    try:
+        data = df.to_json()
+    except AttributeError:
+        data = pd.Series(df).to_json()
+
+    return {'data': data}
 
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=port)
