@@ -120,7 +120,7 @@ def execute_new(agent_result):
     frames = {}
     i = -1
     for elem in plans:
-        #print(elem)
+        print(elem)
         if elem['function'] == 'http://127.0.0.1:5200/retrieve':
             df = getData(elem['filter_dict'])
             i += 1
@@ -136,7 +136,12 @@ def execute_new(agent_result):
         else:
             df = _putDataProduct(df, elem)
             frames["df_" + str(i)] = df
-        #print(frames["df_" + str(i)],type(frames["df_" + str(i)]))
+        #print(frames["df_" + str(i)])
+        try:
+            tmp = frames["df_" + str(i)]
+            print(tmp["DisplayName"].unique())
+        except:
+            pass
 
     return frames["df_" + str(i)]
 
@@ -178,12 +183,18 @@ if __name__ == "__main__":
                        'combination', 'filter_dict':{'columns_left': 'race_id', 'columns_right': 'id', 'type': 'equals',
                                        'values': ['None']}},
                    {"function": "http://127.0.0.1:5200/sum", "values": {"group_by": "superhero_name", "column": "weight_kg"}}]}
-    #{"function":'combination', 'filter_dict': {"columns_left": "code", "columns_right": "setCode", "type": "equals", "values": ["None"]}}
-    l ={"plans": [{"function": "http://127.0.0.1:5200/retrieve","filter_dict": {"product": "http://127.0.0.1:5000/products/formula_1/drivers"}},
-               {"function": "http://127.0.0.1:5200/retrieve","filter_dict": {"product": "http://127.0.0.1:5000/products/formula_1/results"}},
-               {"function": "http://127.0.0.1:5200/sum", "filter_dict": {"group_by": "driverId", "column": "points"}},
-               {"function": "http://127.0.0.1:5200/max", "filter_dict": {"columns": "driverId", "rows": 1}},
-               {"function":'combination', 'filter_dict': {"columns_left": "driverId", "columns_right": "driverId", "type": "equals", "values": ["None"]}}]}
+
+
+    wip = {'plans': [
+{'function': 'http://127.0.0.1:5200/retrieve','filter_dict': {'product': 'http://127.0.0.1:5000/products/financial/district'}},
+{'function': 'http://127.0.0.1:5200/filter', "values": {"conditions": {"A11":{"min":8000,"max":9000}}}},
+{'function': 'http://127.0.0.1:5200/retrieve','filter_dict': {'product': 'http://127.0.0.1:5000/products/financial/account'}},
+{'function':'combination', 'filter_dict':{'columns_left': 'district_id', 'columns_right': 'district_id', 'type': 'equals','values': ['None']}},
+{'function': 'http://127.0.0.1:5200/retrieve','filter_dict': {'product': 'http://127.0.0.1:5000/products/financial/disp'}},
+{'function': 'http://127.0.0.1:5200/filter', "values": {"conditions": {"type":"DISPONENT"}}},
+{'function':'combination', 'filter_dict':{'columns_left': 'account_id', 'columns_right': 'account_id', 'type': 'equals','values': ['None']}}]}
+
+    l ={'plans': [{'function': 'http://127.0.0.1:5200/retrieve','filter_dict': {'product': 'http://127.0.0.1:5000/products/formula_1/drivers'}},{'function': 'http://127.0.0.1:5200/filter', "values": {"conditions": {"nationality":"German", "dob":{"min":"1980-01-01", "max": "1985-12-31"}}}},{'function': 'http://127.0.0.1:5200/retrieve','filter_dict': {'product': 'http://127.0.0.1:5000/products/formula_1/pitStops'}},{"function":"http://127.0.0.1:5200/mean","filter_dict":{"columns":"milliseconds","group_by":"driverId"}},{'function':'combination', 'filter_dict':{'columns_left': 'driverId', 'columns_right': 'driverId', 'type': 'equals','values': ['None']}},{"function":"http://127.0.0.1:5200/min","filter_dict":{"column":"milliseconds","rows":3}}]}
 
 
 

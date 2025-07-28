@@ -19,6 +19,7 @@ def mean(df, filter_dict):
     filter_dict = ast.literal_eval(filter_dict)
     if "group_by" in filter_dict:
         df = df.groupby(by=filter_dict['group_by'])
+        print(df[filter_dict['columns']].mean())
         return df[filter_dict['columns']].mean().reset_index()
     else:
         return df[filter_dict['columns']].mean()

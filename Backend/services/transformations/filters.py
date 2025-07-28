@@ -16,20 +16,44 @@ def getNRows(df,filter_dict):
 
 def _rangeFilter(df, column, range_dict):
     if ('min' in range_dict) & ('max' in range_dict):
-        mask = df[column].ge(range_dict['min']) & df[column].le(range_dict['max'])
+        try:
+            mask = df[column].ge(range_dict['min']) & df[column].le(range_dict['max'])
+        except TypeError:
+            mask = df[column].ge(int(range_dict['min'])) & df[column].le(int(range_dict['max']))
     elif 'min' in range_dict:
-        mask = df[column].ge(range_dict['min'])
+        try:
+            mask = df[column].ge(range_dict['min'])
+        except TypeError:
+            mask = df[column].ge(int(range_dict['min']))
     elif 'max' in range_dict:
-        mask = df[column].le(range_dict['max'])
-    print(df[mask])
+        try:
+            mask = df[column].le(range_dict['max'])
+        except:
+            mask = df[column].le(int(range_dict['max']))
     return df[mask]
 
+def _range_or(df, column, or_list):
+    idx = []
+    for elem in or_list:
+        if 'min' in elem:
+            mask = df[column].ge(elem['min'])
+            idx += np.where(np.asarray(mask))[0].tolist()
+
+        if 'max' in elem:
+            mask = df[column].le(elem['max'])
+            idx += np.where(np.asarray(mask))[0].tolist()
+
+    return df.iloc[idx]
 
 def applyFilter(df, filter_dict):
     filter_dict = ast.literal_eval(filter_dict)
+    print(filter_dict)
+
 
     if 'conditions' in filter_dict:
         filter_dict = filter_dict['conditions']
+    elif "criteria" in filter_dict:
+        filter_dict = filter_dict['criteria']
     elif 'columns' in filter_dict:
         filter_dict = filter_dict['columns']
 
@@ -37,12 +61,15 @@ def applyFilter(df, filter_dict):
         filter_dict = filter_dict[0]
 
     for key, val in filter_dict.items():
-
+        print(key, val)
         if isinstance(val, dict):
 
             df = _rangeFilter(df, key, val)
         elif isinstance(val, list):
-            df =  _matchValues(df, key, val)
+            if isinstance(val[0],dict):
+                df = _range_or(df, key, val)
+            else:
+                df =  _matchValues(df, key, val)
         else:
             try:
                 if isinstance(val, str):
@@ -89,8 +116,13 @@ def getMax(df, filter_dict):
     else:
         key = 'columns'
     if isinstance(df, pd.DataFrame):
-        if "rows" in filter_dict:
-            return df.nlargest(n=filter_dict["rows"],columns=filter_dict[key])
+        try:
+            if "rows" in filter_dict:
+                return df.nlargest(n=filter_dict["rows"],columns=filter_dict[key])
+        except TypeError:
+            print(df[filter_dict[key]].astype("float"))
+            df[filter_dict[key]] = pd.to_numeric(df[filter_dict[key]])
+            return df.nlargest(n=filter_dict["rows"], columns=filter_dict[key])
     else:
         if isinstance(df, pd.Series):
             df = df.to_frame()

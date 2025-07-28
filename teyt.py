@@ -50,41 +50,12 @@ def rephrase_query_prod(step,org):
     llm = models.get_LLM()
     return llm.invoke(messages).content
 
-org = "What is Copycat's race?"
-step = "retrieve race dataset"
+def helper(x):
+    i = 0
 
-#print(rephrase_query_prod(step, org))
+    return len(x)
 
-a =set([(1,2),(2,3)])
-b = set([(1,2),(5,4)])
-print(a&b)
-print(a-b)
-print(b-a)
-
-def _get_df(product, collection):
-    response = requests.get(f"http://127.0.0.1:5000/products/{collection}/{product}")
-    content = json.loads(response.text)
-    df = pd.read_json(io.StringIO(content['data']))
-    return df
-
-
-def q_892():
-    df1 = _get_df("drivers", "formula_1")
-    df2 = _get_df("results", "formula_1")
-    df2 = df2.groupby(by=["driverId"])
-    df2 = df2["points"].sum()
-    df2 = df2.nlargest(n=1)
-
-    res = df1.merge(df2, suffixes=["", "_y"], left_on="driverId", right_on='driverId')
-    res.drop(res.filter(regex='_y$').columns, axis=1, inplace=True)
-    print(res.columns)
-    res = res.drop(labels=["points"],axis=1)
-    res.to_csv("sql_result_892.csv",index=False)
-    """
-    {"plans": [{"function": "http://127.0.0.1:5200/retrieve","filter_dict": {"product": "http://127.0.0.1:5000/products/formula_1/drivers"}},
-               {"function": "http://127.0.0.1:5200/retrieve","filter_dict": {"product": "http://127.0.0.1:5000/products/formula_1/results"}},
-               {"function": "http://127.0.0.1:5200/sum", "filter_dict": {"group_by": "driverId", "column": "points"}},
-               {"function": "http://127.0.0.1:5200/max", "filter_dict": {"columns": "driverId", "rows": 1}},
-               {"function":'combination', 'filter_dict': {"columns_left": "driverId", "columns_right": "driverId", "type": "equals", "values": ["None"]}}]}
-    """
-q_892()
+file = "Backend/evaluation/bird_mini_dev/prototype_eval.csv"
+df = pd.read_csv(file)
+print(df.shape)
+print(df.dropna().shape)

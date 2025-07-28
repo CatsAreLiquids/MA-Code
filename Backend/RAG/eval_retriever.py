@@ -27,15 +27,28 @@ load_dotenv()
 
 
 def productRetriever_eval(query):
-    sys_prompt = """Your task is to help find the best fitting data product / data set. You are provided with a user query .
-                Provide the most likely fitting data products, always provide the data products name and why it would fit this query
+    sys_prompt = """Your task is to help find the best fitting data product. You are provided with a user query.
+                Provide the most likely fitting data product, always provide the data products name and why it would fit this query.
+                Only provide one data product
         Context: {context} 
-        Answer:
+        The output should be a valid json with 'name': as the data product name and 'reason':
     """
     mod_query = f"I am looking for data products that can answer the query: '{query}'"
     config = {"filter": {"type": {"$eq": "product"}}}
 
     return getEvaluationChain(sys_prompt, config,mod_query)
+
+def productRetriever_eval_both(query,step):
+    sys_prompt = """"Your task is to help find the best fitting data product. You are provided with a user query.
+                Provide the most likely fitting data product, always provide the data products name and why it would fit this query.
+                Only provide one data product
+        Context: {context} 
+        The output should be a valid json with 'name': as the data product name and 'reason':
+    """
+    mod_query = f"I am looking for data products that can answer the query: '{query}', specifically the step:{step}"
+    config = {"filter": {"type": {"$eq": "product"}}}
+
+    return getMultiLevelEvaluation(sys_prompt, config,mod_query)
 
 
 def functionRetriever_eval(query,type):
@@ -54,7 +67,7 @@ def functionRetriever_eval(query,type):
     """
     mod_query = f"I am looking for a function that can solve the following problem for me :{query}"
     config = {"filter": {"type": {"$eq": "function_NoManual2"}}}
-    return getEvaluationChain(sys_prompt, config,query)
+    return getEvaluationChainFunc( config,query)
 
 def functionRetriever_hybrid(query,type):
     """
@@ -71,8 +84,8 @@ def functionRetriever_hybrid(query,type):
                 Answer:
     """
     mod_query = f"I am looking for a function that can solve the following problem for me :{query}"
-    config = {"filter": {"type": {"$eq": "function_NoManual2"}}}
-    return getEvaluationChainFunc(sys_prompt, config,mod_query)
+    config = {"filter": {"type": {"$eq": "function"}}}
+    return getEvaluationChainFunc( config,mod_query)
 
 def functionRetriever_eval_noreorder(query,context):
     """
@@ -102,10 +115,11 @@ def functionRetriever_eval_noreorder(query,context):
 
 
 def multilevelRetriever(query):
-    sys_prompt = """Your task is to help find the best fitting data product / data set. You are provided with a user query .
-                    Provide the most likely fitting data products, always provide the data products name and why it would fit this query
-            Context: {context} 
-            Answer:
+    sys_prompt = """Your task is to help find the best fitting data product. You are provided with a user query.
+                Provide the most likely fitting data product, always provide the data products name and why it would fit this query.
+                Only provide one data product
+        Context: {context} 
+        The output should be a valid json with 'name': as the data product name and 'reason': where reason should be a short explanation as to why it is the ocrrect dataset
         """
     mod_query = f"I am looking for data products that can answer the query :{query}"
     config = {"filter": {"type": {"$eq": "product"}}}

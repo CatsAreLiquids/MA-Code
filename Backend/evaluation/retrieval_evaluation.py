@@ -8,26 +8,29 @@ from pathlib import Path
 from datetime import datetime
 from tqdm import tqdm
 from numpy.random import default_rng
-from Backend.RAG.eval_retriever import productRetriever_eval,functionRetriever_eval, multilevelRetriever, functionRetriever_hybrid
+from Backend.RAG.eval_retriever import productRetriever_eval,functionRetriever_eval, multilevelRetriever, functionRetriever_hybrid,productRetriever_eval_both
 import time
 
 
-functions = {"product": productRetriever_eval, "function": functionRetriever_eval,"function_text":functionRetriever_eval, "multilevel":multilevelRetriever,"hybrid":functionRetriever_hybrid}
+functions = {"product": productRetriever_eval, "function": functionRetriever_eval,"function_text":functionRetriever_eval, "multilevel":multilevelRetriever,"hybrid":functionRetriever_hybrid,
+             "both":productRetriever_eval_both}
 
 def run_test(config):
     df = pd.read_csv(config["file"],converters={'retrieved_docs': pd.eval,'products': pd.eval,"correct_context":pd.eval})
 
     answer, context = [],[]
     for index, row in tqdm(df.iterrows()):
+
         res = functions[config["retriever"]](row["query"])
         answer.append(res["response"])
         context.append(res["docs"])
+        print(res["docs"])
 
     df["response"] = answer
     df["retrieved_docs"] = context
 
     timestamp = datetime.now().strftime("%Y-%m-%d-%H-%M")
-    df.to_csv(f"runs/{Path(Path(config['file']).name).stem}_{config['retriever']}_{timestamp}.csv",index=False)
+    df.to_csv(f"runs/query_multilevel_no_reorder_{timestamp}.csv",index=False)
 
 def run_test_step(config):
     df = pd.read_csv(config["file"],converters={'retrieved_docs': pd.eval,'products': pd.eval,"correct_context":pd.eval})
@@ -42,7 +45,23 @@ def run_test_step(config):
     df["retrieved_docs"] = context
 
     timestamp = datetime.now().strftime("%Y-%m-%d-%H-%M")
-    df.to_csv(f"runs/{Path(Path(config['file']).name).stem}_{config['retriever']}_{timestamp}.csv",index=False)
+    df.to_csv(f"runs/step_multilevel_reorder_{timestamp}.csv",index=False)
+
+def run_test_step_both(config):
+    df = pd.read_csv(config["file"],
+                     converters={'retrieved_docs': pd.eval, 'products': pd.eval, "correct_context": pd.eval})
+
+    answer, context = [], []
+    for index, row in tqdm(df.iterrows()):
+        res = functions[config["retriever"]](row["question_id"],row["step"])
+        answer.append(res["response"])
+        context.append(res["docs"])
+
+    df["response"] = answer
+    df["retrieved_docs"] = context
+
+    timestamp = datetime.now().strftime("%Y-%m-%d-%H-%M")
+    df.to_csv(f"runs/both_multilevel_reorder_{timestamp}.csv", index=False)
 
 def run_score_steps(file):
     #df = pd.read_csv(file)
@@ -69,16 +88,17 @@ def run_score_steps(file):
 def run_score(file):
     #df = pd.read_csv(file)
     #print(df.head())
-    df = pd.read_csv(file,converters={'retrieved_docs': pd.eval,'names': pd.eval,"correct_context":pd.eval})
+    df = pd.read_csv(file,converters={'retrieved_docs': pd.eval,'names': pd.eval,"products":pd.eval,})
     mmr = []
     precision = []
     recall = []
 
 
     for index, row in tqdm(df.iterrows()):
-        mmr.append(metrics.mmr(row["correct_context"],row["retrieved_docs"]))
-        precision.append(metrics.precison(row["correct_context"],row["retrieved_docs"]))
-        recall.append(metrics.recall(row["correct_context"], row["retrieved_docs"]))
+        mmr.append(metrics.mmr(row["products"],row["retrieved_docs"]))
+        precision.append(metrics.precison(row["products"],row["retrieved_docs"]))
+        recall.append(metrics.recall(row["products"], row["retrieved_docs"]))
+
     f1 = metrics.F1(precision,recall)
 
     df["mmr"] = mmr
@@ -118,7 +138,7 @@ def runFunction(config):
     answer, context = [],[]
     for index, row in tqdm(df.iterrows()):
         if row["function"] != "":
-            res = functions["hybrid"](row["step"],"function")
+            res = functions["function"](row["step"],"function")
             answer.append(res["response"])
             context.append(res["docs"])
 
@@ -126,7 +146,7 @@ def runFunction(config):
     df["retrieved_docs"] = context
 
     timestamp = datetime.now().strftime("%Y-%m-%d-%H-%M")
-    df.to_csv(f"runs/baseline_hybrid_enhanced_function_{timestamp}.csv",index=False)
+    df.to_csv(f"runs/function_hybrid_hybrid_reorder_{timestamp}.csv",index=False)
 
 def helper(org,functionName):
 
@@ -149,19 +169,21 @@ if __name__ == "__main__":
     #    tmp.append(helper(row["correct_context"],row["function"]))
     #df["correct_context"] = tmp
     #df.to_csv(file,index=False)
-    file = "runs/products_retrieval_steps_hybrid_reorder_03_2025-07-08-17-10.csv"
-    run_score_steps(file)
+    file = "runs/function_hybrid_hybrid_reorder_03_2025-07-27-14-33.csv"
+    #run_score_steps(file)
     #run_score(file)
-    #scoreFunction(file)
+    scoreFunction(file)
     df = pd.read_csv(file)
     print(df[["mmr", "precision", "recall", "f1"]].describe())
 
-    config = {"file":"bird_mini_dev/products_retrieval_steps.csv","num_of_querys":111,"retriever":"product"}
+    config = {"file":"bird_mini_dev/functions_simplel.csv","num_of_querys":111,"retriever":"function"}
 
     #file= "dbpedia_entity/semantic_queries.csv"
     file = "bird_mini_dev/bird_minidev_questions_eval.csv"
     start = time.time()
-    run_test_step(config=config)
+    #run_test(config)
+    #run_test_step_both(config=config)
+    #run_test_step(config=config)
     #runFunction(config)
     end = time.time()
     print(end - start)

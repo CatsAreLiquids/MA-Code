@@ -54,6 +54,7 @@
     filter_dict:
       - conditions: "a dict ith the corresponding columns and their values"
     example: "{'condition':{'location':'berlin','year':{'min':2002,'max':2007}}"
+
   getValues:
     base_api: http://127.0.0.1:5200/getValues
     description: "Retrieves specififed data values in a list format"

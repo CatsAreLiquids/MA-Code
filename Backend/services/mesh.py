@@ -31,6 +31,7 @@ def getCatalog():
                 return "could not find the specific collection catalog"
             except KeyError:
                 return collection_dict
+    return {"text":"No fitting collection found"}
 
 @app.route('/catalog/collection', methods=['GET'])
 def getCatalogCollection():
@@ -38,7 +39,7 @@ def getCatalogCollection():
     file = content['file']
     if "/" in file:
         file = file.split("/")[-1]
-
+    print(file)
     try:
         with open("../data/Catalogs/catalog.yml") as stream:
             catalog = yaml.safe_load(stream)
@@ -51,6 +52,7 @@ def getCatalogCollection():
                 with open("../data/Catalogs/" + collection['name'] + ".yml") as stream:
                     collection_dict = yaml.safe_load(stream)
                     return collection_dict
+
             except FileNotFoundError:
                 return "could not find the specific collection catalog"
 
@@ -69,7 +71,6 @@ def getCatalogColumns():
         return "could not find the main catalog"
 
     for collection in catalog:
-        print
         if file in catalog[collection]['products']:
             try:
                 with open("../data/Catalogs/" + collection + ".yml") as stream:

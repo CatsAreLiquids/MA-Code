@@ -29,6 +29,7 @@ def eval_rows(ref, test):
     fp = 0
     fn = 0
 
+
     for i in range(test.shape[0]):
         tmp = np.asarray(test.iloc[i])
         try:
@@ -37,7 +38,6 @@ def eval_rows(ref, test):
             else:
                 fp += 1
         except ValueError:
-            print(ref.shape,tmp.shape)
             if (ref == tmp).all().any():
                 tp += 1
             else:
@@ -67,115 +67,124 @@ def eval_rows(ref, test):
     except ZeroDivisionError:
         r = 0
 
+
     return p, r
 
 
 def eval_by_index(ref, test,columns):
-
+    #print(ref, test,columns)
     ref = set(ref[columns].tolist())
     test = set(test[columns].tolist())
+
 
     tp = len(ref & test)
     fn = len(ref - test)
     fp = len(test - ref)
 
+
     return tp / (tp + fp), tp / (tp + fn)
 
 def test_plan(file):
     df = pd.read_csv(file)
-    df.dropna(how= "any", inplace=True)
+    #df.dropna(how= "any", inplace=True)
     precision = []
     recall = []
-    time_ = []
+    execution_error = []
 
 
     for index, row in df.iterrows():
-        print(row['question_id'])
-        start = time.time()
-        p = execute.execute_new(ast.literal_eval(row["plan"]))
-        end = time.time()
-        t = pd.read_csv(f"results/sql_result_{row['question_id']}.csv")
-        if row['type'] == "index":
-            pre, re = eval_by_index(t, p,row['columns'])
-        else:
-            pre, re = eval_rows(t, p)
-
-        precision.append(pre)
-        recall.append(re)
-        time_.append(end-start)
-        print(end-start)
-
-    df["precision"] = precision
-    df["recall"] = recall
-
-    df.to_csv(file, index=False)
-
-
-def test_plan_generation(file):
-    df = pd.read_csv(file)
-    df = df.dropna()
-    df["plan"] = df["plan"].apply(lambda x: str(x).replace("\"\"", "\""))
-
-    agent = init_agent()
-
-    res = {"response": [], "agent_error": [], "ast_error": [], "executer_error": [], "planRecall": [], "jaccard": [],
-           "planPrecision": [], "schemaAdherence": [], "time": []}
-
-    for index, row in tqdm(df.iterrows()):
 
         try:
             start = time.time()
-            response = agent.invoke({'input': row["query"]})['output']
+            p = execute.execute_new(ast.literal_eval(row["response"]))
+            p = p.replace({np.nan: "None"})
+
+            end = time.time()
+            t = execute.execute_new(ast.literal_eval(row["plan"]))
+            t = t.replace({np.nan: "None"})
+            if row['type'] == "index":
+                pre, re = eval_by_index(t, p,row['columns'])
+            else:
+                pre, re = eval_rows(t, p)
+            ex_error = 0
+        except:
+            ex_error = 1
+            pre = 0
+            re = 0
+
+        precision.append(pre)
+        recall.append(re)
+        execution_error.append(ex_error)
+        #print(end-start)
+
+    print(precision,recall)
+    df["precision"] = precision
+    df["recall"] = recall
+    df["execution_error"] = execution_error
+    df.to_csv(file, index=False)
+
+
+def generate_plan():
+
+    df = pd.read_csv("bird_mini_dev/prototype_eval.csv")
+    df = df.dropna()
+
+    res = {"response": [], "agent_error": [], "time": []}
+    agent = init_agent()
+
+    for index, row in tqdm(df.iterrows()):
+        try:
+            start = time.time()
+            response = agent.invoke({'query': row["query"],"evidence":row["evidence"]})['output']
 
             end = time.time()
             res["time"].append(end - start)
             res["response"].append(response)
             res["agent_error"].append(0)
         except:
+            end = time.time()
+            print(row["question_id"])
             res["response"].append("")
             res["agent_error"].append(1)
-            res["ast_error"].append(np.NaN)
-            res["executer_error"].append(np.NaN)
-            res["planRecall"].append(np.NaN)
-            res["jaccard"].append(np.NaN)
-            res["planPrecision"].append(np.NaN)
-            res["schemaAdherence"].append(np.NaN)
-            res["time"].append(np.NaN)
-            continue
+            res["time"].append(end - start)
 
-        try:
-            response = ast.literal_eval(response)
-            res["ast_error"].append(0)
-            res["planRecall"].append(metrics.planRecall(response, row["plan"]))
-            res["jaccard"].append(metrics.jaccard(response, row["plan"]))
-            res["planPrecision"].append(metrics.planPrecision(response, row["plan"]))
-            res["schemaAdherence"].append(metrics.schemaAdherence(response))
-        except:
-            res["executer_error"].append(np.NaN)
-            res["ast_error"].append(1)
-            res["planRecall"].append(np.NaN)
-            res["jaccard"].append(np.NaN)
-            res["planPrecision"].append(np.NaN)
-            res["schemaAdherence"].append(np.NaN)
-            continue
 
-        res["executer_error"].append(np.NaN)
-
-    print(res)
-    # TOdo execute and compare results
-
-    res_df = pd.DataFrame(res)
-
+    df["response"] = res["response"]
+    df["agent_error"] = res["agent_error"]
+    df["agent_time"] = res["time"]
     timestamp = datetime.now().strftime("%Y-%m-%d-%H-%M")
-    res_df.to_csv(f"prototype_eval_{timestamp}.csv", index=False)
+    df.to_csv(f"prototype_eval_{timestamp}.csv", index=False)
+
+def eval_plan(file):
+    df = pd.read_csv(file)
+
+    res = {"planRecall": [], "jaccard": [],"planPrecision": []}
+
+    for index, row in tqdm(df.iterrows()):
+        try:
+            res["planRecall"].append(metrics.planRecall(row["response"], row["plan"]))
+            res["jaccard"].append(metrics.jaccard(row["response"], row["plan"]))
+            res["planPrecision"].append(metrics.planPrecision(row["response"], row["plan"]))
+
+        except:
+            res["planRecall"].append(np.NaN)
+            res["jaccard"].append(np.NaN)
+            res["planPrecision"].append(np.NaN)
+
+    df["planRecall"] = res["planRecall"]
+    df["jaccard"] = res["jaccard"]
+    df["planPrecision"] = res["planPrecision"]
+
+    df.to_csv(file, index=False)
 
 
 if __name__ == "__main__":
-    file = "bird_mini_dev/prototype_eval.csv"
-    # runTest(file)
+    #generate_plan()
+    file = "prototype_eval_2025-07-28-13-29.csv"
+    eval_plan(file)
     test_plan(file)
-    #file = "prototype_eval_2025-06-27-11-04.csv"
-    #df = pd.read_csv(file)
-    # print(df.dtypes)
-    # print(df[["agent_error", "ast_error", "executer_error", "time"]].mean())
-    # print(df[["planRecall", "jaccard", "planPrecision", "schemaAdherence"]].mean())
+    df = pd.read_csv(file)
+    print(df[["agent_error", "agent_time"]].describe())
+    print(df[["planRecall", "jaccard", "planPrecision"]].describe())
+    print(df[["recall", "precision","execution_error"]].describe())
+    print(df[df["execution_error"] != 1])

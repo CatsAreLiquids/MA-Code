@@ -172,11 +172,6 @@ def get_docs(query, max: int, filter=None, collection=None):
     return vector_store.similarity_search(query, k=max, filter=filter)
 
 
-
-
-
-
-
 def evalEmbbeds(docs):
 
     emb_func = models.get_embeddings()
@@ -213,9 +208,11 @@ if __name__ == "__main__":
     db = models.getVectorStore()
     #add_Functions_Test(None)
     #print(rephrase_query("retrieve drivers dataset","State code numbers of top 3 yougest drivers. How many Netherlandic drivers among them?"))
+    #add_collections()
 
-
-    print(get_docs("",15,filter=None,collection="collection_level"))
+    docs = get_docs("List the patient ID, sex and birthday of patient with LDH beyond normal range.",15,filter=None,collection="collection_level")
+    for doc in docs:
+        print(doc)
     prompt = """Your task is to help find the best fitting data product. You are provided with a user query .
                     Provide the most likely fitting data products, always provide the data products name and why it would fit this query
             Question: {question} 
@@ -226,10 +223,11 @@ if __name__ == "__main__":
     #                {"filter": {"type": {"$eq": "product"}}})
 
     #add_Functions("sortby")
-    #delete(id = ["6ae8dcee-a32f-44cd-a31c-de0c8b088a62"])
-    get_docs_score(query = "",max= 30,filter={"type": {"$eq": "function_NoManual"}})#,filter={"type": {"$eq": "product"}}
-    #delete(id=['77b63c2e-cbcd-4a4a-82fc-f70aff8cef03','ef29f026-556c-4b3b-b40a-c4c3535b0798','5636a715-7631-4629-9f67-0cf5ceb92f32','162c47f8-6165-444c-99a1-5e241e6bc103','1a2e0673-9a8c-431e-a615-f8c97eb737ce','d0e7c96a-4879-4fa1-8c4f-90d18934d744'])
+    #delete(id= None,collection="collection_level")
+
+
+    #get_docs_score(query = "",max= 100,filter={"type": {"$eq": 'product'}})#,filter={"type": {"$eq": "product"}}#,filter={"type": {"$eq": "function_NoManual"}}
     #add_Functions(None)
-    #add_docs("california_schools",None)
+    #add_docs("toxicology",None)
     #evalEmbbeds("")
     #stuff()

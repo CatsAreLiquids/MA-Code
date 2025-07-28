@@ -34,7 +34,12 @@ def call_sum():
     df = pd.read_json(io.StringIO(content['data']))
     df = aggregation.getSum(df, content['args'])
 
-    return {'data':df.to_json()}
+    try:
+        data = df.to_json()
+    except AttributeError:
+        data = pd.Series(df).to_json()
+
+    return {'data':data}
 
 @app.route('/max', methods=['PUT'])
 def call_max():

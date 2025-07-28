@@ -43,15 +43,16 @@ def scoreFunction(file):
     df = df.dropna()
     correctness_LLM = []
     simple_match = []
+    exact_match = []
 
     for index, row in tqdm(df.iterrows()):
-        correctness_LLM.append(metrics.correctness_LLM(row["function"],row["response"]))
+        #correctness_LLM.append(metrics.correctness_LLM(row["function"],row["response"]))
         simple_match.append(metrics.simple_match(row["response"], [row["function"]]))
 
+        exact_match.append(metrics.exact_match(row["response"], [row["function"]]))
 
-
-
-    df["correctness_LLM"] = correctness_LLM
+    df["exact_match"] = exact_match
+    #df["correctness_LLM"] = correctness_LLM
     df["simple_match"] = simple_match
     df.to_csv(file, index=False)
 
@@ -72,6 +73,7 @@ def score_function_no_reorder(file):
     df["correctness_LLM"] = correctness_LLM
     df["simple_match"] = simple_match
     df["response"] = responses
+    df["exact_match"] = exact_match
     df.to_csv(file, index=False)
 
 
@@ -80,14 +82,17 @@ def score_step(file):
 
     correctness_LLM = []
     simple_match = []
+    exact_match= []
 
 
     for index, row in tqdm(df.iterrows()):
-        correctness_LLM.append(metrics.correctness_LLM([row["product"]],row["response"]))
-        simple_match.append(metrics.simple_match(row["response"], [row["product"]]))
-
-    df["correctness_LLM"] = correctness_LLM
-    df["simple_match"] = simple_match
+        #correctness_LLM.append(metrics.correctness_LLM([row["product"]],row["response"]))
+        #simple_match.append(metrics.simple_match(row["response"], [row["product"]]))
+        exact_match.append(metrics.exact_match(row["response"], [row["product"]]))
+        #print(row["response"], [row["product"]])
+    #df["correctness_LLM"] = correctness_LLM
+    #df["simple_match"] = simple_match
+    df["exact_match"] = exact_match
     df.to_csv(file, index=False)
 
 def score(file):
@@ -98,17 +103,15 @@ def score(file):
     ragasFaithfullnes = []
     ragasResponseGroundedness = []
     ragasSemanticSimilarity = []
-
+    exact_match = []
 
     for index, row in tqdm(df.iterrows()):
-        correctness_LLM.append(metrics.correctness_LLM(row["products"],row["response"]))
-        simple_match.append(metrics.simple_match(row["response"], row["products"]))
+        exact_match.append(metrics.exact_match(row["response"], row["products"]))
         #ragasFaithfullnes.append(metrics.ragasFaithfullnes(row["query"], row["response"],row["retrieved_docs"]))
         #ragasResponseGroundedness.append(metrics.ragasResponseGroundedness( row["response"],row["retrieved_docs"]))
         #ragasSemanticSimilarity.append(metrics.ragasSemanticSimilarity( row["response"],row["ground_truth"]))
 
-    df["correctness_LLM"] = correctness_LLM
-    df["simple_match"] = simple_match
+    df["exact_match"] = exact_match
     #df["ragasFaithfullnes"] = ragasFaithfullnes
     #df["ragasResponseGroundedness"] = ragasResponseGroundedness
     #df["ragasSemanticSimilarity"] = ragasSemanticSimilarity
@@ -117,15 +120,19 @@ def score(file):
 
 if __name__ == "__main__":
     #createGroundTruth(file)
-    file = "runs/products_retrieval_steps_hybrid_05_2025-07-07-13-55.csv"
+    file = "runs/function_function_reorder_2025-07-27-12-06.csv"
     #file = "bird_minidev_questions_functions_simple_eval_function_2025-06-17-17-36.csv"
     #score_function_no_reorder(file)
-    #scoreFunction(file)
-    score_step(file)
+    scoreFunction(file)
+    #score_step(file)
+    #score(file)
     df = pd.read_csv(file)
-    #print(df.columns)
-    #print(df["correctness_LLM"].value_counts())
-    print(df[["correctness_LLM", "simple_match"]].describe())
+    print(df[["exact_match"]].describe())
+
+    #file = "runs/query_multilevel_reorder_05_2025-07-22-10-09.csv"
+    #score(file)
+    #df = pd.read_csv(file)
+    #print(df[["exact_match"]].describe())
     #print(df[["simple_match"]].describe())
     #print(df[[ "ragasFaithfullnes","ragasResponseGroundedness",
     #          "ragasSemanticSimilarity"]].describe())

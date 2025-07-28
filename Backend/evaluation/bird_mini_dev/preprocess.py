@@ -182,7 +182,7 @@ def collectContext():
 
 def ground_truth_sql():
     df1 = pd.read_csv("bird_minidev_questions.csv")
-    df2 = pd.read_csv("prototype_eval.csv")
+    df2 = pd.read_csv("old/prototype_eval.csv")
 
     res_df = df1.join(df2, rsuffix="_r",how="inner")
     res_df = res_df.drop(columns=['plan','correc_context', 'correct_context', 'question_id_r', 'query_r',
