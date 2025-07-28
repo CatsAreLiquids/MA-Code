@@ -76,10 +76,11 @@
       - value: "the value to count "
       - unique: "True if only distinct values should be counted, False otherwise"
   returnResult:
-    description: "retrieves or extracts  the previously computed data, specified  by the columns in a dataframe"
-    filter_dict:
-      - columns: "which columns to retrun/extract"
+    base_api: http://127.0.0.1:5200/returnResult
+    description: "returns a computed query"
+    filter_dict: "None"
   retrieve:
+    base_api: http://127.0.0.1:5200/returnResult
     description: "retrieves the specified data product, takes the data products name and a list of requested columns as arguments"
     filter_dict:
       - product: "product url"

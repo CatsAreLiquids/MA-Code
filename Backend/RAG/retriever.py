@@ -308,6 +308,7 @@ def collection_rag( query,config):
 def function_rag(step):
     sys_prompt = """Your task is to find a the most fitting function that could solve problem described in the provided step.
                     As a valid json format return the function name your response should look like this: 'function_name': 'name','reason':'reason'
+                    If you can not find a fitting function return 'function_name': None
 
                     Context: {context} 
                     Answer:

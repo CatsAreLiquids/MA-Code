@@ -49,7 +49,7 @@ def _add_Function(functionName: str, description: dict):
     for k, v in description.items():
         text += f"{k}: {v}\n"
 
-    doc = [Document(page_content=text, metadata={"type": "function", "id": str(uuid.uuid4()),"name":functionName})]
+    doc = [Document(page_content=text, metadata={"type": "function_NoManual", "id": str(uuid.uuid4()),"name":functionName})]
     vector_store.add_documents(doc)
 
 
@@ -210,9 +210,7 @@ if __name__ == "__main__":
     #print(rephrase_query("retrieve drivers dataset","State code numbers of top 3 yougest drivers. How many Netherlandic drivers among them?"))
     #add_collections()
 
-    docs = get_docs("List the patient ID, sex and birthday of patient with LDH beyond normal range.",15,filter=None,collection="collection_level")
-    for doc in docs:
-        print(doc)
+
     prompt = """Your task is to help find the best fitting data product. You are provided with a user query .
                     Provide the most likely fitting data products, always provide the data products name and why it would fit this query
             Question: {question} 
@@ -223,11 +221,11 @@ if __name__ == "__main__":
     #                {"filter": {"type": {"$eq": "product"}}})
 
     #add_Functions("sortby")
-    #delete(id= None,collection="collection_level")
+    #delete(id= ["93e6e754-d8d9-4e1b-9bd7-24da841c0644","c4a436be-0190-4d80-867e-ec18f0e821c6"],collection=None)
 
 
-    #get_docs_score(query = "",max= 100,filter={"type": {"$eq": 'product'}})#,filter={"type": {"$eq": "product"}}#,filter={"type": {"$eq": "function_NoManual"}}
-    #add_Functions(None)
+    get_docs_score(query = "",max= 100,filter={"type": {"$eq": 'function_NoManual'}})#,filter={"type": {"$eq": "product"}}#,filter={"type": {"$eq": "function_NoManual"}}
+    #add_Functions("retrieve")
     #add_docs("toxicology",None)
     #evalEmbbeds("")
     #stuff()

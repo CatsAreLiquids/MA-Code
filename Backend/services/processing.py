@@ -161,5 +161,11 @@ def call_count():
 
     return {'data': data}
 
+@app.route('/returnResult', methods=['PUT'])
+def call_return():
+    content = json.loads(request.data)
+
+    return {'data': content}
+
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=port)

@@ -120,7 +120,7 @@ def execute_new(agent_result):
     frames = {}
     i = -1
     for elem in plans:
-        print(elem)
+        #print(elem)
         if elem['function'] == 'http://127.0.0.1:5200/retrieve':
             df = getData(elem['filter_dict'])
             i += 1

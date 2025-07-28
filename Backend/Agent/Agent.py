@@ -19,7 +19,7 @@ from Backend.Agent import execute
 from Backend.RAG import vector_db,retriever
 
 
-
+@tool(parse_docstring=True)
 def functionRetriever(step):
     """
     Searches and returns Data files aboout the functions accesible for the processing. Only usefull when trying to identify a function
@@ -74,11 +74,13 @@ def breakDownQuery(query):
 
     sys_prompt = """ Your task is to explain how you would slove the provided query. For this break it down into sepereate retrieval, computation and combination steps.
                 You will be provided with information for fitting data products, keep the steps short but combine them if possible.
-                The word retrieve is reserved for when you need to get a data product.
+                The word retrieve is reserved for when you need to get a data product. Keep these steps short. Retrieval instruction should only be the name of the data product
+                Keep in mind that when you combine multiple filterd products they will all be filterd
                 Multiple filter steps for the same product should be combined into one step. 
-                User returnResult for providing the finished product
+                Use returnResult for providing the finished product
                 Always do all steps necerssary for one product in a row.
                 When combining data always list both names 
+                Remember that you need to combine data if multiple data products are necerssary
                 
                 Example: All customer data of customers who have bought at least 1 book
                 result: ["retrieve sales data","filter for customers who have bought 1 book","retrieve customer data","combine customers from sales data and custmer data","return finished product"] 
@@ -155,21 +157,26 @@ def generate_retrieve(step, product_name):
 
 
 @tool(parse_docstring=True)
-def generate_function(step,product_name):
+def generate_function(step,function_name,product_name):
     """
     Generates a function call
     Args:
         step:  a step in a query that is being solved
+        function_name: the name of the function that can solve the step, can be found with the functionRetriever tool
         product_name: the name of the data product, or previous for processing a previous result, not an api
     Returns:
         a dict containing a function api and its parameters
     """
-
-    function_name = functionRetriever(step)
+    if "_" in function_name:
+        function_name = functionRetriever.invoke(input={"step":step})
 
     # Retrieve corresponding function catalog
     response = requests.get("http://127.0.0.1:5200/catalog", json={"function_name": function_name})
     function_catalog = json.loads(response.text)
+
+    if "base_api" in function_catalog:
+        if function_catalog["base_api"] == "http://127.0.0.1:5200/retrieve":
+            return "skip"
 
     if product_name not in ["combined_data","previous"]:
         response = requests.get("http://127.0.0.1:5000/catalog", json={"file": product_name})
@@ -183,9 +190,10 @@ def generate_function(step,product_name):
 
 
     sys_prompt = """ Your task is to combine all previously gatherd data into a preset output. use the following examples as a guide:
-                     Make sure that you only use 
+                     Make sure that you only use coloumns present in the data, and use parameters if necerssary
+                     If the filter_dict is described as none dont only provide the function part
                     Example:
-                    step: aggregate total items sold for each mall
+                    step: aggregate total items sold for groupd_by each mall
                     func_description: 
                     **Description**: This function calculates the sum of specified columns in a dataframe, optionally grouping the results by one or more columns. It requires a list of columns for which the sum should be calculated (cannot be None) and allows for grouping by a list of columns (can be None).
                     **API Endpoint**: [http://127.0.0.1:5200/sum](http://127.0.0.1:5200/sum)
@@ -370,19 +378,20 @@ def sql_plan(collection_name, query):
     # llm = models.get_LLM()
     llm = models.get_structured_LLM()
     response = llm.invoke(messages)
-    print(response['explanation'])
     return response["sql"]
 
 def init_agent():
     sys_prompt = """Your task is to create an execution plan for a user query. 
                     The first step is to break down the user query into ist substeps using the breakDownQuery tool, creating a list of tasks
                     
-                    To solve each of the task follow this guide 
-                    1. to produce the correct output for each step use:
-                        1.a if a step contains the a variation of the word combine use the generate_combination tool,
-                        1.b if a step contains the word retrieve use the generate_retrieve tools
-                        1.c if none of the above are fitting or any other rask is mentioned in a step use the generate_function tool
-                    2. transfrom the output to fit the schema with the generate_output tool
+                    To process each of the generated steps follow this outline:
+                    1. Identify which function or data product is needed using the productRetrieverStep Tool or the functionRetriever tool
+                    
+                    2. to produce the correct output for each step use:
+                        2.a if a step contains the a variation of the word combine use the generate_combination tool,
+                        2.b if a step contains the word retrieve use the generate_retrieve tools
+                        2.c if none of the above are fitting or any other rask is mentioned in a step use the generate_function tool
+                    3. transfrom the output to fit the schema with the format_output tool
                     
                     Directly return the result of the format_output tool !
         """
@@ -394,7 +403,7 @@ def init_agent():
         ]
     )
 
-    tools = [breakDownQuery,productRetrieverStep,generate_function,generate_combination,format_output,generate_retrieve]
+    tools = [breakDownQuery,productRetrieverStep,functionRetriever,generate_function,generate_combination,format_output,generate_retrieve]
 
     agent = create_tool_calling_agent(models.get_LLM(), tools, prompt)
     return AgentExecutor(agent=agent, tools=tools, verbose=True,return_intermediate_steps=True)
@@ -405,10 +414,10 @@ if __name__ == "__main__":
     with get_openai_callback() as cb:
         agent_i = init_agent()
 
-        sql = "What is Copycat's race?"
-        sql = "What was the average overall rating for Marko Arnautovic from 2007/2/22 to 2016/4/21?"
+        sql = "Calculate the average overall rating of Pietro Marino"
+        #sql = "What was the average overall rating for Marko Arnautovic from 2007/2/22 to 2016/4/21?"
         ev = "Marko Arnautovic refers to player_name = 'Marko Arnautovic'; from 2007/2/22 to 2016/4/21 refers to the first 10 characters of date BETWEEN '2007-02-22' and '2016-04-21'"
-
+        ev =""
 
         agent_result = agent_i.invoke({'query': sql,"evidence":ev})
         print(agent_result['output'])
