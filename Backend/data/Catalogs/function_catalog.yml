@@ -1,12 +1,14 @@
   sum:
     base_api: http://127.0.0.1:5200/sum
     description: "Calcuates the sum of a dataframe based on a list of group_by columns and"
+    default_column: "sum"
     filter_dict:
       - group_by: "a list of coulmns in the dataframe, can be None"
       - columns: "a list of columns for hicht the sum should be calculated, cant be None"
   mean:
     base_api: http://127.0.0.1:5200/mean
     description: "Calcuates the mean of a dataframe based on a list of group_by columns and"
+    default_column: "mean"
     filter_dict:
       - group_by: "a list of coulmns in the dataframe, can be None"
       - columns: "a list of columns for hicht the mean should be calculated, cant be None"
@@ -71,6 +73,7 @@
   count:
     base_api: http://127.0.0.1:5200/count
     description: "counts the occurences of a specific value or values"
+    default_column: "count"
     filter_dict:
       - columns: "a column in which the value to count is present"
       - value: "the value to count "

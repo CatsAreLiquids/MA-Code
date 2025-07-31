@@ -1,5 +1,6 @@
 import pandas as pd
 from Backend.Agent.Agent import init_agent
+from Backend.Agent.Agent_new import run_agent
 from Backend.Agent import execute
 from dotenv import load_dotenv
 from Backend.evaluation import metrics
@@ -92,7 +93,7 @@ def test_plan(file):
     execution_error = []
 
 
-    for index, row in df.iterrows():
+    for index, row in tqdm(df.iterrows()):
 
         try:
             start = time.time()
@@ -177,10 +178,40 @@ def eval_plan(file):
 
     df.to_csv(file, index=False)
 
+def generate_plan2():
+
+    df = pd.read_csv("bird_mini_dev/prototype_eval.csv")
+    df = df.dropna()
+
+    res = {"response": [], "agent_error": [], "time": []}
+    agent = init_agent()
+
+    for index, row in tqdm(df.iterrows()):
+        try:
+            start = time.time()
+            response = run_agent(row["query"],row["evidence"])
+
+            end = time.time()
+            res["time"].append(end - start)
+            res["response"].append(response)
+            res["agent_error"].append(0)
+
+        except:
+            end = time.time()
+            print(row["question_id"])
+            res["response"].append("")
+            res["agent_error"].append(1)
+            res["time"].append(end - start)
+
+    df["response"] = res["response"]
+    df["agent_error"] = res["agent_error"]
+    df["agent_time"] = res["time"]
+    timestamp = datetime.now().strftime("%Y-%m-%d-%H-%M")
+    df.to_csv(f"prototype_eval_{timestamp}.csv", index=False)
 
 if __name__ == "__main__":
-    #generate_plan()
-    file = "prototype_eval_2025-07-27-21-48_cirtiqued.csv"
+    #generate_plan2()
+    file = "prototype_eval_2025-07-31-17-23.csv"
     eval_plan(file)
     test_plan(file)
     df = pd.read_csv(file)

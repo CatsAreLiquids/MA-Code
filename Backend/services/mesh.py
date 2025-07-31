@@ -56,6 +56,7 @@ def getCatalogCollection():
             except FileNotFoundError:
                 return "could not find the specific collection catalog"
 
+
 @app.route('/catalog/columns', methods=['GET'])
 def getCatalogColumns():
     content = json.loads(request.data)
@@ -80,7 +81,7 @@ def getCatalogColumns():
                 return "could not find the specific collection catalog"
             except KeyError:
                 return collection_dict
-
+    return {"text": "No fitting catalog columns found"}
 # ----------------------Single Catalogs-----------------------
 @app.route('/catalog/EDGAR_2024_GHG', methods=['GET'])
 def getCatalogEDGAR_2024_GHG():
