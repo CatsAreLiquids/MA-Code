@@ -63,7 +63,7 @@ def process_product(file):
     product = Path(file).parts[1]
 
     if _data_exists(collection,product):
-        columns = _getColumns(file)
+        columns = _get_columns(file)
     else:
         print("Could not find the specified data product. Not going to proceed")
         return
@@ -102,6 +102,6 @@ if __name__ == '__main__':
     files = glob.glob("california_schools/*.csv")
     for file in files:
         print(file)
-        process_Product(file)
+        process_product(file)
     #file = "old/EDGAR_2023_GHG/GHG_per_capita_by_country_2023.csv"
     #main(file)

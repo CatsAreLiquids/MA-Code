@@ -72,6 +72,7 @@ def critique_plan(agent_result):
     plan = agent_result["plans"]
 
     for i in range(len(plan)):
+        print(i)
         elem = plan[i]
         if elem['function'] == 'http://127.0.0.1:5200/retrieve':
             product = elem["filter_dict"]["product"]
@@ -108,5 +109,5 @@ def correct_run(file):
 
     df.to_csv(f"{file}_cirtiqued",index=False)
 if __name__ == "__main__":
-    file = "../evaluation/prototype_eval_2025-07-28-23-10.csv"
+    file = "../evaluation/prototype_eval_2025-07-31-17-23.csv"
     correct_run(file)

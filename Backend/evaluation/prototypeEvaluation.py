@@ -154,7 +154,7 @@ def generate_plan():
     df["agent_error"] = res["agent_error"]
     df["agent_time"] = res["time"]
     timestamp = datetime.now().strftime("%Y-%m-%d-%H-%M")
-    df.to_csv(f"prototype_eval_{timestamp}.csv", index=False)
+    df.to_csv(f"prototype_eval_column_info_{timestamp}.csv", index=False)
 
 def eval_plan(file):
     df = pd.read_csv(file)
@@ -210,10 +210,10 @@ def generate_plan2():
     df.to_csv(f"prototype_eval_{timestamp}.csv", index=False)
 
 if __name__ == "__main__":
-    #generate_plan2()
-    file = "prototype_eval_2025-07-31-17-23.csv"
-    eval_plan(file)
-    test_plan(file)
+    generate_plan()
+    file = "prototype_eval_2025-07-31-17-23_cirtiqued.csv"
+    #eval_plan(file)
+    #test_plan(file)
     df = pd.read_csv(file)
     print(df[["agent_error", "agent_time"]].describe())
     print(df[["planRecall", "jaccard", "planPrecision"]].describe())
