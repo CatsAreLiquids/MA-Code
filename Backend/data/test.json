@@ -1,0 +1,9 @@
+{"sum":     """filter_dict = ast.literal_eval(filter_dict)
+    if "group_by" in filter_dict:
+        df = df.groupby(by=filter_dict['group_by'])
+
+    if 'columns' in filter_dict:
+        key = 'columns'
+    elif 'column' in filter_dict:
+        key = 'column'
+    return df[filter_dict[key]].sum()}"""

@@ -1,0 +1,96 @@
+badges:
+  base_api: http://127.0.0.1:5000/products/codebase_community/badges
+  columns:
+  - 'Id, type :numerical, format: integers'
+  - 'UserId, type :numerical, format: integers'
+  - 'Name, type :texts, format: string'
+  - 'Date, type :dates, format: YYYY-MM-DD HH:MM:SS'
+comments:
+  base_api: http://127.0.0.1:5000/products/codebase_community/comments
+  columns:
+  - 'Id, type :numerical, format: integers'
+  - 'PostId, type :numerical, format: integers'
+  - 'Score, type :numerical, format: integers'
+  - 'Text, type :texts, format: string'
+  - 'CreationDate, type :dates, format: YYYY-MM-DD HH:MM:SS'
+  - 'UserId, type :numerical, format: float'
+  - 'UserDisplayName, type :texts, format: string'
+postHistory:
+  base_api: http://127.0.0.1:5000/products/codebase_community/postHistory
+  columns:
+  - 'Id, type :numerical, format: integers'
+  - 'PostHistoryTypeId, type :numerical, format: integers'
+  - 'PostId, type :numerical, format: integers'
+  - 'RevisionGUID, type :texts, format: UUID'
+  - 'CreationDate, type :dates, format: YYYY-MM-DD HH:MM:SS'
+  - 'UserId, type :numerical, format: float'
+  - 'Text, type :texts, format: string'
+  - 'Comment, type :texts, format: string'
+  - 'UserDisplayName, type :texts, format: string'
+postLinks:
+  base_api: http://127.0.0.1:5000/products/codebase_community/postLinks
+  columns:
+  - 'Id, type :numerical, format: integers'
+  - 'CreationDate, type :dates, format: YYYY-MM-DD HH:MM:SS'
+  - 'PostId, type :numerical, format: integers'
+  - 'RelatedPostId, type :numerical, format: integers'
+  - 'LinkTypeId, type :numerical, format: integers'
+posts:
+  base_api: http://127.0.0.1:5000/products/codebase_community/posts
+  columns:
+  - 'Id, type :numerical, format: integers'
+  - 'PostTypeId, type :numerical, format: integers'
+  - 'AcceptedAnswerId, type :numerical, format: float'
+  - 'CreaionDate, type :dates and times, format: YYYY-MM-DD HH:MM:SS'
+  - 'Score, type :numerical, format: integers'
+  - 'ViewCount, type :numerical, format: float'
+  - 'Body, type :text, format: HTML paragraphs and code snippets'
+  - 'OwnerUserId, type :numerical, format: float'
+  - 'LasActivityDate, type :dates, format: YYYY-MM-DD HH:MM:SS'
+  - 'Title, type :texts, format: string'
+  - 'Tags, type :texts, format: <category1><category2><category3>'
+  - 'AnswerCount, type :numerical, format: float'
+  - 'CommentCount, type :numerical, format: integers'
+  - 'FavoriteCount, type :numerical, format: float'
+  - 'LastEditorUserId, type :numerical, format: float'
+  - 'LastEditDate, type :dates, format: YYYY-MM-DD HH:MM:SS'
+  - 'CommunityOwnedDate, type :dates, format: YYYY-MM-DD HH:MM:SS'
+  - 'ParentId, type :numerical, format: float'
+  - 'ClosedDate, type :dates, format: YYYY-MM-DD HH:MM:SS'
+  - 'OwnerDisplayName, type :texts, format: string'
+  - 'LastEditorDisplayName, type :texts, format: string'
+tags:
+  base_api: http://127.0.0.1:5000/products/codebase_community/tags
+  columns:
+  - 'Id, type :numerical, format: integers'
+  - 'TagName, type :texts, format: list of strings'
+  - 'Count, type :numerical, format: integers'
+  - 'ExcerptPostId, type :numerical, format: float'
+  - 'WikiPostId, type :numerical, format: float'
+users:
+  base_api: http://127.0.0.1:5000/products/codebase_community/users
+  columns:
+  - 'Id, type :numerical, format: integers'
+  - 'Reputation, type :numerical, format: integers'
+  - 'CreationDate, type :dates, format: YYYY-MM-DD HH:MM:SS'
+  - 'DisplayName, type :texts, format: string'
+  - 'LastAccessDate, type :dates, format: YYYY-MM-DD HH:MM:SS'
+  - 'WebsiteUrl, type :texts, format: http://example.com'
+  - 'Location, type :texts, format: City, Country or State'
+  - 'AboutMe, type :texts, format: HTML formatted strings with various personal descriptions,
+    interests, and links'
+  - 'Views, type :numerical, format: integers'
+  - 'UpVotes, type :numerical, format: integers'
+  - 'DownVotes, type :numerical, format: integers'
+  - 'AccountId, type :numerical, format: integers'
+  - 'Age, type :numerical, format: float'
+  - 'ProfileImageUrl, type :texts, format: URL'
+votes:
+  base_api: http://127.0.0.1:5000/products/codebase_community/votes
+  columns:
+  - 'Id, type :numerical, format: integers'
+  - 'PostId, type :numerical, format: integers'
+  - 'VoteTypeId, type :numerical, format: integers'
+  - 'CreationDate, type :dates, format: YYYY-MM-DD'
+  - 'UserId, type :numerical, format: float'
+  - 'BountyAmount, type :numerical, format: float or NaN'

@@ -2,4 +2,7 @@
 venv
 .idea
 *.jsonl
-data/
+*.sql
+*posts.csv
+postHistory.csv
+Match.csv

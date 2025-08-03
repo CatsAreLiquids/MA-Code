@@ -1,0 +1,36 @@
+customers:
+  base_api: http://127.0.0.1:5000/products/debit_card_specializing/customers
+  columns:
+  - 'CustomerID, type :numerical, format: integers'
+  - 'Segment, type :texts, format: string'
+  - 'Currency, type :texts, format: Currency codes (ISO 4217)'
+gasstations:
+  base_api: http://127.0.0.1:5000/products/debit_card_specializing/gasstations
+  columns:
+  - 'GasStationID, type :numerical, format: integers'
+  - 'ChainID, type :numerical, format: integers'
+  - 'Country, type :texts, format: ISO 3166-1 alpha-3 country codes'
+  - 'Segment, type :text, format: string'
+products:
+  base_api: http://127.0.0.1:5000/products/debit_card_specializing/products
+  columns:
+  - 'ProductID, type :numerical, format: integers'
+  - 'Description, type :texts, format: string'
+transactions_1k:
+  base_api: http://127.0.0.1:5000/products/debit_card_specializing/transactions_1k
+  columns:
+  - 'TransactionID, type :numerical, format: integers'
+  - 'Date, type :dates, format: YYYY-MM-DD'
+  - 'Time, type :time, format: HH:MM:SS'
+  - 'CustomerID, type :numerical, format: integers'
+  - 'CardID, type :numerical, format: integers'
+  - 'GasStationID, type :numerical, format: integers'
+  - 'ProductID, type :numerical, format: integers'
+  - 'Amount, type :numerical, format: integers'
+  - 'Price, type :numerical, format: float'
+yearmonth:
+  base_api: http://127.0.0.1:5000/products/debit_card_specializing/yearmonth
+  columns:
+  - 'CustomerID, type :numerical, format: integers'
+  - 'Date, type :numerical, format: YYYYMM'
+  - 'Consumption, type :numerical, format: float'

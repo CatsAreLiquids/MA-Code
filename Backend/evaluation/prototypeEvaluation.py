@@ -210,10 +210,10 @@ def generate_plan2():
     df.to_csv(f"prototype_eval_{timestamp}.csv", index=False)
 
 if __name__ == "__main__":
-    generate_plan()
-    file = "prototype_eval_2025-07-31-17-23_cirtiqued.csv"
-    #eval_plan(file)
-    #test_plan(file)
+    #generate_plan()
+    file = "prototype_eval_column_info_2025-08-01-16-02.csv"
+    eval_plan(file)
+    test_plan(file)
     df = pd.read_csv(file)
     print(df[["agent_error", "agent_time"]].describe())
     print(df[["planRecall", "jaccard", "planPrecision"]].describe())

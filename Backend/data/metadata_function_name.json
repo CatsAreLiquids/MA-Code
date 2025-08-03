@@ -1,0 +1,10 @@
+[{"sum": "sum"},
+  {"mean": "mean"},
+  {"max": "max"},
+  {"min": "min"},
+  {"filter": "filter"},
+  {"sortby": "sortby"},
+  {"count": "count"},
+  {"returnResult": "returnResult"},
+  {"retrieve": "retrieve"},
+  {"combine": "combine"}]
