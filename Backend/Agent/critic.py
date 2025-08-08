@@ -109,5 +109,5 @@ def correct_run(file):
 
     df.to_csv(f"{file}_cirtiqued",index=False)
 if __name__ == "__main__":
-    file = "../evaluation/prototype_eval_2025-07-31-17-23.csv"
+    file = "../evaluation/prototype_eval_column_info_2025-08-01-16-02.csv"
     correct_run(file)

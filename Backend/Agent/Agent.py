@@ -45,8 +45,8 @@ def productRetrieverStep(query,step):
         a text descrbing potential functions
     """
 
-    mod_query = f"I am looking for data products that can answer the query: '{query}'\n Specifically the retrieval question {step} "
-
+    #mod_query = f"I am looking for data products that can answer the query: '{query}'\n Specifically the retrieval question {step} "
+    mod_query = f"I am looking for data products that can answer the retrieval question {step} "
     product = retriever.product_rag(mod_query)
     return product["name"]
 
