@@ -148,11 +148,11 @@ def execute_new(agent_result):
 if __name__ == "__main__":
 
     l ={'plans': [
-{'function': 'http://127.0.0.1:5200/retrieve', 'filter_dict': {'product': 'http://127.0.0.1:5000/products/formula_1/qualifying'}},
- {'function': 'http://127.0.0.1:5200/filter', 'filter_dict': {'conditions': {'raceId': 45, 'q3': '0:01:33'}}},
- {'function': 'http://127.0.0.1:5200/retrieve', 'filter_dict': {'product': 'http://127.0.0.1:5000/products/formula_1/qualifying'}},
- {'function': 'http://127.0.0.1:5200/filter', 'filter_dict': {'conditions': {'driverId': 'qualifying_result_driverId'}}},
- {'function': 'http://127.0.0.1:5200/returnResult', 'filter_dict': None}]}
+{'function': 'http://127.0.0.1:5200/retrieve', 'filter_dict': {'product': 'http://127.0.0.1:5000/products/formula_1/driverStandings'}},
+ {'function': 'http://127.0.0.1:5200/filter', 'filter_dict': {'conditions': {'year': {'min': 1980, 'max': 1985}}}},
+ {'function': 'http://127.0.0.1:5200/retrieve', 'filter_dict': {'product': 'http://127.0.0.1:5000/products/formula_1/pitStops'}},
+ {'function': 'http://127.0.0.1:5200/mean', 'filter_dict': {'group_by': None, 'columns': ['duration']}},
+ {'function': 'http://127.0.0.1:5200/max', 'filter_dict': {'columns': 'duration', 'rows': 3}}]}
 
 
 

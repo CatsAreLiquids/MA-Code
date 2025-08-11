@@ -1,0 +1,137 @@
+circuits:
+  base_api: http://127.0.0.1:5000/products/formula_1/circuits
+  columns:
+  - 'circuitId, type :numerical, format: integers'
+  - 'circuitRef, type :texts, format: string'
+  - 'name, type :texts, format: string'
+  - 'location, type :texts, format: string'
+  - 'country, type :texts, format: Country names'
+  - 'lat, type :numerical, format: floating-point numbers'
+  - 'lng, type :numerical, format: floating point numbers'
+  - 'alt, type :null or missing data, format: N/A'
+  - 'url, type :texts, format: URL'
+constructorResults:
+  base_api: http://127.0.0.1:5000/products/formula_1/constructorResults
+  columns:
+  - 'constructorResultsId, type :numerical, format: integers'
+  - 'raceId, type :numerical, format: integers'
+  - 'constructorId, type :numerical, format: integers'
+  - 'points, type :numerical, format: float'
+  - 'status, type :mixed, format: string, null'
+constructorStandings:
+  base_api: http://127.0.0.1:5000/products/formula_1/constructorStandings
+  columns:
+  - 'constructorStandingsId, type :numerical, format: integers'
+  - 'raceId, type :numerical, format: integers'
+  - 'constructorId, type :numerical, format: integers'
+  - 'points, type :numerical, format: float or integer'
+  - 'position, type :numerical, format: integers'
+  - 'positionText, type :numerical and categorical, format: integers and single characters'
+  - 'wins, type :numerical, format: integers'
+constructors:
+  base_api: http://127.0.0.1:5000/products/formula_1/constructors
+  columns:
+  - 'constructorId, type :numerical, format: integers'
+  - 'constructorRef, type :texts, format: string'
+  - 'name, type :texts, format: string'
+  - 'nationality, type :text, format: String values representing nationalities or
+    ethnicities'
+  - 'url, type :texts, format: http://en.wikipedia.org/wiki/Example'
+driverStandings:
+  base_api: http://127.0.0.1:5000/products/formula_1/driverStandings
+  columns:
+  - 'driverStandingsId, type :numerical, format: integers'
+  - 'raceId, type :numerical, format: integers'
+  - 'driverId, type :numerical, format: integers'
+  - 'points, type :numerical, format: float'
+  - 'position, type :numerical, format: integers'
+  - 'positionText, type :numerical, format: integers'
+  - 'wins, type :numerical, format: integers'
+drivers:
+  base_api: http://127.0.0.1:5000/products/formula_1/drivers
+  columns:
+  - 'driverId, type :numerical, format: integers'
+  - 'driverRef, type :texts, format: string'
+  - 'number, type :numerical, format: float'
+  - 'code, type :texts, format: string'
+  - 'forename, type :texts, format: string'
+  - 'surname, type :texts, format: string'
+  - 'dob, type :dates, format: YYYY-MM-DD'
+  - 'nationality, type :texts, format: String values representing nationalities'
+  - 'url, type :texts, format: http://en.wikipedia.org/wiki/Name'
+lapTimes:
+  base_api: http://127.0.0.1:5000/products/formula_1/lapTimes
+  columns:
+  - 'raceId, type :numerical, format: integers'
+  - 'driverId, type :numerical, format: integers'
+  - 'lap, type :numerical, format: integers'
+  - 'position, type :numerical, format: integers'
+  - 'time, type :text, format: MM:SS.sss'
+  - 'milliseconds, type :numerical, format: integers'
+pitStops:
+  base_api: http://127.0.0.1:5000/products/formula_1/pitStops
+  columns:
+  - 'raceId, type :numerical, format: integers'
+  - 'driverId, type :numerical, format: integers'
+  - 'stop, type :numerical, format: integers'
+  - 'lap, type :numerical, format: integers'
+  - 'time, type :time, format: HH:MM:SS'
+  - 'duration, type :numerical, format: float'
+  - 'milliseconds, type :numerical, format: integers'
+qualifying:
+  base_api: http://127.0.0.1:5000/products/formula_1/qualifying
+  columns:
+  - 'qualifyId, type :numerical, format: integers'
+  - 'raceId, type :numerical, format: integers'
+  - 'driverId, type :numerical, format: integers'
+  - 'constructorId, type :numerical, format: integers'
+  - 'number, type :numerical, format: integers'
+  - 'position, type :numerical, format: integers'
+  - 'q1, type :text, format: MM:SS.sss'
+  - 'q2, type :text, format: MM:SS.SSS'
+  - 'q3, type :numerical, format: MM:SS.SSS'
+races:
+  base_api: http://127.0.0.1:5000/products/formula_1/races
+  columns:
+  - 'raceId, type :numerical, format: integers'
+  - 'year, type :numerical, format: integers'
+  - 'round, type :numerical, format: integers'
+  - 'circuitId, type :numerical, format: integers'
+  - 'name, type :texts, format: String'
+  - 'date, type :dates, format: YYYY-MM-DD'
+  - 'time, type :time, format: HH:MM:SS'
+  - 'url, type :texts, format: URL'
+results:
+  base_api: http://127.0.0.1:5000/products/formula_1/results
+  columns:
+  - 'resultId, type :numerical, format: integers'
+  - 'raceId, type :numerical, format: integers'
+  - 'driverId, type :numerical, format: integers'
+  - 'constructorId, type :numerical, format: integers'
+  - 'number, type :numerical, format: float'
+  - 'grid, type :numerical, format: integers'
+  - 'position, type :numerical, format: float'
+  - 'positionText, type :mixed, format: [''text'', ''integer'', ''text'', ''integer'',
+    ''integer'', ''integer'', ''integer'', ''integer'', ''integer'', ''integer'',
+    ''integer'', ''integer'', ''text'', ''integer'', ''integer'']'
+  - 'positionOrder, type :numerical, format: integers'
+  - 'points, type :numerical, format: float'
+  - 'laps, type :numerical, format: integers'
+  - 'time, type :time durations and numerical values, format: HH:MM:SS.sss for time
+    durations, +XX.XXX for numerical values'
+  - 'milliseconds, type :numerical, format: float'
+  - 'fastestLap, type :numerical, format: float'
+  - 'rank, type :numerical, format: float'
+  - 'fastestLapTime, type :text, format: MM:SS.SSS'
+  - 'fastestLapSpeed, type :numerical, format: float'
+  - 'statusId, type :numerical, format: integers'
+seasons:
+  base_api: http://127.0.0.1:5000/products/formula_1/seasons
+  columns:
+  - 'year, type :numerical, format: integers'
+  - 'url, type :texts, format: http://en.wikipedia.org/wiki/YYYY_Formula_One_season'
+status:
+  base_api: http://127.0.0.1:5000/products/formula_1/status
+  columns:
+  - 'statusId, type :numerical, format: integers'
+  - 'status, type :texts, format: string'

@@ -1,72 +1,72 @@
 Attendance:
   base_api: http://127.0.0.1:5000/products/student_club/Attendance
   columns:
-  - 'link_to_event, type :text, format: alphanumeric string'
-  - 'link_to_member, type :texts, format: alphanumeric strings'
+  - link_to_event: 'type :text, format: alphanumeric string'
+  - link_to_member: 'type :texts, format: alphanumeric strings'
 Budget:
   base_api: http://127.0.0.1:5000/products/student_club/Budget
   columns:
-  - 'budget_id, type :texts, format: alphanumeric strings'
-  - 'category, type :texts, format: string'
-  - 'spent, type :numerical, format: float'
-  - 'remaining, type :numerical, format: float'
-  - 'amount, type :numerical, format: integers'
-  - 'event_status, type :text, format: string values representing status'
-  - 'link_to_event, type :texts, format: alphanumeric strings'
+  - budget_id: 'type :texts, format: alphanumeric strings'
+  - category: 'type :texts, format: string'
+  - spent: 'type :numerical, format: float'
+  - remaining: 'type :numerical, format: float'
+  - amount: 'type :numerical, format: integers'
+  - event_status: 'type :text, format: string values representing status'
+  - link_to_event: 'type :texts, format: alphanumeric strings'
 Event:
   base_api: http://127.0.0.1:5000/products/student_club/Event
   columns:
-  - 'event_id, type :texts, format: alphanumeric strings'
-  - 'event_name, type :texts, format: string'
-  - 'event_date, type :dates, format: YYYY-MM-DDTHH:MM:SS'
-  - 'type, type :text, format: string'
-  - 'notes, type :texts, format: string'
-  - 'location, type :texts, format: string'
-  - 'status, type :text, format: string values representing status'
+  - event_id: 'type :texts, format: alphanumeric strings'
+  - event_name: 'type :texts, format: string'
+  - event_date: 'type :dates, format: YYYY-MM-DDTHH:MM:SS'
+  - type: 'type :text, format: string'
+  - notes: 'type :texts, format: string'
+  - location: 'type :texts, format: string'
+  - status: 'type :text, format: string values representing status'
 Expense:
   base_api: http://127.0.0.1:5000/products/student_club/Expense
   columns:
-  - 'expense_id, type :texts, format: alphanumeric strings'
-  - 'expense_description, type :texts, format: Comma-separated items'
-  - 'expense_date, type :dates, format: YYYY-MM-DD'
-  - 'cost, type :numerical, format: float'
-  - 'approved, type :mixed, format: [null, boolean]'
-  - 'link_to_member, type :texts, format: alphanumeric strings'
-  - 'link_to_budget, type :texts, format: alphanumeric strings'
+  - expense_id: 'type :texts, format: alphanumeric strings'
+  - expense_description: 'type :texts, format: Comma-separated items'
+  - expense_date: 'type :dates, format: YYYY-MM-DD'
+  - cost: 'type :numerical, format: float'
+  - approved: 'type :mixed, format: [null, boolean]'
+  - link_to_member: 'type :texts, format: alphanumeric strings'
+  - link_to_budget: 'type :texts, format: alphanumeric strings'
 Income:
   base_api: http://127.0.0.1:5000/products/student_club/Income
   columns:
-  - 'income_id, type :texts, format: alphanumeric strings'
-  - 'date_received, type :dates, format: YYYY-MM-DD'
-  - 'amount, type :numerical, format: integers'
-  - 'source, type :texts, format: string'
-  - 'notes, type :texts, format: string'
-  - 'link_to_member, type :texts, format: alphanumeric strings'
+  - income_id: 'type :texts, format: alphanumeric strings'
+  - date_received: 'type :dates, format: YYYY-MM-DD'
+  - amount: 'type :numerical, format: integers'
+  - source: 'type :texts, format: string'
+  - notes: 'type :texts, format: string'
+  - link_to_member: 'type :texts, format: alphanumeric strings'
 Major:
   base_api: http://127.0.0.1:5000/products/student_club/Major
   columns:
-  - 'major_id, type :texts, format: alphanumeric strings'
-  - 'major_name, type :texts, format: List of academic programs or fields of study'
-  - 'department, type :texts, format: String'
-  - 'college, type :text, format: String'
+  - major_id: 'type :texts, format: alphanumeric strings'
+  - major_name: 'type :texts, format: List of academic programs or fields of study'
+  - department: 'type :texts, format: String'
+  - college: 'type :text, format: String'
 Member:
   base_api: http://127.0.0.1:5000/products/student_club/Member
   columns:
-  - 'member_id, type :texts, format: alphanumeric strings'
-  - 'first_name, type :texts, format: string'
-  - 'last_name, type :texts, format: string'
-  - 'email, type :texts, format: email@example.com'
-  - 'position, type :text, format: string'
-  - 't_shirt_size, type :text, format: string'
-  - 'phone, type :text, format: XXX-XXX-XXXX or (XXX) XXX-XXXX'
-  - 'zip, type :numerical, format: integers'
-  - 'link_to_major, type :texts, format: alphanumeric strings or null'
+  - member_id: 'type :texts, format: alphanumeric strings'
+  - first_name: 'type :texts, format: string'
+  - last_name: 'type :texts, format: string'
+  - email: 'type :texts, format: email@example.com'
+  - position: 'type :text, format: string'
+  - t_shirt_size: 'type :text, format: string'
+  - phone: 'type :text, format: XXX-XXX-XXXX or (XXX) XXX-XXXX'
+  - zip: 'type :numerical, format: integers'
+  - link_to_major: 'type :texts, format: alphanumeric strings or null'
 Zip_Code:
   base_api: http://127.0.0.1:5000/products/student_club/Zip_Code
   columns:
-  - 'zip_code, type :numerical, format: integers'
-  - 'type, type :text, format: string'
-  - 'city, type :texts, format: string'
-  - 'county, type :texts, format: String'
-  - 'state, type :texts, format: String (State names)'
-  - 'short_state, type :text, format: State abbreviations (2-letter codes)'
+  - zip_code: 'type :numerical, format: integers'
+  - type: 'type :text, format: string'
+  - city: 'type :texts, format: string'
+  - county: 'type :texts, format: String'
+  - state: 'type :texts, format: String (State names)'
+  - short_state: 'type :text, format: State abbreviations (2-letter codes)'

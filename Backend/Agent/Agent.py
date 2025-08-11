@@ -72,8 +72,10 @@ def breakDownQuery(query):
                             json={"file": prod_descriptions["collection_name"]})
     catalog = json.loads(response.text)
 
-    sys_prompt = """ Your task is to explain how you would slove the provided query. For this break it down into sepereate retrieval, computation and combination steps.
+    sys_prompt = """ Your task is to explain how you would slove the provided query. For this break it down into all the seperate steps
+    
                 You will be provided with information for fitting data products, keep the steps short but combine them if possible.
+                
                 
                 Always combine sorting and selecting a number of resutlts into one step. I.e sort by books sold and slect top 4
                 
@@ -429,8 +431,8 @@ if __name__ == "__main__":
         agent_i = init_agent()
 
         sql = "Calculate the average overall rating of Pietro Marino"
-        sql = "Which top 4 leagues had the most games in the 2015-2016 season?"
-        ev = "in the 2015-2016 season refers to season = '2015/2016'; league with most games refers to League.name where MAX(COUNT(id)); "
+        sql = "What is the Simplified Chinese translation of the name of the set 'Eighth Edition'?"
+        ev = "Eighth Edition is the name of card set which refers to name = 'Eighth Edition'; Simplified Chinese refers to language = 'Chinese Simplified'; translation of the name refers to translation"
 
         agent_result = agent_i.invoke({'query': sql, "evidence": ev})
         print(agent_result['output'])

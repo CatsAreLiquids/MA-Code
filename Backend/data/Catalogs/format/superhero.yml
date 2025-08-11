@@ -1,0 +1,61 @@
+alignment:
+  base_api: http://127.0.0.1:5000/products/superhero/alignment
+  columns:
+  - 'id, type :numerical, format: integers'
+  - 'alignment, type :categorical, format: [''Neutral'', ''Bad'', ''Good'']'
+attribute:
+  base_api: http://127.0.0.1:5000/products/superhero/attribute
+  columns:
+  - 'id, type :numerical, format: integers'
+  - 'attribute_name, type :texts, format: String values representing attributes'
+colour:
+  base_api: http://127.0.0.1:5000/products/superhero/colour
+  columns:
+  - 'id, type :numerical, format: integers'
+  - 'colour, type :text, format: Color names'
+gender:
+  base_api: http://127.0.0.1:5000/products/superhero/gender
+  columns:
+  - 'id, type :numerical, format: integers'
+  - 'gender, type :categorical, format: [''Male'', ''Female'', null]'
+hero_attribute:
+  base_api: http://127.0.0.1:5000/products/superhero/hero_attribute
+  columns:
+  - 'hero_id, type :numerical, format: integers'
+  - 'attribute_id, type :numerical, format: integers'
+  - 'attribute_value, type :numerical, format: integers'
+hero_power:
+  base_api: http://127.0.0.1:5000/products/superhero/hero_power
+  columns:
+  - 'hero_id, type :numerical, format: integers'
+  - 'power_id, type :numerical, format: integers'
+publisher:
+  base_api: http://127.0.0.1:5000/products/superhero/publisher
+  columns:
+  - 'id, type :numerical, format: integers'
+  - 'publisher_name, type :texts, format: string'
+race:
+  base_api: http://127.0.0.1:5000/products/superhero/race
+  columns:
+  - 'id, type :numerical, format: integers'
+  - 'race, type :texts, format: string'
+superhero:
+  base_api: http://127.0.0.1:5000/products/superhero/superhero
+  columns:
+  - 'id, type :numerical, format: integers'
+  - 'superhero_name, type :texts, format: string'
+  - 'full_name, type :texts, format: string'
+  - 'gender_id, type :numerical, format: integers'
+  - 'eye_colour_id, type :numerical, format: integers'
+  - 'hair_colour_id, type :numerical, format: integers'
+  - 'skin_colour_id, type :numerical, format: integers'
+  - 'race_id, type :numerical, format: float'
+  - 'publisher_id, type :numerical, format: float'
+  - 'alignment_id, type :numerical, format: float or NaN'
+  - 'height_cm, type :numerical, format: floating point numbers'
+  - 'weight_kg, type :numerical, format: float'
+superpower:
+  base_api: http://127.0.0.1:5000/products/superhero/superpower
+  columns:
+  - 'id, type :numerical, format: integers'
+  - 'power_name, type :texts, format: list of strings'

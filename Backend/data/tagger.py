@@ -290,6 +290,55 @@ def _create_column_info(examples):
     ]
     return llm.invoke(messages)
 
+def _create_column_description(format, description):
+    llm = models.get_structured_LLM()
+
+    sys_prompt = """ Your task is to provide a short description, as short as possible
+    Include data format but do not include examples
+     The output should be a valid json with
+    "description": description of the what kind of data it is"""
+
+    input_prompt = """I would like a description for this data: 
+        {format}
+        {description}
+        """
+    input_prompt = input_prompt.format(format=format, description=description)
+    messages = [
+        ("system", sys_prompt),
+        ("human", input_prompt),
+    ]
+    return llm.invoke(messages)
+
+def create_column_description(collection_name, product_name ):
+    with open(f"Catalogs/{collection_name}.yml") as stream:
+        collection = yaml.safe_load(stream)
+
+    for k in collection.keys():
+        columns = []
+
+        if product_name is None or product_name == k:
+            des = pd.read_csv(f"{collection_name}/database_description/{k}.csv")
+            formats = collection[k]['columns']
+
+            with open(f"{collection_name}/database_description/{k}.csv", 'r') as file:
+                i = 0
+                for line in file:
+                    if i != 0:
+                        print(line)
+
+
+                    i+= 1
+
+
+
+
+            columns.append(f"{col}, type :{res['type']}, format: {res['format']}")
+
+
+        #    collection[k]["columns"] = columns
+        #with open(f"Catalogs/{collection_name}.yml", 'w') as yaml_file:
+        #    yaml.dump(collection, yaml_file, default_flow_style=False)
+
 def create_column_info(collection_name, product_name ):
     with open(f"Catalogs/{collection_name}.yml") as stream:
         collection = yaml.safe_load(stream)
@@ -301,32 +350,52 @@ def create_column_info(collection_name, product_name ):
             data = pd.read_csv(f"{collection_name}/{k}.csv")
 
             cols = data.columns.tolist()
-            cols = cols[80:85]
-            #cols[75:80]
-            #cols[80:85]
             for col in cols:
                 examples = data[col].unique().tolist()
 
-                if len(examples) < 3:
+                if len(examples) < 15:
                     l = len(examples)
-                else: l = 3
+                else: l = 15
 
                 examples = random.sample(examples, l)
                 print(examples)
                 res = _create_column_info(examples)
 
-                columns.append(f"{col}, type :{res['type']}, format: {res['format']}")
+                columns.append({col:f"type :{res['type']}, format: {res['format']}"})
             print(columns)
                 #time.sleep(60)
 
-            #collection[k]["columns"] = columns
-        #with open(f"Catalogs/{collection_name}.yml", 'w') as yaml_file:
-            #yaml.dump(collection, yaml_file, default_flow_style=False)
+            collection[k]["columns"] = columns
+        with open(f"Catalogs/{collection_name}.yml", 'w') as yaml_file:
+            yaml.dump(collection, yaml_file, default_flow_style=False)
 
+def fix_error(collection_name):
+    with open(f"Catalogs/{collection_name}.yml") as stream:
+        collection = yaml.safe_load(stream)
+
+    for k in collection.keys():
+        if k != "votes":
+            columns = collection[k]['columns']
+            new =[]
+            for col in columns:
+                parts = col.split(",",maxsplit=1)
+                new.append({parts[0]:parts[1].strip()})
+
+            collection[k]["columns"] = new
+
+        with open(f"Catalogs/{collection_name}.yml", 'w') as yaml_file:
+                yaml.dump(collection, yaml_file, default_flow_style=False)
+
+
+def format_descriptions(collection_name, product_name ):
+    with open(f"Catalogs/{collection_name}.yml") as stream:
+        collection = yaml.safe_load(stream)
 
 if __name__ == "__main__":
     #generateCollection("toxicology")
     #generate_function_descriptions()
     #generate_function_descriptionsCode()
     #generate_function_descriptionsNoManual()
-    create_column_info("european_football_2","Match")
+    #create_column_info("codebase_community","votes")
+    #print(create_column_description("european_football_2",None))
+    fix_error("toxicology")
