@@ -1,79 +1,119 @@
 account:
   base_api: http://127.0.0.1:5000/products/financial/account
   columns:
-  - account_id: 'type :numerical, format: integers'
-  - district_id: 'type :numerical, format: integers'
-  - frequency: 'type :texts, format: string'
-  - date: 'type :dates, format: YYYY-MM-DD'
+  - account_id: Numerical data representing account IDs in integer format.
+  - district_id: Numerical data representing district IDs as integers, indicating
+      the location of branches.
+  - frequency: 'This data consists of text strings that describe different types of
+      issuance frequencies: monthly, weekly, and after transaction.'
+  - date: 'Account creation dates in two formats: primary format is YYYY-MM-DD and
+      secondary format is YYMMDD.'
 card:
   base_api: http://127.0.0.1:5000/products/financial/card
   columns:
-  - card_id: 'type :numerical, format: integers'
-  - disp_id: 'type :numerical, format: integers'
-  - type: 'type :text, format: string'
-  - issued: 'type :dates, format: YYYY-MM-DD'
+  - card_id: Numerical data representing credit card IDs as integers.
+  - disp_id: Numerical data representing disposition IDs in integer format.
+  - type: A string representing the type of credit card, which can be 'junior' for
+      junior class, 'classic' for standard class, or 'gold' for high-level credit
+      card.
+  - issued: Dates in the format YYYY-MM-DD for general dates and YYMMDD for the date
+      when the credit card was issued.
 client:
   base_api: http://127.0.0.1:5000/products/financial/client
   columns:
-  - client_id: 'type :numerical, format: integers'
-  - gender: 'type :text, format: [''M'', ''F'']'
-  - birth_date: 'type :dates, format: YYYY-MM-DD'
-  - district_id: 'type :numerical, format: integers'
+  - client_id: Numerical data representing unique client identifiers in integer format.
+  - gender: Gender data represented as text with values 'M' for male and 'F' for female.
+  - birth_date: Birth date in the format YYYY-MM-DD.
+  - district_id: Numerical data representing district IDs as integers, indicating
+      the location of branches.
 disp:
   base_api: http://127.0.0.1:5000/products/financial/disp
   columns:
-  - disp_id: 'type :numerical, format: integers'
-  - client_id: 'type :numerical, format: integers'
-  - account_id: 'type :numerical, format: integers'
-  - type: 'type :texts, format: string'
+  - disp_id: Numerical data in integer format representing a unique identifier for
+      each record, labeled as 'disp_id' or disposition id.
+  - client_id: Numerical data representing client IDs as integers.
+  - account_id: Numerical data representing account IDs as integers.
+  - type: A string containing text data that describes the type of disposition related
+      to ownership and user rights, including commonsense evidence regarding account
+      capabilities.
 district:
   base_api: http://127.0.0.1:5000/products/financial/district
   columns:
-  - district_id: 'type :numerical, format: integers'
-  - A2: 'type :texts, format: string'
-  - A3: 'type :text, format: string'
-  - A4: 'type :numerical, format: integers'
-  - A5: 'type :numerical, format: integers'
-  - A6: 'type :numerical, format: integers'
-  - A7: 'type :numerical, format: integers'
-  - A8: 'type :numerical, format: integers'
-  - A9: 'type :numerical, format: integers'
-  - A10: 'type :numerical, format: float'
-  - A11: 'type :numerical, format: integers'
-  - A12: 'type :numerical, format: float'
-  - A13: 'type :numerical, format: float'
-  - A14: 'type :numerical, format: integers'
-  - A15: 'type :numerical, format: float'
-  - A16: 'type :numerical, format: integers'
+  - district_id: Numerical data in integer format representing district IDs and branch
+      locations.
+  - A2: A collection of text data in string format, representing district names and
+      associated text entries, structured as comma-separated values.
+  - A3: A string data type representing a region in a text format, with a specific
+      structure including 'A3' and 'region' identifiers.
+  - A4: Numerical data representing the number of inhabitants, formatted as integers.
+  - A5: Numerical data in integer format representing the number of municipalities
+      with inhabitants less than 499, categorized by municipality, district, and region.
+  - A6: Numerical data in integer format representing the number of municipalities
+      with populations between 500 and 1999, categorized by municipality, district,
+      and region.
+  - A7: Numerical data in integer format representing the number of municipalities
+      with populations between 2000 and 9999, categorized by municipality, district,
+      and region.
+  - A8: A8 is a numerical dataset representing the count of municipalities with populations
+      greater than 10,000, categorized by municipality, district, and region, formatted
+      as integers.
+  - A9: Numerical data in integer format, not useful.
+  - A10: A10 is a numerical data point representing the ratio of urban inhabitants,
+      formatted as a float.
+  - A11: Numerical data representing average salary values in integer format.
+  - A12: Numerical data representing the unemployment rate for the year 1995, formatted
+      as a float.
+  - A13: Numerical data representing the unemployment rate for the year 1996, formatted
+      as a float.
+  - A14: A14 represents the number of entrepreneurs per 1000 inhabitants, formatted
+      as integers.
+  - A15: Numerical data representing the number of committed crimes in 1995, formatted
+      as a float.
+  - A16: A16 represents the number of committed crimes in the year 1996, formatted
+      as integers.
 loan:
   base_api: http://127.0.0.1:5000/products/financial/loan
   columns:
-  - loan_id: 'type :numerical, format: integers'
-  - account_id: 'type :numerical, format: integers'
-  - date: 'type :dates, format: YYYY-MM-DD'
-  - amount: 'type :numerical, format: integers'
-  - duration: 'type :numerical, format: integers'
-  - payments: 'type :numerical, format: float'
-  - status: 'type :text, format: single characters'
+  - loan_id: Numerical data representing loan identifiers, formatted as integers.
+  - account_id: Numerical data in integer format representing account identifiers.
+  - date: A date representing when a loan is approved, formatted as YYYY-MM-DD.
+  - amount: Numerical data in integer format representing amounts and approved amounts
+      in US dollars.
+  - duration: Numerical data representing loan duration in months, formatted as integers.
+  - payments: Numerical data representing monthly payments in float format, measured
+      in months.
+  - status: 'Repayment status represented by single characters: ''A'' for finished
+      with no issues, ''B'' for finished but unpaid, ''C'' for running and okay, ''D''
+      for running with client in debt.'
 order:
   base_api: http://127.0.0.1:5000/products/financial/order
   columns:
-  - order_id: 'type :numerical, format: integers'
-  - account_id: 'type :numerical, format: integers'
-  - bank_to: 'type :texts, format: two uppercase letters'
-  - account_to: 'type :numerical, format: integers'
-  - amount: 'type :numerical, format: float'
-  - k_symbol: 'type :texts, format: string'
+  - order_id: Numerical data representing unique order identifiers in integer format.
+  - account_id: Numerical data representing account IDs as integers.
+  - bank_to: Data consists of texts formatted as two uppercase letters representing
+      banks, including the recipient's bank and additional text information.
+  - account_to: Numerical data in integer format representing the account of the recipient,
+      identified by a unique two-letter bank code.
+  - amount: Numerical data in float format representing amounts, including debited
+      amounts and real values.
+  - k_symbol: This data consists of text strings that characterize different types
+      of payments, including insurance, household, leasing, and loan payments.
 trans:
   base_api: http://127.0.0.1:5000/products/financial/trans
   columns:
-  - trans_id: 'type :numerical, format: integers'
-  - account_id: 'type :numerical, format: integers'
-  - date: 'type :dates, format: YYYY-MM-DD'
-  - type: 'type :texts, format: string'
-  - operation: 'type :texts, format: string'
-  - amount: 'type :numerical, format: integers'
-  - balance: 'type :numerical, format: integers'
-  - k_symbol: 'type :texts, format: string'
-  - bank: 'type :texts, format: string'
-  - account: 'type :numerical, format: float'
+  - trans_id: A numerical dataset containing transaction IDs represented as integers.
+  - account_id: Numerical data in integer format representing account IDs.
+  - date: A list of transaction dates in the format YYYY-MM-DD.
+  - type: This data consists of transaction records in string format, indicating either
+      a credit (PRIJEM) or a withdrawal (VYDAJ).
+  - operation: A string containing various transaction modes and their descriptions,
+      formatted as key-value pairs.
+  - amount: Numerical data representing amounts of money in integers, formatted in
+      USD.
+  - balance: Numerical data representing balances in USD, formatted as integers.
+  - k_symbol: A collection of transaction characterizations represented as strings,
+      detailing various financial terms and their meanings.
+  - bank: A string format data representing banks, where each bank has a unique two-letter
+      code.
+  - account: Numerical data in float format representing a value, and integer data
+      representing the account of a partner.

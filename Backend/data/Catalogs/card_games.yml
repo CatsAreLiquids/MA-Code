@@ -1,152 +1,251 @@
 cards:
   base_api: http://127.0.0.1:5000/products/card_games/cards
   columns:
-  - id: 'type :numerical, format: integers'
-  - artist: 'type :texts, format: string'
-  - asciiName: 'type :texts, format: string'
-  - availability: 'type :text, format: comma-separated values'
-  - borderColor: 'type :text, format: string'
-  - cardKingdomFoilId: 'type :numerical, format: float'
-  - cardKingdomId: 'type :numerical, format: float'
-  - colorIdentity: 'type :texts, format: Comma-separated values with uppercase letters'
-  - colorIndicator: 'type :text, format: comma-separated values with possible nulls'
-  - colors: 'type :texts, format: comma-separated values'
-  - convertedManaCost: 'type :numerical, format: float'
-  - duelDeck: 'type :mixed, format: [null, string, string]'
-  - edhrecRank: 'type :numerical, format: float'
-  - faceConvertedManaCost: 'type :numerical, format: float'
-  - faceName: 'type :texts, format: string'
-  - flavorName: 'type :texts, format: String'
-  - flavorText: 'type :texts, format: string with quotes and author attribution'
-  - frameEffects: 'type :texts, format: comma-separated values'
-  - frameVersion: 'type :mixed, format: [''YYYY'', ''text'', ''integer'']'
-  - hand: 'type :numerical, format: float'
-  - hasAlternativeDeckLimit: 'type :numerical, format: integers'
-  - hasContentWarning: 'type :numerical, format: integers'
-  - hasFoil: 'type :numerical, format: integers'
-  - hasNonFoil: 'type :numerical, format: integers'
-  - isAlternative: 'type :numerical, format: integers'
-  - isFullArt: 'type :numerical, format: integers'
-  - isOnlineOnly: 'type :numerical, format: integers'
-  - isOversized: 'type :numerical, format: integers'
-  - isPromo: 'type :numerical, format: integers'
-  - isReprint: 'type :numerical, format: integers'
-  - isReserved: 'type :numerical, format: integers'
-  - isStarter: 'type :numerical, format: integers'
-  - isStorySpotlight: 'type :numerical, format: integers'
-  - isTextless: 'type :numerical, format: integers'
-  - isTimeshifted: 'type :numerical, format: integers'
-  - keywords: 'type :texts, format: Comma-separated values representing abilities
-      or keywords'
-  - layout: 'type :texts, format: string'
-  - leadershipSkills: 'type :text, format: {''brawl'': boolean, ''commander'': boolean,
-      ''oathbreaker'': boolean} or null'
-  - life: 'type :numerical, format: float or nan'
-  - loyalty: 'type :mixed, format: [''string'', ''string'', ''integer'', float, ''integer'',
-      float, ''string'', float, ''integer'', ''integer'', ''string'', null, float,
-      ''integer'', float]'
-  - manaCost: 'type :texts, format: {<character(s)}{<character(s)}{<character(s)}'
-  - mcmId: 'type :numerical, format: float'
-  - mcmMetaId: 'type :numerical, format: float'
-  - mtgArenaId: 'type :numerical, format: float'
-  - mtgjsonV4Id: 'type :texts, format: UUID'
-  - mtgoFoilId: 'type :numerical, format: float'
-  - mtgoId: 'type :numerical, format: float'
-  - multiverseId: 'type :numerical, format: floating point numbers'
-  - name: 'type :texts, format: string'
-  - number: 'type :text, format: alphanumeric strings'
-  - originalReleaseDate: 'type :dates, format: YYYY/MM/DD'
-  - originalText: 'type :texts, format: string descriptions of card abilities and
-      effects'
-  - originalType: 'type :texts, format: String representing the type and subtype of
-      a card in a collectible card game'
-  - otherFaceIds: 'type :text, format: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx'
-  - power: 'type :mixed, format: integers, floats, special characters, and strings'
-  - printings: 'type :texts, format: Comma-separated values'
-  - promoTypes: 'type :texts, format: comma-separated values'
-  - purchaseUrls: 'type :text, format: {''cardKingdom'': ''URL'', ''cardKingdomFoil'':
-      ''URL'', ''cardmarket'': ''URL'', ''tcgplayer'': ''URL''}'
-  - rarity: 'type :text, format: string values representing rarity categories'
-  - scryfallId: 'type :texts, format: UUID'
-  - scryfallIllustrationId: 'type :text, format: UUID'
-  - scryfallOracleId: 'type :text, format: UUID'
-  - setCode: 'type :texts, format: string'
-  - side: 'type :text, format: string'
-  - subtypes: 'type :texts, format: Comma-separated values representing categories
-      or types'
-  - supertypes: 'type :texts, format: Comma-separated values or single words'
-  - tcgplayerProductId: 'type :numerical, format: float'
-  - text: 'type :texts, format: string'
-  - toughness: 'type :mixed, format: strings and numerical values, including integers
-      and floats, with some special characters and NaN'
-  - type: "type :texts, format: Creature \u2014 [Type], Plane \u2014 [Name], Artifact\
-      \ Creature \u2014 [Name], Legendary Creature \u2014 [Type], Snow Creature \u2014\
-      \ [Type], Planeswalker \u2014 [Name]"
-  - types: 'type :texts, format: string'
-  - uuid: 'type :text, format: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx'
-  - variations: 'type :texts, format: UUID or comma-separated UUIDs'
-  - watermark: 'type :texts, format: string'
+  - id: A numerical dataset consisting of unique integer identifiers for cards.
+  - artist: A string data type representing the name of the artist who illustrated
+      the card art.
+  - asciiName: A string representing the ASCII code formatted card name without special
+      unicode characters.
+  - availability: A list of available printing types for a card, formatted as comma-separated
+      values (CSV). Example values include 'arena', 'dreamcast', 'mtgo', 'paper',
+      'shandalar'.
+  - borderColor: A string data type representing the border color of a card, with
+      possible values including 'black', 'borderless', 'gold', 'silver', and 'white'.
+  - cardKingdomFoilId: Numerical data in float format representing card Kingdom Foil
+      Ids, with a note on the significance of pairing with non-null card Kingdom Ids.
+  - cardKingdomId: A numerical dataset containing float values representing the card
+      Kingdom Id and a list of colors in the color indicator.
+  - colorIdentity: Comma-separated values (CSV) containing uppercase letters representing
+      color identity and associated text descriptions.
+  - colorIndicator: A list of color indicators represented as text in a comma-separated
+      values format, allowing for possible null values.
+  - colors: A list of colors represented in a comma-separated values (CSV) format,
+      detailing colors found in manaCost and colorIndicator, with potential absence
+      of values for cards labeled 'Devoid'.
+  - convertedManaCost: Numerical data representing the converted mana cost of a card,
+      formatted as a float. Higher values indicate a higher cost in converted mana.
+  - duelDeck: A mixed data type array that can contain null or two strings, representing
+      the duel deck identifier and its description.
+  - edhrecRank: Numerical data in float format representing the EDHRec rank of a card,
+      with an additional integer field for the card's rank in EDH.
+  - faceConvertedManaCost: Numerical data representing the converted mana cost (CMC)
+      of a card, formatted as a float. A higher value indicates a higher cost in converted
+      mana for the card's face.
+  - faceName: A string data type representing the name displayed on a card's face.
+  - flavorName: A string representing the promotional name of a special card, which
+      is displayed above the true card name and has no game function.
+  - flavorText: A collection of flavor text entries, formatted as strings with quotes
+      and author attribution, providing thematic or narrative context without game
+      function.
+  - frameEffects: This data consists of text entries in a comma-separated values (CSV)
+      format, detailing various visual frame effects related to a specific context,
+      with a focus on different types of frame effects.
+  - frameVersion: Mixed data type containing a year format (YYYY), text descriptions
+      of card frame versions, and integer values. Examples of text include '1993',
+      '1997', '2003', '2015', and 'future'.
+  - hand: Numerical data representing the starting maximum hand size total modifier,
+      formatted as a float. The value can be positive (e.g., +1, +2), negative (e.g.,
+      -1), or neutral (0), indicated by a preceding + or - character.
+  - hasAlternativeDeckLimit: Numerical data representing whether a card allows an
+      alternative deck limit, formatted as integers where 0 indicates disallow and
+      1 indicates allow.
+  - hasContentWarning: Numerical data in integer format indicating whether a card
+      has sensitive content, where '0' means no sensitive content and '1' means it
+      has sensitive content.
+  - hasFoil: 'Numerical data in integer format indicating whether a card can be found
+      in foil (0: cannot be found, 1: can be found).'
+  - hasNonFoil: Numerical data in integer format indicating whether a card can be
+      found in non-foil, where 0 means cannot be found and 1 means can be found.
+  - isAlternative: Numerical data in integer format indicating whether a card is an
+      alternate variation of an original printing, where 0 means 'not an alternate'
+      and 1 means 'is an alternate'.
+  - isFullArt: Numerical data representing whether a card has full artwork, formatted
+      as integers where 0 indicates no full artwork and 1 indicates full artwork.
+  - isOnlineOnly: A numerical data type represented as integers indicating whether
+      a card is available only in online game variations, where 0 means 'not online
+      only' and 1 means 'is online only'.
+  - isOversized: Numerical data representing whether a card is oversized, formatted
+      as integers where 0 indicates 'not oversized' and 1 indicates 'oversized'.
+  - isPromo: Numerical data in integer format indicating whether a card is a promotional
+      printing (0 for not, 1 for yes).
+  - isReprint: Numerical data representing whether a card has been reprinted, with
+      0 indicating it has not been reprinted and 1 indicating it has been reprinted.
+  - isReserved: 'This data represents a numerical value indicating whether a card
+      is on the Magic: The Gathering Reserved List, formatted as an integer.'
+  - isStarter: Numerical data in integer format indicating whether a card is found
+      in a starter deck, where 0 means 'not a starter' and 1 means 'is a starter'.
+  - isStorySpotlight: This data represents a numerical value in integer format indicating
+      whether a card is a Story Spotlight card, where 0 means it is not a Story Spotlight
+      and 1 means it is.
+  - isTextless: Numerical data representing whether a card has a text box, formatted
+      as integers where 0 indicates the presence of a text box and 1 indicates its
+      absence.
+  - isTimeshifted: Numerical data represented as integers indicating whether a card
+      is time shifted, with a specific focus on the feature of certain sets where
+      a card may have a different frame version.
+  - keywords: Comma-separated values representing abilities or keywords associated
+      with a card.
+  - layout: A string representing the type of card layout, specifically indicating
+      'token' for token cards.
+  - leadershipSkills: A text data type that indicates the legality of a card in various
+      formats (brawl, commander, oathbreaker) as boolean values or null, along with
+      a list of leadership skills formats for commander legality.
+  - life: Numerical data representing a life total modifier, formatted as a float
+      or NaN, with a preceding plus or minus character followed by an integer.
+  - loyalty: Mixed data format containing strings, integers, and floats, representing
+      various attributes of a loyalty card, including a starting loyalty value and
+      additional notes on usage.
+  - manaCost: Data type is texts formatted as {<character(s)}{<character(s)}{<character(s)}
+      where the first part represents manaCost, the second part is a description of
+      the mana cost, and the third part is a text note regarding the mana cost being
+      unconverted.
+  - mcmId: Numerical data in float format, with an identifier 'mcmId' followed by
+      text that is not useful.
+  - mcmMetaId: Numerical data in float format, associated with mcmMetaId and labeled
+      as NOT USEFUL.
+  - mtgArenaId: Numerical data in float format, with an identifier 'mtgArenaId' that
+      is not useful.
+  - mtgjsonV4Id: Data type is text with a specific format of UUID, representing unique
+      identifiers for items.
+  - mtgoFoilId: Numerical data in float format, specifically for mtgoFoilId, which
+      is not useful.
+  - mtgoId: Numerical data in float format, specifically for mtgoId, with additional
+      text indicating it is not useful.
+  - multiverseId: Numerical data in floating point format, representing multiverse
+      identifiers.
+  - name: A string data type representing the name of a card, which may include delimiters
+      for cards with multiple faces.
+  - number: Alphanumeric strings representing card numbers.
+  - originalReleaseDate: The original release date in ISO 8601 format (YYYY/MM/DD)
+      for promotional cards printed outside of a cycle window, such as Secret Lair
+      Drop promotions.
+  - originalText: String descriptions of card abilities and effects, including the
+      original text as printed on the card.
+  - originalType: String representing the original type and subtype of a card in a
+      collectible card game, including any supertypes and subtypes.
+  - otherFaceIds: A list of card UUIDs in the format xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+      representing counterparts of a card, such as transformed or melded faces.
+  - power: Mixed data type containing integers, floats, special characters, and strings,
+      with specific references to card power and its meanings.
+  - printings: A list of set printing codes for cards, formatted as uppercase text
+      in a comma-separated values (CSV) format.
+  - promoTypes: A list of promotional types for a card in comma-separated values format.
+  - purchaseUrls: A collection of URLs for purchasing cards from various online retailers,
+      including Card Kingdom, Card Kingdom Foil, Cardmarket, and TCGPlayer.
+  - rarity: String values representing rarity categories for card printing.
+  - scryfallId: A collection of text data identified by UUIDs, including a Scryfall
+      ID and an irrelevant text field.
+  - scryfallIllustrationId: A UUID formatted text representing a unique identifier
+      for a Scryfall illustration.
+  - scryfallOracleId: Data type is text formatted as a UUID, specifically for Scryfall
+      Oracle IDs, which are not useful.
+  - setCode: A string data type representing the set printing code that a card is
+      from, labeled as 'setCode'.
+  - side: A string identifier representing the side of a card, used for cards with
+      multiple faces. An empty value indicates the card has a single face.
+  - subtypes: Comma-separated values representing categories or types of card subtypes
+      found after an em-dash.
+  - supertypes: A list of card supertypes represented as comma-separated values or
+      single words, detailing the union of subtypes and supertypes related to commonsense
+      evidence.
+  - tcgplayerProductId: Numerical data in float format representing TCGPlayer product
+      IDs.
+  - text: A string containing the rules text of a card.
+  - toughness: Mixed data containing strings and numerical values (integers and floats),
+      including special characters and NaN, representing the toughness of a card.
+  - type: "Data representing card types in a collectible card game, formatted as 'Creature\
+      \ \u2014 [Type]', 'Plane \u2014 [Name]', 'Artifact Creature \u2014 [Name]',\
+      \ etc. Includes various card types such as 'Artifact', 'Creature', 'Planeswalker',\
+      \ and more."
+  - types: "A list of all card types in string format, including Un\xE2\u20AC\u2018\
+      sets and gameplay variants."
+  - uuid: A UUID (Universally Unique Identifier) in the format xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx,
+      generated by MTGJSON, representing a unique identifier for each entry.
+  - variations: Data consists of text entries formatted as UUIDs or comma-separated
+      UUIDs.
+  - watermark: A string data type representing the name of the watermark on a card.
 foreign_data:
   base_api: http://127.0.0.1:5000/products/card_games/foreign_data
   columns:
-  - id: 'type :numerical, format: integers'
-  - flavorText: 'type :texts, format: string'
-  - language: 'type :texts, format: string'
-  - multiverseid: 'type :numerical, format: float'
-  - name: 'type :texts, format: string'
-  - text: 'type :texts, format: Multilingual text descriptions with game mechanics
-      and abilities'
-  - type: "type :texts, format: Language \u2014 Description"
-  - uuid: 'type :text, format: UUID'
+  - id: Numerical data in integer format representing a unique identifier for each
+      row.
+  - flavorText: A string representing the foreign flavor text of a card.
+  - language: A string representing the foreign language of a card.
+  - multiverseid: Numerical data in float format representing a value, and an integer
+      representing the foreign multiverse identifier of a card.
+  - name: A string representing the foreign name of a card.
+  - text: Multilingual text descriptions of game mechanics and abilities, including
+      foreign text rulings of cards.
+  - type: "Texts in the format 'Language \u2014 Description' detailing the foreign\
+      \ type of a card, including supertypes and subtypes."
+  - uuid: A UUID (Universally Unique Identifier) represented as text.
 legalities:
   base_api: http://127.0.0.1:5000/products/card_games/legalities
   columns:
-  - id: 'type :numerical, format: integers'
-  - format: 'type :text, format: string'
-  - status: 'type :text, format: string'
-  - uuid: 'type :texts, format: UUID'
+  - id: Numerical data in integer format representing a unique identifier for a legality.
+  - format: A string data type representing different rules for playing, with each
+      value corresponding to a specific format of play.
+  - status: A string data type representing the status of an item, which can include
+      values such as 'legal', 'banned', or 'restricted'.
+  - uuid: A dataset containing text entries associated with unique identifiers in
+      UUID format.
 rulings:
   base_api: http://127.0.0.1:5000/products/card_games/rulings
   columns:
-  - id: 'type :numerical, format: integers'
-  - date: 'type :dates, format: YYYY-MM-DD'
-  - text: 'type :texts, format: string'
-  - uuid: 'type :texts, format: UUID'
+  - id: Numerical data consisting of unique integer identifiers for rulings.
+  - date: A list of dates in the format YYYY-MM-DD.
+  - text: A string format containing descriptive text about a ruling.
+  - uuid: A dataset containing text entries associated with unique identifiers in
+      UUID format.
 set_translations:
   base_api: http://127.0.0.1:5000/products/card_games/set_translations
   columns:
-  - id: 'type :numerical, format: integers'
-  - language: 'type :texts, format: Language names'
-  - setCode: 'type :texts, format: alphanumeric strings'
-  - translation: 'type :texts, format: string'
+  - id: Numerical data consisting of unique integer identifiers for a dataset.
+  - language: A dataset containing language names formatted as text entries, with
+      each entry specifying the language and its corresponding text.
+  - setCode: Alphanumeric strings representing the set code for a specific set.
+  - translation: A collection of text strings representing translations of cards.
 sets:
   base_api: http://127.0.0.1:5000/products/card_games/sets
   columns:
-  - id: 'type :numerical, format: integers'
-  - baseSetSize: 'type :numerical, format: integers'
-  - block: 'type :texts, format: string'
-  - booster: 'type :text, format: {''default'': {''boosters'': [{''contents'': {''common'':
-      <integer>, ''uncommon'': <integer>, ''rare'': <integer>, ''rareMythic'': <integer>,
-      ''foil'': <integer>, ''basic'': <integer>, ''sfcCommon'': <integer>, ''sfcRareMythic'':
-      <integer>, ''sfcUncommon'': <integer>, ''dfcCommonUncommon'': <integer>, ''dedicatedFoil'':
-      <integer>, ''nonconspiracyCommon'': <integer>, ''nonconspiracyRareMythic'':
-      <integer>, ''nonconspiracyUncommon'': <integer>}, ''weight'': <integer>}], ''boostersTotalWeight'':
-      <integer>, ''sheets'': {''common'': {''balanceColors'': <boolean>, ''cards'':
-      {''<card_id>'': <integer>}}}}}'
-  - code: 'type :text, format: alphanumeric strings'
-  - isFoilOnly: 'type :numerical, format: integers'
-  - isForeignOnly: 'type :numerical, format: integers'
-  - isNonFoilOnly: 'type :numerical, format: integers'
-  - isOnlineOnly: 'type :numerical, format: integers'
-  - isPartialPreview: 'type :numerical, format: integers'
-  - keyruneCode: 'type :text, format: string values'
-  - mcmId: 'type :numerical, format: float'
-  - mcmIdExtras: 'type :numerical, format: float'
-  - mcmName: 'type :texts, format: string'
-  - mtgoCode: 'type :texts, format: string'
-  - name: 'type :texts, format: string'
-  - parentCode: 'type :texts, format: string values'
-  - releaseDate: 'type :dates, format: YYYY-MM-DD'
-  - tcgplayerGroupId: 'type :numerical, format: floating point numbers'
-  - totalSetSize: 'type :numerical, format: integers'
-  - type: 'type :texts, format: string'
+  - id: Numerical data consisting of unique integer identifiers for a dataset.
+  - baseSetSize: Numerical data representing the number of cards in a set, formatted
+      as integers.
+  - block: A string data type representing the name of the block in which a set is
+      located.
+  - booster: A JSON structure representing the breakdown of card types and their weights
+      in a booster pack, including counts for various rarity levels and configurations.
+  - code: Alphanumeric strings representing the set code for a specific set.
+  - isFoilOnly: A numerical dataset containing integers that indicate whether a set
+      is only available in foil, represented by the field 'isFoilOnly'.
+  - isForeignOnly: A numerical dataset containing integers indicating whether a set
+      is available only outside the United States (1 for yes, 0 for no).
+  - isNonFoilOnly: Numerical data representing whether a set is only available in
+      non-foil format, stored as integers.
+  - isOnlineOnly: A numerical dataset containing integers that indicate whether a
+      game is available only in online variations.
+  - isPartialPreview: Numerical data in integer format indicating whether a set is
+      in partial preview, where 1 represents 'is partial preview' and 0 represents
+      'not partial preview'.
+  - keyruneCode: A string value representing the Keyrune code associated with set
+      image icons.
+  - mcmId: 'Numerical data in float format representing the Magic Card Market ID (mcmId),
+      which is an integer identifier for Magic: The Gathering cards.'
+  - mcmIdExtras: Numerical data in float format representing the Magic Card Market
+      ID Extras, which is an integer identifier for the second set of a split Magic
+      Card Market set.
+  - mcmName: A string data type representing the name of a magic card in the Magic
+      Card Market (MCM) database.
+  - mtgoCode: 'A string representing the Magic: The Gathering Online code for a specific
+      set, which may be null or empty if it does not appear on the platform.'
+  - name: A string data type representing the name of a set.
+  - parentCode: A collection of text data represented as string values, specifically
+      for the parent code associated with set variations such as promotions and guild
+      kits.
+  - releaseDate: Release date in ISO 8601 format (YYYY-MM-DD).
+  - tcgplayerGroupId: Numerical data in floating point format, including an integer
+      identifier for TCGplayer group sets.
+  - totalSetSize: Numerical data representing the total number of cards in a set,
+      including promotional and related supplemental products, formatted as integers.
+  - type: A string containing various types of expansion sets, including 'alchemy',
+      'commander', 'masters', and others.

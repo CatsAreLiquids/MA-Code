@@ -1,72 +1,115 @@
 Attendance:
   base_api: http://127.0.0.1:5000/products/student_club/Attendance
   columns:
-  - link_to_event: 'type :text, format: alphanumeric string'
-  - link_to_member: 'type :texts, format: alphanumeric strings'
+  - link_to_event: Alphanumeric string representing a unique identifier for an attended
+      event, referencing the Event table.
+  - link_to_member: Alphanumeric strings representing unique identifiers for members
+      who attended an event, referencing the Member table.
 Budget:
   base_api: http://127.0.0.1:5000/products/student_club/Budget
   columns:
-  - budget_id: 'type :texts, format: alphanumeric strings'
-  - category: 'type :texts, format: string'
-  - spent: 'type :numerical, format: float'
-  - remaining: 'type :numerical, format: float'
-  - amount: 'type :numerical, format: integers'
-  - event_status: 'type :text, format: string values representing status'
-  - link_to_event: 'type :texts, format: alphanumeric strings'
+  - budget_id: Alphanumeric strings representing unique identifiers for budget entries.
+  - category: A string representing the category for which a budget amount is allocated,
+      such as advertisement, food, or parking.
+  - spent: Numerical data representing the total amount spent in dollars for a budgeted
+      category of an event, formatted as a float and summarized from the Expense table.
+  - remaining: A numerical value in float format representing the remaining budget,
+      calculated as the budgeted amount minus the amount spent, measured in dollars.
+      If the value is less than 0, it indicates that spending has exceeded the budget.
+  - amount: Numerical data representing the budgeted amount for a specified category
+      and event, formatted as integers in dollars. The amount is calculated as the
+      sum of spent and remaining funds.
+  - event_status: String values representing the status of an event, which can be
+      'Closed', 'Open', or 'Planning'. 'Closed' indicates the event is finalized with
+      no further changes to expenses, 'Open' means the event is active and expenses
+      can change, and 'Planning' signifies the event has not yet started.
+  - link_to_event: Alphanumeric strings representing unique identifiers for events,
+      referencing the Event table.
 Event:
   base_api: http://127.0.0.1:5000/products/student_club/Event
   columns:
-  - event_id: 'type :texts, format: alphanumeric strings'
-  - event_name: 'type :texts, format: string'
-  - event_date: 'type :dates, format: YYYY-MM-DDTHH:MM:SS'
-  - type: 'type :text, format: string'
-  - notes: 'type :texts, format: string'
-  - location: 'type :texts, format: string'
-  - status: 'type :text, format: string values representing status'
+  - event_id: Alphanumeric strings representing event identifiers and associated text
+      data.
+  - event_name: A collection of text strings representing event names, formatted as
+      a comma-separated list.
+  - event_date: Event date in ISO 8601 format, representing the date and time an event
+      took place or is scheduled to take place, formatted as YYYY-MM-DDTHH:MM:SS.
+  - type: A string representing the type of event, such as game, social, or election.
+  - notes: A free text field for any notes about the event, formatted as a string.
+  - location: A string representing the address or name of the location where an event
+      is held.
+  - status: A string value representing the status of an event, which can be 'Open',
+      'Closed', or 'Planning'.
 Expense:
   base_api: http://127.0.0.1:5000/products/student_club/Expense
   columns:
-  - expense_id: 'type :texts, format: alphanumeric strings'
-  - expense_description: 'type :texts, format: Comma-separated items'
-  - expense_date: 'type :dates, format: YYYY-MM-DD'
-  - cost: 'type :numerical, format: float'
-  - approved: 'type :mixed, format: [null, boolean]'
-  - link_to_member: 'type :texts, format: alphanumeric strings'
-  - link_to_budget: 'type :texts, format: alphanumeric strings'
+  - expense_id: Alphanumeric strings representing unique identifiers for expenses.
+  - expense_description: A comma-separated list of textual descriptions detailing
+      the purpose of expenses.
+  - expense_date: Expense date in the format YYYY-MM-DD, indicating when the expense
+      was incurred.
+  - cost: Numerical data representing the cost of an expense in dollars, formatted
+      as a float.
+  - approved: A mixed data type that can be null or a boolean value indicating whether
+      an expense is approved, represented as true or false.
+  - link_to_member: Alphanumeric strings representing links to members who incurred
+      expenses.
+  - link_to_budget: Alphanumeric strings representing unique identifiers linking to
+      the Budget table, indicating expected total expenditure for specific categories
+      and events.
 Income:
   base_api: http://127.0.0.1:5000/products/student_club/Income
   columns:
-  - income_id: 'type :texts, format: alphanumeric strings'
-  - date_received: 'type :dates, format: YYYY-MM-DD'
-  - amount: 'type :numerical, format: integers'
-  - source: 'type :texts, format: string'
-  - notes: 'type :texts, format: string'
-  - link_to_member: 'type :texts, format: alphanumeric strings'
+  - income_id: A collection of alphanumeric strings representing unique identifiers
+      for income records.
+  - date_received: A date field representing when the fund was received, formatted
+      as YYYY-MM-DD.
+  - amount: Numerical data representing the amount of funds in dollars, formatted
+      as integers.
+  - source: A string representing the source of funds, indicating where the funds
+      originate, such as dues or annual university allocation.
+  - notes: A free-text value providing details about the receipt of funds, formatted
+      as a string.
+  - link_to_member: Alphanumeric strings representing links to members, formatted
+      as texts.
 Major:
   base_api: http://127.0.0.1:5000/products/student_club/Major
   columns:
-  - major_id: 'type :texts, format: alphanumeric strings'
-  - major_name: 'type :texts, format: List of academic programs or fields of study'
-  - department: 'type :texts, format: String'
-  - college: 'type :text, format: String'
+  - major_id: Alphanumeric strings representing unique identifiers for each major.
+  - major_name: List of academic programs or fields of study in text format, including
+      major names.
+  - department: A string representing the name of the department that offers a specific
+      major.
+  - college: A string representing the name of the college that houses the department
+      offering the major.
 Member:
   base_api: http://127.0.0.1:5000/products/student_club/Member
   columns:
-  - member_id: 'type :texts, format: alphanumeric strings'
-  - first_name: 'type :texts, format: string'
-  - last_name: 'type :texts, format: string'
-  - email: 'type :texts, format: email@example.com'
-  - position: 'type :text, format: string'
-  - t_shirt_size: 'type :text, format: string'
-  - phone: 'type :text, format: XXX-XXX-XXXX or (XXX) XXX-XXXX'
-  - zip: 'type :numerical, format: integers'
-  - link_to_major: 'type :texts, format: alphanumeric strings or null'
+  - member_id: Alphanumeric strings representing unique identifiers for members.
+  - first_name: A string data type representing a member's first name.
+  - last_name: This data consists of text strings representing a member's last name,
+      with an example illustrating the format of a full name as a combination of first
+      name and last name.
+  - email: A dataset containing member email addresses in the format email@example.com,
+      represented as text entries.
+  - position: A string representing the position a member holds in the club.
+  - t_shirt_size: A string representing the preferred t-shirt size of a member, typically
+      indicating their body shape.
+  - phone: Phone number format, either XXX-XXX-XXXX or (XXX) XXX-XXXX, used for contacting
+      a member.
+  - zip: Numerical data representing the zip code of a member's hometown, formatted
+      as integers.
+  - link_to_major: Alphanumeric strings or null values representing a unique identifier
+      for a member's major, referencing the Major table.
 Zip_Code:
   base_api: http://127.0.0.1:5000/products/student_club/Zip_Code
   columns:
-  - zip_code: 'type :numerical, format: integers'
-  - type: 'type :text, format: string'
-  - city: 'type :texts, format: string'
-  - county: 'type :texts, format: String'
-  - state: 'type :texts, format: String (State names)'
-  - short_state: 'type :text, format: State abbreviations (2-letter codes)'
+  - zip_code: A five-digit numerical identifier for a US post office, represented
+      as an integer.
+  - type: A string data type representing different kinds of ZIP codes, including
+      standard codes, PO Box codes, and unique codes assigned to organizations.
+  - city: A string representing the city associated with a specific ZIP code.
+  - county: A string representing the county associated with a specific ZIP code.
+  - state: A string representing the name of the state associated with a ZIP code.
+  - short_state: State abbreviations in 2-letter codes representing the state related
+      to a ZIP code.

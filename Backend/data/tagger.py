@@ -294,8 +294,8 @@ def _create_column_description(format, description):
     llm = models.get_structured_LLM()
 
     sys_prompt = """ Your task is to provide a short description, as short as possible
-    Include data format but do not include examples
-     The output should be a valid json with
+    Include data format, especially if it is a secific format such as a url or a date format
+    The output should be a valid json with
     "description": description of the what kind of data it is"""
 
     input_prompt = """I would like a description for this data: 
@@ -314,30 +314,24 @@ def create_column_description(collection_name, product_name ):
         collection = yaml.safe_load(stream)
 
     for k in collection.keys():
-        columns = []
-
+        columns = collection[k]['columns']
+        new = []
         if product_name is None or product_name == k:
-            des = pd.read_csv(f"{collection_name}/database_description/{k}.csv")
-            formats = collection[k]['columns']
-
             with open(f"{collection_name}/database_description/{k}.csv", 'r') as file:
-                i = 0
-                for line in file:
-                    if i != 0:
-                        print(line)
+                des = file.read().strip().split("\n")[1:]
+                print(k)
+                print(len(des),len(columns))
+                assert len(des) == len(columns)
 
+                for d, c in zip(des, columns):
+                    assert d.split(",")[0].strip() == list(c.keys())[0]
+                    res = _create_column_description(list(c.values())[0],d)
 
-                    i+= 1
+                    new.append({d.split(",")[0].strip():f"{res['description']}"})
 
-
-
-
-            columns.append(f"{col}, type :{res['type']}, format: {res['format']}")
-
-
-        #    collection[k]["columns"] = columns
-        #with open(f"Catalogs/{collection_name}.yml", 'w') as yaml_file:
-        #    yaml.dump(collection, yaml_file, default_flow_style=False)
+            collection[k]["columns"] = new
+        with open(f"Catalogs/{collection_name}.yml", 'w') as yaml_file:
+            yaml.dump(collection, yaml_file, default_flow_style=False)
 
 def create_column_info(collection_name, product_name ):
     with open(f"Catalogs/{collection_name}.yml") as stream:
@@ -397,5 +391,6 @@ if __name__ == "__main__":
     #generate_function_descriptionsCode()
     #generate_function_descriptionsNoManual()
     #create_column_info("codebase_community","votes")
-    #print(create_column_description("european_football_2",None))
-    fix_error("toxicology")
+    #financial
+    print(create_column_description("toxicology",None))
+    #fix_error("toxicology")

@@ -1,80 +1,144 @@
 Examination:
   base_api: http://127.0.0.1:5000/products/thrombosis_prediction/Examination
   columns:
-  - ID: 'type :numerical, format: float'
-  - Examination Date: 'type :dates, format: YYYY-MM-DD'
-  - aCL IgG: 'type :numerical, format: float'
-  - aCL IgM: 'type :numerical, format: float'
-  - ANA: 'type :numerical, format: floating point numbers'
-  - ANA Pattern: 'type :text, format: Comma-separated values with possible ''nan''
-      for missing data'
-  - aCL IgA: 'type :numerical, format: integers'
-  - Diagnosis: 'type :texts, format: string'
-  - KCT: 'type :categorical, format: [''-'', nan, ''+'']'
-  - RVVT: 'type :categorical, format: [''-'', ''+'', NaN]'
-  - LAC: 'type :categorical, format: [''-'', ''+'', NaN]'
-  - Symptoms: 'type :texts, format: string'
-  - Thrombosis: 'type :numerical, format: integers'
+  - ID: Numerical data representing a patient's identification as an integer and a
+      numerical value as a float.
+  - Examination Date: Examination Date in the format YYYY-MM-DD
+  - aCL IgG: Numerical data representing the concentration of aCL IgG (anti-Cardiolipin
+      antibody) in float format.
+  - aCL IgM: Numerical data representing the concentration of anti-Cardiolipin antibody
+      (IgM) in float format.
+  - ANA: Numerical data representing the concentration of anti-nucleus antibodies,
+      formatted as floating point numbers.
+  - ANA Pattern: Comma-separated values (CSV) format containing text data for ANA
+      patterns observed in ANA examination, with possible 'nan' for missing data.
+  - aCL IgA: Numerical data representing the concentration of anti-Cardiolipin antibody
+      (IgA) in integer format.
+  - Diagnosis: A collection of text data representing diagnoses and disease names,
+      formatted as strings.
+  - KCT: 'Categorical data representing the measure of degree of coagulation with
+      possible values: ''-'', nan, and ''+''. The text indicates that ''+'' signifies
+      positive and ''-'' signifies negative.'
+  - RVVT: Categorical data representing the results of a RVVT test for coagulation,
+      with possible values of '-', '+', or NaN indicating negative, positive, or missing
+      results respectively.
+  - LAC: Categorical data representing the measure of degree of coagulation with values
+      indicating positive ('+') or negative ('-') results, including NaN for missing
+      values.
+  - Symptoms: A collection of text strings describing symptoms and other observed
+      symptoms.
+  - Thrombosis: Numerical data representing the degree of thrombosis as integers,
+      where 0 indicates no thrombosis, 1 indicates the most severe thrombosis, 2 indicates
+      severe thrombosis, and 3 indicates mild thrombosis.
 Laboratory:
   base_api: http://127.0.0.1:5000/products/thrombosis_prediction/Laboratory
   columns:
-  - ID: 'type :numerical, format: integers'
-  - Date: 'type :dates, format: YYYY-MM-DD'
-  - GOT: 'type :numerical, format: float or NaN'
-  - GPT: 'type :numerical, format: float'
-  - LDH: 'type :numerical, format: float'
-  - ALP: 'type :numerical, format: float'
-  - TP: 'type :numerical, format: float'
-  - ALB: 'type :numerical, format: float'
-  - UA: 'type :numerical, format: float'
-  - UN: 'type :numerical, format: float'
-  - CRE: 'type :numerical, format: float'
-  - T-BIL: 'type :numerical, format: float or NaN'
-  - T-CHO: 'type :numerical, format: float'
-  - TG: 'type :numerical, format: float'
-  - CPK: 'type :numerical, format: float'
-  - GLU: 'type :numerical, format: float'
-  - WBC: 'type :numerical, format: float'
-  - RBC: 'type :numerical, format: float'
-  - HGB: 'type :numerical, format: float'
-  - HCT: 'type :numerical, format: float'
-  - PLT: 'type :numerical, format: float'
-  - PT: 'type :numerical, format: float'
-  - APTT: 'type :numerical, format: float'
-  - FG: 'type :numerical, format: float'
-  - PIC: 'type :numerical, format: float'
-  - TAT: 'type :numerical, format: float'
-  - TAT2: 'type :numerical, format: float'
-  - U-PRO: 'type :mixed, format: string, integer, NaN, special characters, comparison
-      operators'
-  - IGG: 'type :numerical, format: float'
-  - IGA: 'type :numerical, format: float'
-  - IGM: 'type :numerical, format: float'
-  - CRP: 'type :numerical, format: float or integer'
-  - RA: 'type :text, format: string values representing categories or statuses'
-  - RF: 'type :numerical, format: float or integer'
-  - C3: 'type :numerical, format: float'
-  - C4: 'type :numerical, format: float'
-  - RNP: 'type :mixed, format: [''integer'', ''integer'', ''text'', ''null'', ''integer'',
-      ''integer'', ''integer'', ''integer'', ''integer'']'
-  - SM: 'type :mixed, format: [integer, null, integer, text, integer, integer]'
-  - SC170: 'type :mixed, format: {''integers'': ''integer values (e.g., 4, 16, 1,
-      0)'', ''text'': "text values (e.g., ''negative'')", ''null'': ''nan''}'
-  - SSA: 'type :mixed, format: [''text'', ''integer'', ''integer'', ''integer'', ''integer'',
-      ''integer'', ''null'', ''integer'']'
-  - SSB: 'type :mixed, format: [''string'', ''string'', ''integer'', ''integer'',
-      ''null'', ''integer'', ''integer'']'
-  - CENTROMEA: 'type :mixed, format: [''integer or string'', ''null'', ''text'']'
-  - DNA: 'type :numerical, format: float'
-  - DNA-II: 'type :null or missing value, format: N/A'
+  - ID: Numerical data representing patient identification, formatted as integers.
+  - Date: Dates in the format YYYY-MM-DD representing the date of laboratory tests.
+  - GOT: Numerical data representing the levels of GOT and AST (glutamic oxaloacetic
+      transaminase) in float format or NaN, with a normal range indicating values
+      less than 60.
+  - GPT: Numerical data representing the level of ALT (alanine aminotransferase) in
+      the blood, formatted as a float. The normal range is indicated as less than
+      60.
+  - LDH: Numerical data representing lactate dehydrogenase (LDH) levels, formatted
+      as a float, with a normal range indicating values less than 500.
+  - ALP: Numerical data representing alkaline phosphatase levels, formatted as a float,
+      with a normal range indicating values less than 300.
+  - TP: Numerical data representing total protein levels in float format, with a normal
+      range of 6.0 to 8.5 grams per deciliter.
+  - ALB: Numerical data representing albumin levels in float format, with a normal
+      range of 3.5 to 5.5 g/dL.
+  - UA: Numerical data representing uric acid levels in float format, with a normal
+      range of > 8.0 for males and > 6.5 for females.
+  - UN: Numerical data representing urea nitrogen levels in float format, with a normal
+      range indicating values less than 30.
+  - CRE: Numerical data representing creatinine levels in float format, with a normal
+      range indicating values less than 1.5.
+  - T-BIL: Numerical data representing total bilirubin levels, formatted as a float
+      or NaN, with a normal range of less than 2.0.
+  - T-CHO: Numerical data representing total cholesterol levels in float format, with
+      a normal range indicating values less than 250.
+  - TG: Numerical data representing triglyceride levels, formatted as a float, with
+      a normal range defined as less than 200.
+  - CPK: Numerical data representing creatinine phosphokinase (CPK) levels, formatted
+      as a float, with a normal range indicating values less than 250.
+  - GLU: Numerical data representing blood glucose levels in float format, with a
+      normal range indicating values less than 180.
+  - WBC: Numerical data representing white blood cell count in float format, with
+      a normal range of 3.5 to 9.0.
+  - RBC: Numerical data representing the count of red blood cells (RBC) in float format,
+      with a normal range of 3.5 to 6.0.
+  - HGB: Numerical data representing Hemoglobin levels in float format, with a normal
+      range of 10 to 17.
+  - HCT: Numerical data representing Hematocrit (HCT) values as floating-point numbers,
+      with a normal range between 29 and 52.
+  - PLT: Numerical data representing platelet count in float format, with a normal
+      range of 100 to 400.
+  - PT: Numerical data representing prothrombin time in seconds, with a normal range
+      indicating values less than 14.
+  - APTT: Numerical data representing the activated partial prothrombin time (APTT)
+      in float format, with a normal range indicating values less than 45.
+  - FG: Numerical data representing fibrinogen levels in float format, with a normal
+      range of 150 to 450.
+  - PIC: Numerical data in float format, possibly representing a series of values
+      or measurements.
+  - TAT: Numerical data representing Turnaround Time (TAT) in float format.
+  - TAT2: Numerical data in float format representing TAT2 values.
+  - U-PRO: Mixed data containing strings, integers, NaN values, special characters,
+      and comparison operators, specifically related to proteinuria with a normal
+      range indicated as '0 < N < 30'.
+  - IGG: Numerical data representing IgG levels in float format, with a normal range
+      of 900 to 2000.
+  - IGA: Numerical data representing Immunoglobulin A (IgA) levels, formatted as a
+      float. The normal range is defined as 80 < N < 500.
+  - IGM: Numerical data representing immunoglobulin M (IgM) levels, formatted as a
+      float, with a normal range of 40 to 400.
+  - CRP: Numerical data representing C-reactive protein (CRP) levels, formatted as
+      float or integer, with a normal range indicated as N < 1.0.
+  - RA: A string value representing categories or statuses related to medical tests,
+      specifically for Rheumatoid Factor, including normal range evidence.
+  - RF: Numerical data representing RF and RAHA values, with a normal range indicated
+      as less than 20.
+  - C3: Numerical data representing a float value related to 'C3' complement levels,
+      with a normal range indicating values greater than 35.
+  - C4: Numerical data representing a float value related to 'C4' with a normal range
+      indicating that values should be greater than 10.
+  - RNP: Mixed data type containing integers, text, and null values, representing
+      RNP and anti-ribonuclear protein information with associated evidence and normal
+      range.
+  - SM: Mixed data type containing integers, null values, and text, formatted as [integer,
+      null, integer, text, integer, integer]. Example entry includes values related
+      to SM and anti-SM with a commonsense evidence text description.
+  - SC170: Mixed data format containing integers, text values, and nulls, with examples
+      including integer values (e.g., 4, 16), text values (e.g., 'negative'), and
+      null represented as 'nan'.
+  - SSA: Mixed data containing text and integers, including SSA and anti-SSA values,
+      with a text description of commonsense evidence and normal range information.
+  - SSB: Mixed data containing two strings, four integers, and a null value, representing
+      various attributes related to anti-SSB testing results and commonsense evidence.
+  - CENTROMEA: Mixed data type containing integers or strings, null values, and text.
+      Example entry includes a label (CENTROMEA), a category (anti-centromere), and
+      a description with commonsense evidence and normal range information.
+  - DNA: Numerical data representing float values related to DNA and anti-DNA measurements,
+      with a normal range indicated as N < 8.
+  - DNA-II: This data represents a measurement of anti-DNA levels in a sample, where
+      the value can be null or missing. The format is not applicable (N/A), and the
+      integer value indicates the level of anti-DNA, with a normal range defined as
+      less than 8.
 Patient:
   base_api: http://127.0.0.1:5000/products/thrombosis_prediction/Patient
   columns:
-  - ID: 'type :numerical, format: integers'
-  - SEX: 'type :categorical, format: [''F'', ''M''] or nan'
-  - Birthday: 'type :dates, format: YYYY-MM-DD'
-  - Description: 'type :dates, format: YYYY-MM-DD'
-  - First Date: 'type :dates, format: YYYY-MM-DD'
-  - Admission: 'type :categorical, format: [''-'', ''nan'', ''+'', ''+('']'
-  - Diagnosis: 'type :texts, format: Comma-separated values with potential abbreviations
-      and conditions'
+  - ID: Numerical data representing patient identification, formatted as integers.
+  - SEX: Categorical data representing sex, with values 'F' for female, 'M' for male,
+      or NaN for missing data.
+  - Birthday: A list of birthdays in the date format YYYY-MM-DD.
+  - Description: The first date when a patient's data was recorded, in the format
+      YYYY-MM-DD. If not recorded, the value is null or empty.
+  - First Date: A date representing when a patient first arrived at the hospital,
+      formatted as YYYY-MM-DD.
+  - Admission: 'Categorical data indicating patient admission status, with possible
+      values: ''-'', ''nan'', ''+'', ''+(''.'
+  - Diagnosis: Comma-separated values (CSV) format containing diagnosis information,
+      disease names, and associated text, potentially including abbreviations and
+      conditions.

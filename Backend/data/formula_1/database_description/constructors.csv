@@ -3,6 +3,5 @@ constructorId ,constructor Id ,the unique identification number identifying cons
 constructorRef ,Constructor Reference name ,Constructor Reference name ,text,
 name ,,full name of the constructor ,text,
 nationality ,,nationality of the constructor ,text,
-url ,,the introduction website of the constructor ,text,"commonsense evidence: 
-How to find out the detailed introduction of the constructor: through its url"
+url ,,the introduction website of the constructor ,text,commonsense evidence: How to find out the detailed introduction of the constructor: through its url
 wins ,,wins ,integer ,

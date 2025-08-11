@@ -1,95 +1,144 @@
 badges:
   base_api: http://127.0.0.1:5000/products/codebase_community/badges
   columns:
-  - Id: 'type :numerical, format: integers'
-  - UserId: 'type :numerical, format: integers'
-  - Name: 'type :texts, format: string'
-  - Date: 'type :dates, format: YYYY-MM-DD HH:MM:SS'
+  - Id: Numerical data representing badge IDs in integer format.
+  - UserId: UserId is a numerical data type represented as integers, serving as a
+      unique identifier for each user.
+  - Name: A string representing the name of a badge obtained by a user.
+  - Date: 'A datetime record indicating the date and time (format: YYYY-MM-DD HH:MM:SS)
+      when a user obtained a badge.'
 comments:
   base_api: http://127.0.0.1:5000/products/codebase_community/comments
   columns:
-  - Id: 'type :numerical, format: integers'
-  - PostId: 'type :numerical, format: integers'
-  - Score: 'type :numerical, format: integers'
-  - Text: 'type :texts, format: string'
-  - CreationDate: 'type :dates, format: YYYY-MM-DD HH:MM:SS'
-  - UserId: 'type :numerical, format: float'
-  - UserDisplayName: 'type :texts, format: string'
+  - Id: Numerical data representing comment IDs in integer format.
+  - PostId: Numerical data in integer format representing the unique identifier for
+      a post.
+  - Score: Numerical data representing a rating score as an integer, ranging from
+      0 to 100, where scores above 60 indicate positive comments and scores below
+      60 indicate negative comments.
+  - Text: A string format containing detailed content of a comment.
+  - CreationDate: Creation date of the comment in datetime format, specified as YYYY-MM-DD
+      HH:MM:SS.
+  - UserId: Numerical data in float format representing user comments, with UserId
+      as an integer identifying the user who posted the comment.
+  - UserDisplayName: A string format representing the user's display name, typically
+      used in user interfaces.
 postHistory:
   base_api: http://127.0.0.1:5000/products/codebase_community/postHistory
   columns:
-  - Id: 'type :numerical, format: integers'
-  - PostHistoryTypeId: 'type :numerical, format: integers'
-  - PostId: 'type :numerical, format: integers'
-  - RevisionGUID: 'type :texts, format: UUID'
-  - CreationDate: 'type :dates, format: YYYY-MM-DD HH:MM:SS'
-  - UserId: 'type :numerical, format: float'
-  - Text: 'type :texts, format: string'
-  - Comment: 'type :texts, format: string'
-  - UserDisplayName: 'type :texts, format: string'
+  - Id: Numerical data in integer format representing post history IDs.
+  - PostHistoryTypeId: PostHistoryTypeId is a numerical data type represented as an
+      integer, indicating the unique identifier for a post history type.
+  - PostId: Numerical data in integer format representing the unique identifier for
+      a post, labeled as PostId.
+  - RevisionGUID: This data consists of text entries formatted as UUIDs, specifically
+      representing the globally unique identifier (GUID) for revisions of a post.
+  - CreationDate: Creation date of the post in datetime format, specified as YYYY-MM-DD
+      HH:MM:SS.
+  - UserId: Numerical data in float format representing user IDs as integers, indicating
+      the user who posted the post.
+  - Text: A string format containing detailed content of a post.
+  - Comment: A collection of comments associated with a post, formatted as strings.
+  - UserDisplayName: A string representing the user's display name in text format.
 postLinks:
   base_api: http://127.0.0.1:5000/products/codebase_community/postLinks
   columns:
-  - Id: 'type :numerical, format: integers'
-  - CreationDate: 'type :dates, format: YYYY-MM-DD HH:MM:SS'
-  - PostId: 'type :numerical, format: integers'
-  - RelatedPostId: 'type :numerical, format: integers'
-  - LinkTypeId: 'type :numerical, format: integers'
+  - Id: Numerical data in integer format representing the post link ID.
+  - CreationDate: Creation date of the post in datetime format, specified as YYYY-MM-DD
+      HH:MM:SS.
+  - PostId: Numerical data representing Post IDs in integer format.
+  - RelatedPostId: Numerical data in integer format representing the ID of a related
+      post.
+  - LinkTypeId: Numerical data in integer format representing the ID of the link type.
 posts:
   base_api: http://127.0.0.1:5000/products/codebase_community/posts
   columns:
-  - Id: 'type :numerical, format: integers'
-  - PostTypeId: 'type :numerical, format: integers'
-  - AcceptedAnswerId: 'type :numerical, format: float'
-  - CreaionDate: 'type :dates and times, format: YYYY-MM-DD HH:MM:SS'
-  - Score: 'type :numerical, format: integers'
-  - ViewCount: 'type :numerical, format: float'
-  - Body: 'type :text, format: HTML paragraphs and code snippets'
-  - OwnerUserId: 'type :numerical, format: float'
-  - LasActivityDate: 'type :dates, format: YYYY-MM-DD HH:MM:SS'
-  - Title: 'type :texts, format: string'
-  - Tags: 'type :texts, format: <category1><category2><category3>'
-  - AnswerCount: 'type :numerical, format: float'
-  - CommentCount: 'type :numerical, format: integers'
-  - FavoriteCount: 'type :numerical, format: float'
-  - LastEditorUserId: 'type :numerical, format: float'
-  - LastEditDate: 'type :dates, format: YYYY-MM-DD HH:MM:SS'
-  - CommunityOwnedDate: 'type :dates, format: YYYY-MM-DD HH:MM:SS'
-  - ParentId: 'type :numerical, format: float'
-  - ClosedDate: 'type :dates, format: YYYY-MM-DD HH:MM:SS'
-  - OwnerDisplayName: 'type :texts, format: string'
-  - LastEditorDisplayName: 'type :texts, format: string'
+  - Id: Numerical data in integer format representing post IDs.
+  - PostTypeId: Numerical data in integer format representing the Post Type Id, which
+      is the identifier for a specific post type.
+  - AcceptedAnswerId: Numerical data in float format representing a value, and an
+      integer representing the accepted answer ID of a post.
+  - CreaionDate: Creation date of the post in datetime format YYYY-MM-DD HH:MM:SS
+  - Score: Numerical data representing the score of a post, formatted as integers.
+  - ViewCount: Numerical data representing the view count of a post, formatted as
+      a float. Higher values indicate greater popularity.
+  - Body: HTML formatted text containing paragraphs and code snippets for the body
+      of a post.
+  - OwnerUserId: Numerical data in float format representing a value, and an integer
+      representing the Owner User Id.
+  - LasActivityDate: Last Activity Date in datetime format, represented as YYYY-MM-DD
+      HH:MM:SS.
+  - Title: A string format data representing the title of a post.
+  - Tags: Data consists of text entries formatted as <category1><category2><category3>,
+      with tags indicating the post's subject matter.
+  - AnswerCount: Numerical data representing the total number of answers to a post,
+      formatted as an integer.
+  - CommentCount: Numerical data representing the total number of comments on a post,
+      formatted as integers.
+  - FavoriteCount: Numerical data representing the total number of favorites for a
+      post, formatted as a float. Higher values indicate more valuable posts.
+  - LastEditorUserId: Numerical data in float format representing a value, and an
+      integer representing the ID of the last editor.
+  - LastEditDate: Dates in the format YYYY-MM-DD HH:MM:SS representing the last edit
+      date and time.
+  - CommunityOwnedDate: Community Owned Date in datetime format, represented as YYYY-MM-DD
+      HH:MM:SS.
+  - ParentId: This data consists of a numerical value in float format representing
+      the ParentId of a post. It indicates the ID of the parent post, where an integer
+      value is used. If the ParentId is null, it signifies that the post is a root
+      post; otherwise, it is a child post of another post.
+  - ClosedDate: ClosedDate represents the date and time when a post is marked as closed,
+      formatted as YYYY-MM-DD HH:MM:SS. A null or empty value indicates the post is
+      not well-finished, while a non-null value signifies that the post is well-finished.
+  - OwnerDisplayName: A string representing the display name of the post owner.
+  - LastEditorDisplayName: A string representing the display name of the last editor.
 tags:
   base_api: http://127.0.0.1:5000/products/codebase_community/tags
   columns:
-  - Id: 'type :numerical, format: integers'
-  - TagName: 'type :texts, format: list of strings'
-  - Count: 'type :numerical, format: integers'
-  - ExcerptPostId: 'type :numerical, format: float'
-  - WikiPostId: 'type :numerical, format: float'
+  - Id: Numerical data representing tag IDs in integer format.
+  - TagName: A list of strings representing text data, specifically formatted as 'TagName,
+      Tag Name, the name of the tag, text'.
+  - Count: Numerical data representing the count of posts associated with a specific
+      tag, formatted as integers. Higher counts indicate greater popularity of the
+      tag.
+  - ExcerptPostId: Numerical data in float format representing the excerpt post ID
+      of the tag, which is an integer.
+  - WikiPostId: Numerical data in float format representing a Wiki Post ID, which
+      is an integer identifying a specific wiki post.
 users:
   base_api: http://127.0.0.1:5000/products/codebase_community/users
   columns:
-  - Id: 'type :numerical, format: integers'
-  - Reputation: 'type :numerical, format: integers'
-  - CreationDate: 'type :dates, format: YYYY-MM-DD HH:MM:SS'
-  - DisplayName: 'type :texts, format: string'
-  - LastAccessDate: 'type :dates, format: YYYY-MM-DD HH:MM:SS'
-  - WebsiteUrl: 'type :texts, format: http://example.com'
-  - Location: 'type :texts, format: City, Country or State'
-  - AboutMe: 'type :texts, format: HTML formatted strings with various personal descriptions,interests, and links'
-  - Views: 'type :numerical, format: integers'
-  - UpVotes: 'type :numerical, format: integers'
-  - DownVotes: 'type :numerical, format: integers'
-  - AccountId: 'type :numerical, format: integers'
-  - Age: 'type :numerical, format: float'
-  - ProfileImageUrl: 'type :texts, format: URL'
+  - Id: Numerical data representing user IDs in integer format.
+  - Reputation: Numerical data representing a user's reputation as an integer, indicating
+      their influence based on the value.
+  - CreationDate: Creation date of the user account in datetime format, specified
+      as YYYY-MM-DD HH:MM:SS.
+  - DisplayName: A string representing the user's display name, formatted as 'DisplayName'
+      or 'Display Name'.
+  - LastAccessDate: LastAccessDate represents the last access date of the user account
+      in the format YYYY-MM-DD HH:MM:SS.
+  - WebsiteUrl: A text data format representing the website URL of a user account,
+      structured as a URL (e.g., http://example.com).
+  - Location: Data consists of user location information in the format 'City, Country'
+      or 'State', along with associated text.
+  - AboutMe: HTML formatted strings containing personal descriptions, interests, and
+      links for user self-introduction.
+  - Views: Numerical data representing the number of views, formatted as integers.
+  - UpVotes: Numerical data representing the number of upvotes as integers.
+  - DownVotes: Numerical data representing the count of downvotes as integers.
+  - AccountId: Numerical data in integer format representing unique account identifiers.
+  - Age: 'Numerical data representing user''s age as a float, categorized into three
+      groups: teenager (13-18), adult (19-65), and elder (> 65).'
+  - ProfileImageUrl: A collection of text data representing profile image URLs, formatted
+      as URLs.
 votes:
   base_api: http://127.0.0.1:5000/products/codebase_community/votes
   columns:
-  - Id: 'type :numerical, format: integers'
-  - PostId: 'type :numerical, format: integers'
-  - VoteTypeId: 'type :numerical, format: integers'
-  - CreationDate: 'type :dates, format: YYYY-MM-DD'
-  - UserId: 'type :numerical, format: float'
-  - BountyAmount: 'type :numerical, format: float'
+  - Id: Numerical data representing vote IDs in integer format.
+  - PostId: Numerical data representing the Post Id, which is an integer indicating
+      the unique identifier of a post that has received a vote.
+  - VoteTypeId: VoteTypeId is a numerical data field representing the ID of the vote
+      type, formatted as an integer.
+  - CreationDate: Creation date of the vote in datetime format, specified as YYYY-MM-DD.
+  - UserId: Numerical data in float format representing user IDs as integers for voters.
+  - BountyAmount: Numerical data representing the bounty amount, formatted as a float.

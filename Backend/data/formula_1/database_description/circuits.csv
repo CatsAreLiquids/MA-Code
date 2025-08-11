@@ -5,7 +5,6 @@ name ,,full name of circuit ,text,
 location  ,,location of circuit ,text,
 country ,,country of circuit ,text,
 lat ,latitude  ,latitude of location of circuit ,real,
-lng ,longitude  ,longitude of location of circuit ,real,"commonsense evidence: 
-Location coordinates: (lat, lng)"
+lng ,longitude  ,longitude of location of circuit ,real,"commonsense evidence: Location coordinates, (lat, lng)"
 alt ,,,integer ,not useful 
 url ,,url ,text,

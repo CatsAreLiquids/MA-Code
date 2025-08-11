@@ -1,36 +1,46 @@
 customers:
   base_api: http://127.0.0.1:5000/products/debit_card_specializing/customers
   columns:
-  - CustomerID: 'type :numerical, format: integers'
-  - Segment: 'type :texts, format: string'
-  - Currency: 'type :texts, format: Currency codes (ISO 4217)'
+  - CustomerID: CustomerID is a numerical identifier for customers, represented as
+      an integer.
+  - Segment: A collection of text data representing client segments, formatted as
+      a string with comma-separated values.
+  - Currency: 'Data type: texts; Format: Currency codes following ISO 4217 standard,
+      including currency name and associated text.'
 gasstations:
   base_api: http://127.0.0.1:5000/products/debit_card_specializing/gasstations
   columns:
-  - GasStationID: 'type :numerical, format: integers'
-  - ChainID: 'type :numerical, format: integers'
-  - Country: 'type :texts, format: ISO 3166-1 alpha-3 country codes'
-  - Segment: 'type :text, format: string'
+  - GasStationID: GasStationID is a numerical data type represented as integers, used
+      to uniquely identify gas stations.
+  - ChainID: Numerical data representing Chain IDs in integer format.
+  - Country: A list of country names associated with their ISO 3166-1 alpha-3 country
+      codes in a text format.
+  - Segment: A text data format consisting of a string that includes segments and
+      chain segments, separated by commas.
 products:
   base_api: http://127.0.0.1:5000/products/debit_card_specializing/products
   columns:
-  - ProductID: 'type :numerical, format: integers'
-  - Description: 'type :texts, format: string'
+  - ProductID: Numerical data representing Product IDs in integer format.
+  - Description: A collection of textual data in string format, containing descriptions.
 transactions_1k:
   base_api: http://127.0.0.1:5000/products/debit_card_specializing/transactions_1k
   columns:
-  - TransactionID: 'type :numerical, format: integers'
-  - Date: 'type :dates, format: YYYY-MM-DD'
-  - Time: 'type :time, format: HH:MM:SS'
-  - CustomerID: 'type :numerical, format: integers'
-  - CardID: 'type :numerical, format: integers'
-  - GasStationID: 'type :numerical, format: integers'
-  - ProductID: 'type :numerical, format: integers'
-  - Amount: 'type :numerical, format: integers'
-  - Price: 'type :numerical, format: float'
+  - TransactionID: A numerical dataset containing Transaction IDs represented as integers.
+  - Date: A collection of dates formatted as YYYY-MM-DD.
+  - Time: Time data in HH:MM:SS format, representing hours, minutes, and seconds.
+  - CustomerID: Numerical data representing unique customer identifiers in integer
+      format.
+  - CardID: Numerical data representing Card IDs in integer format.
+  - GasStationID: GasStationID is a numerical data type represented as integers, used
+      to uniquely identify gas stations.
+  - ProductID: Numerical data representing Product IDs in integer format.
+  - Amount: Numerical data representing amounts in integer format.
+  - Price: 'Numerical data representing price as a float, calculated using the formula:
+      total price = Amount x Price.'
 yearmonth:
   base_api: http://127.0.0.1:5000/products/debit_card_specializing/yearmonth
   columns:
-  - CustomerID: 'type :numerical, format: integers'
-  - Date: 'type :numerical, format: YYYYMM'
-  - Consumption: 'type :numerical, format: float'
+  - CustomerID: Numerical data representing unique customer identifiers in integer
+      format.
+  - Date: Numerical data representing dates in the format YYYYMM.
+  - Consumption: Numerical data representing consumption values in float format.

@@ -1,100 +1,209 @@
 frpm:
   base_api: http://127.0.0.1:5000/products/california_schools/frpm
   columns:
-  - CDSCode: 'type :numerical, format: integers'
-  - Academic Year: 'type :text, format: YYYY-YYYY'
-  - County Code: 'type :numerical, format: integers'
-  - District Code: 'type :numerical, format: integers'
-  - School Code: 'type :numerical, format: integers'
-  - County Name: 'type :texts, format: string'
-  - District Name: 'type :texts, format: String'
-  - School Name: 'type :texts, format: string'
-  - District Type: 'type :text, format: String values representing different educational
-      institution types'
-  - School Type: 'type :text, format: string'
-  - Educational Option Type: 'type :text, format: string'
-  - NSLP Provision Status: 'type :texts, format: string'
-  - Charter School (Y/N): 'type :numerical, format: float or NaN'
-  - Charter School Number: 'type :text, format: 4-digit alphanumeric strings'
-  - Charter Funding Type: 'type :text, format: string'
-  - IRC: 'type :numerical, format: float or NaN'
-  - Low Grade: 'type :mixed, format: integers and texts'
-  - High Grade: 'type :mixed, format: [''integers'', ''text'']'
-  - Enrollment (K-12): 'type :numerical, format: float'
-  - Free Meal Count (K-12): 'type :numerical, format: float'
-  - Percent (%) Eligible Free (K-12): 'type :numerical, format: float'
-  - FRPM Count (K-12): 'type :numerical, format: float'
-  - Percent (%) Eligible FRPM (K-12): 'type :numerical, format: float'
-  - Enrollment (Ages 5-17): 'type :numerical, format: floating point numbers'
-  - Free Meal Count (Ages 5-17): 'type :numerical, format: float'
-  - Percent (%) Eligible Free (Ages 5-17): 'type :numerical, format: float'
-  - FRPM Count (Ages 5-17): 'type :numerical, format: float'
-  - Percent (%) Eligible FRPM (Ages 5-17): 'type :numerical, format: float'
-  - 2013-14 CALPADS Fall 1 Certification Status: 'type :numerical, format: integer'
+  - CDSCode: Numerical data representing CDS codes in integer format.
+  - Academic Year: Data representing academic years in the format YYYY-YYYY, with
+      each entry being an integer.
+  - County Code: Numerical data representing County Codes in integer format.
+  - District Code: Numerical data representing district codes in integer format.
+  - School Code: Numerical data representing school codes in integer format.
+  - County Name: A string format data containing county information with fields for
+      County Name and County Code, separated by commas.
+  - District Name: A string format representing the name of a district, typically
+      used in text data.
+  - School Name: A string format representing the name of a school, potentially containing
+      multiple entries separated by commas.
+  - District Type: String values representing different types of educational institutions,
+      formatted as text.
+  - School Type: A string data type representing the type of school.
+  - Educational Option Type: A string representing the type of educational option
+      available.
+  - NSLP Provision Status: A string representing the NSLP Provision Status, used in
+      text format.
+  - Charter School (Y/N): Numerical data in float format or NaN, indicating whether
+      a school is a charter school (Y/N) represented as an integer (0 for N, 1 for
+      Y).
+  - Charter School Number: 4-digit alphanumeric strings representing Charter School
+      Numbers.
+  - Charter Funding Type: A string data type representing the Charter Funding Type.
+  - IRC: Numerical data in float format or NaN, with an irrelevant integer field labeled
+      IRC.
+  - Low Grade: Mixed data containing integers and text, with examples like 'Low Grade'
+      and empty values.
+  - High Grade: Mixed data containing integers and text, with examples including 'High
+      Grade' as a text entry.
+  - Enrollment (K-12): Numerical data representing K-12 enrollment figures as floating-point
+      numbers.
+  - Free Meal Count (K-12): 'Numerical data representing the count of free meals provided
+      to K-12 students, formatted as a float. It is used to calculate the eligible
+      free rate based on the formula: eligible free rate = Free Meal Count / Enrollment.'
+  - Percent (%) Eligible Free (K-12): Numerical data representing the percentage of
+      K-12 students eligible for free services, formatted as a float.
+  - FRPM Count (K-12): 'Numerical data representing the count of Free or Reduced Price
+      Meal (FRPM) recipients in K-12 education, formatted as a float. The data includes
+      a calculation for the eligible FRPM rate based on the formula: eligible FRPM
+      rate = FRPM / Enrollment.'
+  - Percent (%) Eligible FRPM (K-12): Numerical data representing the percentage of
+      K-12 students eligible for Free and Reduced Price Meals (FRPM), formatted as
+      a float.
+  - Enrollment (Ages 5-17): Numerical data representing enrollment figures for ages
+      5-17, formatted as floating point numbers.
+  - Free Meal Count (Ages 5-17): 'Numerical data representing the count of free meals
+      provided to individuals aged 5-17, formatted as a float. It is used to calculate
+      the eligible free rate based on the formula: eligible free rate = Free Meal
+      Count / Enrollment.'
+  - Percent (%) Eligible Free (Ages 5-17): Numerical data representing the percentage
+      of eligible free individuals aged 5-17, formatted as a float.
+  - FRPM Count (Ages 5-17): Numerical data representing the FRPM Count for individuals
+      aged 5-17, formatted as a float.
+  - Percent (%) Eligible FRPM (Ages 5-17): Numerical data representing the percentage
+      of individuals aged 5-17 eligible for Free and Reduced Price Meals (FRPM), formatted
+      as a float.
+  - 2013-14 CALPADS Fall 1 Certification Status: Numerical data representing the certification
+      status for the 2013-14 CALPADS Fall 1, formatted as an integer.
 satscores:
   base_api: http://127.0.0.1:5000/products/california_schools/satscores
   columns:
-  - cds: 'type :numerical, format: integer'
-  - rtype: 'type :text, format: single character strings'
-  - sname: 'type :texts, format: string'
-  - dname: 'type :texts, format: String'
-  - cname: 'type :text, format: String (County Names)'
-  - enroll12: 'type :numerical, format: integers'
-  - NumTstTakr: 'type :numerical, format: integers'
-  - AvgScrRead: 'type :numerical, format: float'
-  - AvgScrMath: 'type :numerical, format: float'
-  - AvgScrWrite: 'type :numerical, format: float'
-  - NumGE1500: 'type :numerical, format: floating point numbers'
+  - cds: Numerical data in integer format related to the California Department of
+      Schools.
+  - rtype: Single character strings representing text data, with fields for rtype
+      and unuseful.
+  - sname: A collection of text data formatted as strings, containing school names
+      and associated text entries.
+  - dname: A collection of text data in String format, containing district names and
+      segments, structured as 'dname,district name,district segment,text'.
+  - cname: A list of county names formatted as strings.
+  - enroll12: Numerical data representing enrollment numbers for grades 1 to 12, formatted
+      as integers.
+  - NumTstTakr: Numerical data representing the number of test takers in each school,
+      formatted as integers.
+  - AvgScrRead: Numerical data representing average scores in Reading, formatted as
+      a float.
+  - AvgScrMath: Numerical data representing average scores in Math, formatted as a
+      float.
+  - AvgScrWrite: Numerical data representing average scores in writing, formatted
+      as a float.
+  - NumGE1500: Numerical data in floating point format representing the number of
+      test takers whose total SAT scores are greater than or equal to 1500, used to
+      calculate the excellence rate.
 schools:
   base_api: http://127.0.0.1:5000/products/california_schools/schools
   columns:
-  - CDSCode: 'type :numerical, format: integer'
-  - NCESDist: 'type :numerical, format: float'
-  - NCESSchool: 'type :numerical, format: float'
-  - StatusType: 'type :text, format: string'
-  - County: 'type :texts, format: string'
-  - District: 'type :texts, format: String'
-  - School: 'type :texts, format: string'
-  - Street: 'type :texts, format: Street Address'
-  - StreetAbr: 'type :texts, format: Street Address'
-  - City: 'type :texts, format: string'
-  - Zip: 'type :text, format: XXXXX-XXXX or XXXXX'
-  - State: 'type :mixed, format: [null, string]'
-  - MailStreet: 'type :texts, format: Street Address'
-  - MailStrAbr: 'type :texts, format: Street Address'
-  - MailCity: 'type :texts, format: string'
-  - MailZip: 'type :text, format: XXXXX-XXXX or XXXXX'
-  - MailState: 'type :mixed, format: [null, string]'
-  - Phone: 'type :text, format: (XXX) XXX-XXXX'
-  - Ext: 'type :numerical, format: float'
-  - Website: 'type :texts, format: URL'
-  - OpenDate: 'type :dates, format: YYYY-MM-DD'
-  - ClosedDate: 'type :dates, format: YYYY-MM-DD'
-  - Charter: 'type :numerical, format: float or NaN'
-  - CharterNum: 'type :mixed, format: strings and floats'
-  - FundingType: 'type :text, format: string'
-  - DOC: 'type :numerical, format: integers'
-  - DOCType: 'type :texts, format: string'
-  - SOC: 'type :numerical, format: float'
-  - SOCType: 'type :texts, format: string'
-  - EdOpsCode: 'type :text, format: string'
-  - EdOpsName: 'type :texts, format: string'
-  - EILCode: 'type :texts, format: string values representing educational levels or
-      categories'
-  - EILName: 'type :text, format: string'
-  - GSoffered: 'type :text, format: X-Y or X-Adult or P-X or K-X'
-  - GSserved: 'type :text, format: X-Y or K-Z where X, Y, Z are integers'
-  - Virtual: 'type :categorical, format: [''F'', ''N'', ''P'', null]'
-  - Magnet: 'type :numerical, format: float or NaN'
-  - Latitude: 'type :numerical, format: float'
-  - Longitude: 'type :numerical, format: floating-point numbers'
-  - AdmFName1: 'type :texts, format: string'
-  - AdmLName1: 'type :texts, format: string'
-  - AdmEmail1: 'type :texts, format: email@example.com'
-  - AdmFName2: 'type :texts, format: string'
-  - AdmLName2: 'type :texts, format: string'
-  - AdmEmail2: 'type :texts, format: email@example.com'
-  - AdmFName3: 'type :texts, format: string'
-  - AdmLName3: 'type :texts, format: string'
-  - AdmEmail3: 'type :texts, format: email@example.com'
-  - LastUpdate: 'type :dates, format: YYYY-MM-DD'
+  - CDSCode: Numerical data in integer format representing CDS codes, with additional
+      text fields.
+  - NCESDist: A 7-digit numerical identifier for school districts, formatted as a
+      float, where the first 2 digits represent the state and the last 5 digits represent
+      the school district.
+  - NCESSchool: Numerical data in float format representing the 5-digit NCES school
+      identification number, which, when combined with the NCESDist, forms a unique
+      12-digit ID for each school.
+  - StatusType: A string field that identifies the operational status of a district,
+      with possible values including 'Active', 'Closed', 'Merged', and 'Pending'.
+  - County: A string format data representing county names, with a structure that
+      includes a header indicating 'County' followed by the actual county names as
+      text.
+  - District: A dataset containing textual information about districts, formatted
+      as a CSV string with headers 'District' and 'text'.
+  - School: A collection of text data related to schools, formatted as strings.
+  - Street: 'Data type: texts; Format: Street Address, consisting of street names
+      and related text.'
+  - StreetAbr: Abbreviated street address of a school, district, or administrative
+      authority's physical location, formatted as text.
+  - City: A collection of text data representing city names, formatted as a comma-separated
+      string.
+  - Zip: A zip code in text format, either 5 digits (XXXXX) or 10 digits with a hyphen
+      (XXXXX-XXXX).
+  - State: Mixed data type containing null values and strings, representing state
+      information with a specific format including headers 'State' and 'text'.
+  - MailStreet: This data consists of texts in the format of a Street Address, representing
+      the unabbreviated mailing address of schools, districts, or administrative authorities.
+      Note that some entities may lack data, and unpopulated fields have been filled
+      with Street data.
+  - MailStrAbr: Abbreviated mailing street address of a school, district, or administrative
+      authority, formatted as a text string.
+  - MailCity: MailCity is a string data type representing the mailing city associated
+      with the address of a school, district, or administrative authority. It may
+      contain empty values where the mailing address city is not provided, which have
+      been filled with corresponding city data.
+  - MailZip: MailZip is a text field representing the zip code associated with the
+      mailing address of a school, district, or administrative authority. The format
+      can be either 'XXXXX-XXXX' or 'XXXXX'. Note that some entries may be unpopulated
+      and have been filled with available Zip data.
+  - MailState: Mixed data type containing null or string values representing the mailing
+      state in an address, with unpopulated cells filled with corresponding state
+      data.
+  - Phone: Phone number in the format (XXX) XXX-XXXX
+  - Ext: A numerical data type representing the phone number extension of a school,
+      district, or administrative authority, formatted as a float.
+  - Website: A URL format representing the website address of a school, district,
+      or administrative authority.
+  - OpenDate: A date representing when the school opened, formatted as YYYY-MM-DD.
+  - ClosedDate: ClosedDate represents the date a school closed, formatted as YYYY-MM-DD.
+  - Charter: 'This data includes a numerical field that can be a float or NaN, indicating
+      a charter school status coded as an integer: 1 for charter schools and 0 for
+      non-charter schools.'
+  - CharterNum: Mixed data containing strings and floats, including a 4-digit charter
+      school number represented as text.
+  - FundingType: FundingType is a text field indicating the charter school funding
+      type, represented as a string. Possible values include 'Not in CS funding model',
+      'Locally funded', and 'Directly funded'.
+  - DOC: The District Ownership Code (DOC) is a numerical identifier represented as
+      integers, used to categorize the Administrative Authority in the education system,
+      with specific codes assigned to various types of educational institutions.
+  - DOCType: A string representing the text description of the District Ownership
+      Code Type (DOCType), which categorizes ownership types in a district.
+  - SOC: Numerical data representing the School Ownership Code (SOC) as a float, used
+      to identify various types of schools, including preschool, special education,
+      and public schools.
+  - SOCType: A string representing the School Ownership Code Type, which describes
+      the type of school.
+  - EdOpsCode: A string data type representing various education option codes, each
+      corresponding to a specific type of educational institution or program.
+  - EdOpsName: A string data type representing the long text description of an educational
+      option, labeled as 'Educational Option Name'.
+  - EILCode: A string format representing various educational levels or categories,
+      including codes for Adult, Elementary, High School, and others.
+  - EILName: A string representing the Educational Instruction Level Name, which describes
+      the type of educational institution relative to the grade range it serves.
+  - GSoffered: This data represents the grade span offered by a school, district,
+      or administrative authority, formatted as X-Y, X-Adult, P-X, or K-X, where X
+      and Y denote specific grade levels.
+  - GSserved: Text data representing the grade span served in K-12 education, formatted
+      as 'X-Y' or 'K-Z' where X, Y, and Z are integers, indicating the lowest and
+      highest grades of student enrollment based on CALPADS Fall 1 data.
+  - Virtual: 'Categorical data representing the type of virtual instruction offered
+      by a school, with possible values: [''F'', ''N'', ''P'', null]. ''F'' indicates
+      Exclusively Virtual, ''V'' indicates Primarily Virtual, ''C'' indicates Primarily
+      Classroom, ''N'' indicates Not Virtual, and ''P'' indicates Partial Virtual
+      (retired).'
+  - Magnet: 'This data indicates whether a school is a magnet school or offers a magnet
+      program, represented as an integer: 1 for magnet and 0 for not magnet. The field
+      may also contain NaN values.'
+  - Latitude: Numerical data representing latitude as a float, indicating the angular
+      distance in degrees from the equator, measured north to south.
+  - Longitude: Numerical data representing longitude as floating-point numbers, indicating
+      the angular distance in degrees from the prime meridian (Greenwich, England),
+      measured from west to east.
+  - AdmFName1: A string data type representing the administrator's first name, specifically
+      for superintendents or principals, with additional context regarding the display
+      of administrator information in active and pending districts and schools.
+  - AdmLName1: A string data type representing the last name of an administrator,
+      specifically the superintendent or principal, with additional context regarding
+      the display of administrator information for active and pending districts and
+      schools.
+  - AdmEmail1: This data represents an administrator's email address in the format
+      email@example.com, specifically for superintendents or principals in active
+      and pending districts and schools.
+  - AdmFName2: A string data type representing a text field, specifically indicating
+      that 'AdmFName2' is the same as another field labeled '1'.
+  - AdmLName2: A string data type representing a text field labeled 'AdmLName2'.
+  - AdmEmail2: Email address in the format email@example.com
+  - AdmFName3: A string data type representing a text field labeled 'AdmFName3', which
+      is not useful.
+  - AdmLName3: A string data type representing a text field labeled 'AdmLName3', which
+      is not useful.
+  - AdmEmail3: Data type is text, specifically formatted as an email address (email@example.com).
+      The entry 'AdmEmail3,,,text,not useful' indicates a potential email field with
+      additional non-useful text.
+  - LastUpdate: A date field representing the last update of a record, formatted as
+      YYYY-MM-DD.

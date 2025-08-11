@@ -1,61 +1,87 @@
 alignment:
   base_api: http://127.0.0.1:5000/products/superhero/alignment
   columns:
-  - id: 'type :numerical, format: integers'
-  - alignment: 'type :categorical, format: [''Neutral'', ''Bad'', ''Good'']'
+  - id: Numerical data in integer format representing unique identifiers for alignments.
+  - alignment: 'Categorical data representing the alignment of superheroes with three
+      possible values: ''Good'', ''Neutral'', and ''Bad''.'
 attribute:
   base_api: http://127.0.0.1:5000/products/superhero/attribute
   columns:
-  - id: 'type :numerical, format: integers'
-  - attribute_name: 'type :texts, format: String values representing attributes'
+  - id: Numerical data consisting of integers representing unique identifiers for
+      attributes.
+  - attribute_name: String values representing attributes of superheroes, including
+      their physical and personal traits, with commonsense evidence explaining their
+      significance.
 colour:
   base_api: http://127.0.0.1:5000/products/superhero/colour
   columns:
-  - id: 'type :numerical, format: integers'
-  - colour: 'type :text, format: Color names'
+  - id: Numerical data in integer format representing unique identifiers for colors.
+  - colour: Text data representing color names for various attributes of a superhero,
+      such as skin, eye, and hair color.
 gender:
   base_api: http://127.0.0.1:5000/products/superhero/gender
   columns:
-  - id: 'type :numerical, format: integers'
-  - gender: 'type :categorical, format: [''Male'', ''Female'', null]'
+  - id: Numerical data in integer format representing unique identifiers for gender.
+  - gender: Categorical data representing the gender of a superhero, with possible
+      values 'Male', 'Female', or null.
 hero_attribute:
   base_api: http://127.0.0.1:5000/products/superhero/hero_attribute
   columns:
-  - hero_id: 'type :numerical, format: integers'
-  - attribute_id: 'type :numerical, format: integers'
-  - attribute_value: 'type :numerical, format: integers'
+  - hero_id: Numerical data in integer format representing the unique identifier for
+      a hero, mapped to a superhero.
+  - attribute_id: Numerical data in integer format representing the ID of an attribute.
+  - attribute_value: Numerical data in integer format representing attribute values
+      of superheroes, indicating their skill or power level in specific areas.
 hero_power:
   base_api: http://127.0.0.1:5000/products/superhero/hero_power
   columns:
-  - hero_id: 'type :numerical, format: integers'
-  - power_id: 'type :numerical, format: integers'
+  - hero_id: A numerical dataset containing integer values representing the unique
+      identifier for superheroes.
+  - power_id: Numerical data in integer format representing the power ID associated
+      with superhero attributes and abilities.
 publisher:
   base_api: http://127.0.0.1:5000/products/superhero/publisher
   columns:
-  - id: 'type :numerical, format: integers'
-  - publisher_name: 'type :texts, format: string'
+  - id: A numerical dataset containing unique identifiers for publishers, formatted
+      as integers.
+  - publisher_name: A string format containing the name of the publisher followed
+      by the text, separated by commas.
 race:
   base_api: http://127.0.0.1:5000/products/superhero/race
   columns:
-  - id: 'type :numerical, format: integers'
-  - race: 'type :texts, format: string'
+  - id: Numerical data in integer format representing unique identifiers for races.
+  - race: This data represents a text string that describes the race of a superhero,
+      emphasizing the physical characteristics that define their racial group.
 superhero:
   base_api: http://127.0.0.1:5000/products/superhero/superhero
   columns:
-  - id: 'type :numerical, format: integers'
-  - superhero_name: 'type :texts, format: string'
-  - full_name: 'type :texts, format: string'
-  - gender_id: 'type :numerical, format: integers'
-  - eye_colour_id: 'type :numerical, format: integers'
-  - hair_colour_id: 'type :numerical, format: integers'
-  - skin_colour_id: 'type :numerical, format: integers'
-  - race_id: 'type :numerical, format: float'
-  - publisher_id: 'type :numerical, format: float'
-  - alignment_id: 'type :numerical, format: float or NaN'
-  - height_cm: 'type :numerical, format: floating point numbers'
-  - weight_kg: 'type :numerical, format: float'
+  - id: Numerical data in integer format representing the unique identifier of a superhero.
+  - superhero_name: A string format containing the name of a superhero, referred to
+      as 'superhero_name'.
+  - full_name: A string representing the full name of a superhero, typically consisting
+      of a given name and a surname.
+  - gender_id: Numerical data representing the gender ID of a superhero, formatted
+      as an integer.
+  - eye_colour_id: Numerical data representing the eye color ID of a superhero, formatted
+      as integers.
+  - hair_colour_id: Numerical data representing the hair color ID of a superhero,
+      formatted as integers.
+  - skin_colour_id: An integer representing the skin color ID of a superhero.
+  - race_id: Numerical data in float format representing race_id, which is an integer
+      indicating the id of the superhero's race.
+  - publisher_id: Numerical data in float format representing a value, along with
+      an integer representing the publisher ID.
+  - alignment_id: Numerical data representing the alignment ID of a superhero, formatted
+      as a float or NaN for missing values.
+  - height_cm: Numerical data representing the height of a superhero in centimeters,
+      formatted as floating point numbers. A value of NULL or 0 indicates missing
+      height information.
+  - weight_kg: Numerical data representing the weight of a superhero in kilograms,
+      formatted as a float. If weight_kg is NULL or 0, it indicates missing weight
+      information.
 superpower:
   base_api: http://127.0.0.1:5000/products/superhero/superpower
   columns:
-  - id: 'type :numerical, format: integers'
-  - power_name: 'type :texts, format: list of strings'
+  - id: Numerical data in integer format representing unique identifiers for superpowers.
+  - power_name: A list of strings containing superpower names and associated text
+      descriptions.

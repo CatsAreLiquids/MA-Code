@@ -10,9 +10,7 @@ positionText ,position text ,,text,not quite useful
 positionOrder ,position order ,the finishing order of positions ,integer ,
 points ,,points ,real,
 laps ,,lap number ,integer ,
-time  ,,finish time ,text,"commonsense evidence: 
-1. if the value exists, it means the driver finished the race. 
-2. Only the time of the champion shows in the format of ""minutes: seconds.millionsecond"", the time of the other drivers shows as ""seconds.millionsecond"" , which means their actual time is the time of the champion adding the value in this cell."
+time  ,,finish time ,text,"commonsense evidence: 1. if the value exists, it means the driver finished the race. 2. Only the time of the champion shows in the format of ""minutes: seconds.millionsecond"", the time of the other drivers shows as ""seconds.millionsecond"" , which means their actual time is the time of the champion adding the value in this cell."
 milliseconds ,,the actual finishing time of drivers in milliseconds  ,integer ,the actual finishing time of drivers  
 fastestLap ,fastest lap ,fastest lap number ,integer ,
 rank ,,starting rank positioned by fastest lap speed,integer ,

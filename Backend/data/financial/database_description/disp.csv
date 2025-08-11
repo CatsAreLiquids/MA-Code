@@ -2,6 +2,4 @@
 disp_id,disposition id,unique number of identifying this row of record,integer,
 client_id,,id number of client,integer,
 account_id,,id number of account,integer,
-type,,type of disposition,text,"""OWNER"" : ""USER"" : ""DISPONENT""
-commonsense evidence:
-the account can only have the right to issue permanent orders or apply for loans"
+type,,type of disposition,text,"""OWNER"" : ""USER"" : ""DISPONENT""commonsense evidence:the account can only have the right to issue permanent orders or apply for loans"

@@ -1,137 +1,206 @@
 circuits:
   base_api: http://127.0.0.1:5000/products/formula_1/circuits
   columns:
-  - circuitId: 'type :numerical, format: integers'
-  - circuitRef: 'type :texts, format: string'
-  - name: 'type :texts, format: string'
-  - location: 'type :texts, format: string'
-  - country: 'type :texts, format: Country names'
-  - lat: 'type :numerical, format: floating-point numbers'
-  - lng: 'type :numerical, format: floating point numbers'
-  - alt: 'type :null or missing data, format: N/A'
-  - url: 'type :texts, format: URL'
+  - circuitId: A numerical dataset containing unique identification numbers for circuits,
+      formatted as integers.
+  - circuitRef: A collection of circuit reference names in string format, represented
+      as text data.
+  - name: A string representing the full name of a circuit in text format.
+  - location: A string format data representing the location of a circuit, typically
+      in text format.
+  - country: A list of country names in text format with fields for 'country' and
+      'country of circuit'.
+  - lat: Numerical data representing the latitude of a location in floating-point
+      format.
+  - lng: Numerical data representing the longitude of a location in floating point
+      format.
+  - alt: Data type indicating null or missing values, includes an integer field labeled
+      'alt' which is deemed not useful.
+  - url: A collection of text data formatted as URLs, structured as 'url,,url,text'
+      where each entry consists of a URL followed by associated text.
 constructorResults:
   base_api: http://127.0.0.1:5000/products/formula_1/constructorResults
   columns:
-  - constructorResultsId: 'type :numerical, format: integers'
-  - raceId: 'type :numerical, format: integers'
-  - constructorId: 'type :numerical, format: integers'
-  - points: 'type :numerical, format: float'
-  - status: 'type :mixed, format: string, null'
+  - constructorResultsId: Numerical data in integer format representing constructor
+      results identification.
+  - raceId: Numerical data representing race identifiers in integer format.
+  - constructorId: Numerical data representing constructor identifiers in integer
+      format.
+  - points: Numerical data in float format representing real-valued points.
+  - status: Mixed data type (string or null) representing status information with
+      potential text values.
 constructorStandings:
   base_api: http://127.0.0.1:5000/products/formula_1/constructorStandings
   columns:
-  - constructorStandingsId: 'type :numerical, format: integers'
-  - raceId: 'type :numerical, format: integers'
-  - constructorId: 'type :numerical, format: integers'
-  - points: 'type :numerical, format: float or integer'
-  - position: 'type :numerical, format: integers'
-  - positionText: 'type :numerical and categorical, format: integers and single characters'
-  - wins: 'type :numerical, format: integers'
+  - constructorStandingsId: Numerical data in integer format representing unique identification
+      of constructor standing records.
+  - raceId: Numerical data in integer format representing unique identifiers for races
+      (race IDs).
+  - constructorId: Numerical data in integer format representing a unique identifier
+      for constructors, labeled as constructorId.
+  - points: Numerical data representing points acquired in each race, formatted as
+      float or integer.
+  - position: Numerical data representing the position or track of circuits, formatted
+      as integers.
+  - positionText: Data consists of numerical integers and categorical single characters,
+      specifically for position text which describes a position but is not very useful.
+  - wins: Numerical data representing wins, formatted as integers.
 constructors:
   base_api: http://127.0.0.1:5000/products/formula_1/constructors
   columns:
-  - constructorId: 'type :numerical, format: integers'
-  - constructorRef: 'type :texts, format: string'
-  - name: 'type :texts, format: string'
-  - nationality: 'type :text, format: String values representing nationalities or
-      ethnicities'
-  - url: 'type :texts, format: http://en.wikipedia.org/wiki/Example'
+  - constructorId: Numerical data in integer format representing unique identification
+      numbers for constructors.
+  - constructorRef: A string data type representing the name of a constructor reference.
+  - name: A string representing the full name of a constructor.
+  - nationality: String values representing nationalities or ethnicities of constructors.
+  - url: This data consists of text information formatted as a URL, specifically pointing
+      to a Wikipedia page. It provides a method to access detailed introductions about
+      a constructor through its URL.
+  - wins: Numeric data representing the number of wins, formatted as an integer.
 driverStandings:
   base_api: http://127.0.0.1:5000/products/formula_1/driverStandings
   columns:
-  - driverStandingsId: 'type :numerical, format: integers'
-  - raceId: 'type :numerical, format: integers'
-  - driverId: 'type :numerical, format: integers'
-  - points: 'type :numerical, format: float'
-  - position: 'type :numerical, format: integers'
-  - positionText: 'type :numerical, format: integers'
-  - wins: 'type :numerical, format: integers'
+  - driverStandingsId: DriverStandingsId is a numerical data type represented as an
+      integer, serving as a unique identification number for driver standing records.
+  - raceId: Numerical data in integer format representing race identifiers (raceId)
+      and constructor reference names (id) for various races.
+  - driverId: Numerical data in integer format representing unique identifiers for
+      drivers.
+  - points: Numerical data representing the points acquired in each race, formatted
+      as a float.
+  - position: Numerical data representing the position or track of circuits, formatted
+      as integers.
+  - positionText: Numerical data in integer format representing position text, which
+      is a textual description of a position but is not particularly useful.
+  - wins: Numerical data representing wins, formatted as integers.
 drivers:
   base_api: http://127.0.0.1:5000/products/formula_1/drivers
   columns:
-  - driverId: 'type :numerical, format: integers'
-  - driverRef: 'type :texts, format: string'
-  - number: 'type :numerical, format: float'
-  - code: 'type :texts, format: string'
-  - forename: 'type :texts, format: string'
-  - surname: 'type :texts, format: string'
-  - dob: 'type :dates, format: YYYY-MM-DD'
-  - nationality: 'type :texts, format: String values representing nationalities'
-  - url: 'type :texts, format: http://en.wikipedia.org/wiki/Name'
+  - driverId: Numerical data in integer format representing unique identification
+      numbers for each driver.
+  - driverRef: A collection of driver reference names in string format.
+  - number: Numerical data in float format, including both float and integer values.
+  - code: Abbreviated code for drivers represented as a string. A value of 'null'
+      or an empty string indicates the absence of a code.
+  - forename: A collection of forenames in string format, allowing for variations
+      in spacing and punctuation.
+  - surname: A collection of text entries formatted as strings, each containing a
+      surname followed by a text value, separated by commas.
+  - dob: A collection of dates representing dates of birth in the format YYYY-MM-DD.
+  - nationality: String values representing the nationalities of drivers, formatted
+      as text.
+  - url: A collection of text data formatted as URLs, specifically referencing the
+      introduction pages of drivers on Wikipedia.
 lapTimes:
   base_api: http://127.0.0.1:5000/products/formula_1/lapTimes
   columns:
-  - raceId: 'type :numerical, format: integers'
-  - driverId: 'type :numerical, format: integers'
-  - lap: 'type :numerical, format: integers'
-  - position: 'type :numerical, format: integers'
-  - time: 'type :text, format: MM:SS.sss'
-  - milliseconds: 'type :numerical, format: integers'
+  - raceId: Numerical data in integer format representing the identification number
+      of a race (raceId).
+  - driverId: Numerical data in integer format representing the unique identification
+      number for each driver.
+  - lap: Numerical data representing lap numbers in integer format.
+  - position: Numerical data representing the position or track of circuits, formatted
+      as integers.
+  - time: Lap time data in text format, represented as MM:SS.sss (minutes:seconds.milliseconds).
+  - milliseconds: Numerical data representing time in milliseconds, formatted as integers.
 pitStops:
   base_api: http://127.0.0.1:5000/products/formula_1/pitStops
   columns:
-  - raceId: 'type :numerical, format: integers'
-  - driverId: 'type :numerical, format: integers'
-  - stop: 'type :numerical, format: integers'
-  - lap: 'type :numerical, format: integers'
-  - time: 'type :time, format: HH:MM:SS'
-  - duration: 'type :numerical, format: float'
-  - milliseconds: 'type :numerical, format: integers'
+  - raceId: Numerical data in integer format representing the identification number
+      for a race, referred to as raceId.
+  - driverId: Numerical data in integer format representing the unique identification
+      number for each driver.
+  - stop: Numerical data representing stop numbers in integer format.
+  - lap: Numerical data representing lap numbers in integer format.
+  - time: Data representing time in HH:MM:SS format, including fields for time, text,
+      and exact time.
+  - duration: Numerical data representing duration in seconds, formatted as a float.
+  - milliseconds: Numerical data representing time in milliseconds, formatted as integers.
 qualifying:
   base_api: http://127.0.0.1:5000/products/formula_1/qualifying
   columns:
-  - qualifyId: 'type :numerical, format: integers'
-  - raceId: 'type :numerical, format: integers'
-  - driverId: 'type :numerical, format: integers'
-  - constructorId: 'type :numerical, format: integers'
-  - number: 'type :numerical, format: integers'
-  - position: 'type :numerical, format: integers'
-  - q1: 'type :text, format: MM:SS.sss'
-  - q2: 'type :text, format: MM:SS.SSS'
-  - q3: 'type :numerical, format: MM:SS.SSS'
+  - qualifyId: This data consists of numerical integers representing unique identification
+      numbers for qualifying events in F1 Sprint qualifying.
+  - raceId: Numerical data in integer format representing the identification number
+      for each race, labeled as raceId.
+  - driverId: Numerical data in integer format representing the identification number
+      for each driver, labeled as driverId.
+  - constructorId: Numerical data representing constructor IDs in integer format.
+  - number: Numerical data in integer format, represented as whole numbers.
+  - position: Numerical data representing the position or track of a circuit, formatted
+      as integers.
+  - q1: Qualifying lap times for Formula 1, formatted as MM:SS.sss, where Q1 determines
+      the starting positions for the race based on the fastest times set by drivers.
+  - q2: Qualifying 2 time data for racing events, formatted as MM:SS.SSS, representing
+      the best lap times of drivers aiming to qualify for the race. Only the top 15
+      from Qualifying 1 advance, with Q2 being slightly shorter but following the
+      same time format.
+  - q3: Numerical data representing qualifying times in the format MM:SS.SSS, specifically
+      for the third qualifying session (Q3) in a racing context, with a note that
+      only the top 10 from Q2 have records in Q3.
 races:
   base_api: http://127.0.0.1:5000/products/formula_1/races
   columns:
-  - raceId: 'type :numerical, format: integers'
-  - year: 'type :numerical, format: integers'
-  - round: 'type :numerical, format: integers'
-  - circuitId: 'type :numerical, format: integers'
-  - name: 'type :texts, format: String'
-  - date: 'type :dates, format: YYYY-MM-DD'
-  - time: 'type :time, format: HH:MM:SS'
-  - url: 'type :texts, format: URL'
+  - raceId: Numerical data in integer format representing a unique identification
+      number for a race, labeled as raceId.
+  - year: Numerical data representing years in integer format.
+  - round: Numerical data in integer format, specifically rounded integers.
+  - circuitId: Numerical data representing circuit identifiers, formatted as integers.
+  - name: A string representing the name of a race.
+  - date: A list of dates in the format YYYY-MM-DD, possibly representing start and
+      end dates with a duration in between.
+  - time: Time data representing the time of a location in HH:MM:SS format.
+  - url: A collection of texts in URL format related to the introduction of races.
 results:
   base_api: http://127.0.0.1:5000/products/formula_1/results
   columns:
-  - resultId: 'type :numerical, format: integers'
-  - raceId: 'type :numerical, format: integers'
-  - driverId: 'type :numerical, format: integers'
-  - constructorId: 'type :numerical, format: integers'
-  - number: 'type :numerical, format: float'
-  - grid: 'type :numerical, format: integers'
-  - position: 'type :numerical, format: float'
-  - positionText: 'type :mixed, format: [''text'', ''integer'', ''text'', ''integer'',
-      ''integer'', ''integer'', ''integer'', ''integer'', ''integer'', ''integer'',
-      ''integer'', ''integer'', ''text'', ''integer'', ''integer'']'
-  - positionOrder: 'type :numerical, format: integers'
-  - points: 'type :numerical, format: float'
-  - laps: 'type :numerical, format: integers'
-  - time: 'type :time durations and numerical values, format: HH:MM:SS.sss for time
-      durations, +XX.XXX for numerical values'
-  - milliseconds: 'type :numerical, format: float'
-  - fastestLap: 'type :numerical, format: float'
-  - rank: 'type :numerical, format: float'
-  - fastestLapTime: 'type :text, format: MM:SS.SSS'
-  - fastestLapSpeed: 'type :numerical, format: float'
-  - statusId: 'type :numerical, format: integers'
+  - resultId: Numerical data in integer format representing a unique identification
+      number for race results, labeled as 'resultId'.
+  - raceId: Numerical data in integer format representing the identification number
+      of a race, labeled as raceId.
+  - driverId: Numerical data in integer format representing the identification number
+      of a driver (driverId).
+  - constructorId: Numerical data in integer format representing the identification
+      number of constructors.
+  - number: Numerical data consisting of float and integer values.
+  - grid: Numerical data representing the grid number, an integer identifying the
+      area where cars are set into a grid formation to start a race.
+  - position: Numerical data in float format representing values, and integer data
+      representing finishing positions or track circuits.
+  - positionText: Mixed data format consisting of text and integer values, including
+      position text and various integer fields.
+  - positionOrder: Numerical data representing the finishing order of positions, formatted
+      as integers.
+  - points: Numerical data in float format representing real-valued points.
+  - laps: Numerical data representing lap numbers, formatted as integers.
+  - time: Data includes time durations in the format HH:MM:SS.sss for champion's finish
+      time and +XX.XXX for other drivers' time differences, indicating their finish
+      times relative to the champion.
+  - milliseconds: Numerical data representing the actual finishing time of drivers
+      in milliseconds, formatted as a float.
+  - fastestLap: Numerical data representing the fastest lap time as a float and the
+      fastest lap number as an integer.
+  - rank: Numerical data in float format representing a rank based on starting position
+      determined by fastest lap speed, with rank as an integer.
+  - fastestLapTime: Fastest lap time in a race, represented as text in the format
+      MM:SS.SSS. A smaller value indicates a better performance, leading to a higher
+      rank.
+  - fastestLapSpeed: Numerical data representing the fastest lap speed in kilometers
+      per hour, formatted as a float.
+  - statusId: Numerical data in integer format representing status identifiers, with
+      category descriptions available in the status table.
 seasons:
   base_api: http://127.0.0.1:5000/products/formula_1/seasons
   columns:
-  - year: 'type :numerical, format: integers'
-  - url: 'type :texts, format: http://en.wikipedia.org/wiki/YYYY_Formula_One_season'
+  - year: Numerical data consisting of integers representing the year and a unique
+      race ID.
+  - url: A URL format linking to Wikipedia pages for specific Formula One seasons,
+      structured as 'http://en.wikipedia.org/wiki/YYYY_Formula_One_season', where
+      'YYYY' represents the year of the season.
 status:
   base_api: http://127.0.0.1:5000/products/formula_1/status
   columns:
-  - statusId: 'type :numerical, format: integers'
-  - status: 'type :texts, format: string'
+  - statusId: A numerical data type consisting of integers representing unique identification
+      numbers for statuses.
+  - status: A collection of text data represented as strings, where each entry includes
+      a status identifier, the full name of the status, and additional text information.
