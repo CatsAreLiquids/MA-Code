@@ -431,8 +431,8 @@ if __name__ == "__main__":
         agent_i = init_agent()
 
         sql = "Calculate the average overall rating of Pietro Marino"
-        sql = "What is the Simplified Chinese translation of the name of the set 'Eighth Edition'?"
-        ev = "Eighth Edition is the name of card set which refers to name = 'Eighth Edition'; Simplified Chinese refers to language = 'Chinese Simplified'; translation of the name refers to translation"
+        sql = "Which top 4 leagues had the most games in the 2015-2016 season?"
+        ev = "in the 2015-2016 season refers to season = '2015/2016'; league with most games refers to League.name where MAX(COUNT(id)); "
 
         agent_result = agent_i.invoke({'query': sql, "evidence": ev})
         print(agent_result['output'])
