@@ -93,8 +93,8 @@ def identify_columns():
         ("system", sys_prompt),
         ("human", input_prompt),
     ]
-    llm, callback = models.get_LLM_with_callbacks()
-    return llm.invoke(messages, config={"callbacks": [callback]})
+
+    return llm.invoke(messages)
 
 
 

@@ -13,8 +13,8 @@ def get_LLM():
     llm = AzureChatOpenAI(
         azure_endpoint=os.environ["GPT_EndPoint"],
         openai_api_version=os.environ["GPT_APIversion"],
-        model=os.environ["GPT_model_name"],
-        deployment_name=os.environ["GPT_deployment"],
+        model=os.environ["GPT-4o_model_name"],
+        deployment_name=os.environ["GPT-4o_deployment"],
         temperature=0,
 
     )
@@ -24,25 +24,12 @@ def get_structured_LLM():
     llm = AzureChatOpenAI(
         azure_endpoint=os.environ["GPT_EndPoint"],
         openai_api_version=os.environ["GPT_APIversion"],
-        model=os.environ["GPT_model_name"],
-        deployment_name=os.environ["GPT_deployment"],
+        model=os.environ["GPT-4o_model_name"],
+        deployment_name=os.environ["GPT-4o_deployment"],
         temperature=0,
 
     ).with_structured_output(method="json_mode")
     return llm
-
-def get_LLM_with_callbacks():
-    callback = UsageMetadataCallbackHandler()
-    llm = AzureChatOpenAI(
-        azure_endpoint=os.environ["GPT_EndPoint"],
-        openai_api_version=os.environ["GPT_APIversion"],
-        model=os.environ["GPT_model_name"],
-        deployment_name=os.environ["GPT_deployment"],
-        temperature=0,
-        callbacks=[callback]
-    )
-
-    return llm, callback
 
 
 def get_embeddings():

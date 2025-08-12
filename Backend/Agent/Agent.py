@@ -71,9 +71,129 @@ def breakDownQuery(query):
                             json={"file": prod_descriptions["collection_name"]})
     catalog = json.loads(response.text)
 
-    sys_prompt = """ Your task is to explain how you would slove the provided query. For this break it down into all the seperate steps
+    sys_prompt = """ Your task is not narrow down which data products are necerssary to solve a user query.
+    To do that you are provided with a data catalog, and the user query.
+    Only return necerssary data products by name
     
-                You will be provided with information for fitting data products, keep the steps short but combine them if possible.
+    the output should be a valid json  with "products":["product_name_1", "product_name_2", ...] 
+    """
+    input_prompt = PromptTemplate.from_template("""
+                    User Query:{query}
+                    product catalog :{catalog}
+                    """)
+    input_prompt = input_prompt.format(query=query, catalog=catalog)
+    messages = [
+        ("system", sys_prompt),
+        ("human", input_prompt),
+    ]
+    # llm = models.get_LLM()
+    llm = models.get_structured_LLM()
+    response = llm.invoke(messages)['products']
+
+    print(catalog)
+
+    small_catalog = {}
+    for key in response:
+        if key in catalog:
+            small_catalog[key] = catalog[key]
+
+    print(small_catalog)
+
+    sys_prompt = """ Your task is to explain how you would slove the provided query. For this break it down into all the seperate steps
+                Complete the query in the most direct but feasible way necerssary
+                Keep to the user query as much as possible
+                when perfoming any action activley name the columns
+                
+                The most important rules are:
+                    1. Remember that you need to combine data if multiple data products are necerssary, when combining data always list both names 
+                    2. The word retrieve is reserved for when you need to get a data product
+                    3. Use returnResult for providing the finished product
+                    4. Always do all steps necerssary for one product in a row.
+                    
+                Additional Guidelines:
+                    - keep the steps short but combine them if possible.
+                    - Always combine sorting and selecting a number of resutlts into one step. I.e sort by books sold and slect top 4
+                    -  Retrieval instruction should only be the name of the data product
+                    - Combining filterd products will lead to the end resutl being filterd
+                    - Multiple filter steps for the same product should be combined into one step. 
+                
+                Example: All customer data of customers who have bought at least 1 book
+                result: ["retrieve sales data","filter for customers who have bought 1 book","retrieve customer data","combine customers from sales data and custmer data","return finished product"] 
+
+                Return a valid json with the 'plan': generated list of steps, and the reasoning as 'explanation': why the steps are needed
+                Keep to the user query as much as possible
+        """
+
+    input_prompt = PromptTemplate.from_template("""
+                User Query:{query}
+                product catalog :{catalog}
+                """)
+    input_prompt = input_prompt.format(query=query, catalog=small_catalog)
+    messages = [
+        ("system", sys_prompt),
+        ("human", input_prompt),
+    ]
+
+    # llm = models.get_LLM()
+    llm = models.get_structured_LLM()
+    response = llm.invoke(messages)
+    print(response['explanation'])
+    return response["plan"]
+
+
+@tool(parse_docstring=True)
+def breakDownQuery2(query):
+    """
+    Breaks down a user query into its multiple steps
+    Args:
+        query:  a natural languge query
+    Returns:
+        a list of steps necerssary to solve the query
+    """
+
+    # Identify fitting data collection
+    mod_query = f"I am looking for data products that can answer the query: '{query}'"
+
+    prod_descriptions = retriever.collection_rag(mod_query, config=None)
+
+    # Retrieve corresponding data catalog
+    response = requests.get("http://127.0.0.1:5000/catalog/collection",
+                            json={"file": prod_descriptions["collection_name"]})
+    catalog = json.loads(response.text)
+
+    sys_prompt = """ Your task is not narrow down which data products are necerssary to solve a user query.
+    To do that you are provided with a data catalog, and the user query.
+    Only return necerssary data products by name
+    
+
+    the output should be a valid json  with "products":["product_name_1", "product_name_2", ...]
+    """
+    input_prompt = PromptTemplate.from_template("""
+                    User Query:{query}
+                    product catalog :{catalog}
+                    """)
+    input_prompt = input_prompt.format(query=query, catalog=catalog)
+    messages = [
+        ("system", sys_prompt),
+        ("human", input_prompt),
+    ]
+    # llm = models.get_LLM()
+    llm = models.get_structured_LLM()
+    response = llm.invoke(messages)['products']
+
+    small_catalog = {}
+    for key in response:
+        if key in catalog:
+            small_catalog[key] = catalog[key]
+
+    print(small_catalog)
+
+    sys_prompt = f""" Your task is to explain how you would slove a user query step by step.
+                Only ever provide the next step
+                Once you are done output: "return finished product"
+    
+                You will be provided with information for fitting data products and previous steps
+                Keep the steps short but combine them if possible.
                 
                 Always combine sorting and selecting a number of resutlts into one step. I.e sort by books sold and slect top 4
                 
@@ -87,31 +207,63 @@ def breakDownQuery(query):
                 Always do all steps necerssary for one product in a row.
                 When combining data always list both names 
                 Remember that you need to combine data if multiple data products are necerssary
-
+                
+                When no more steps are needed use "return finished product"
+                
                 Example: All customer data of customers who have bought at least 1 book
-                result: ["retrieve sales data","filter for customers who have bought 1 book","retrieve customer data","combine customers from sales data and custmer data","return finished product"] 
+                steps: []
+                result: ["retrieve sales data"]
+                
+                steps: ["retrieve sales data"]
+                result: ["retrieve sales data","filter for customers who have bought 1 book"]
+                
+                steps: ["retrieve sales data","filter for customers who have bought 1 book"]
+                result: ["retrieve sales data","filter for customers who have bought 1 book", "retrieve customer data"]
+                
+                steps: ["retrieve sales data","filter for customers who have bought 1 book", "retrieve customer data"]
+                result: ["retrieve sales data","filter for customers who have bought 1 book", 'retrieve customer data","combine customers from sales data and custmer data"]
+                
+                steps: ["retrieve sales data","filter for customers who have bought 1 book", "retrieve customer data","combine customers from sales data and custmer data"]
+                result: ["retrieve sales data","filter for customers who have bought 1 book", 'retrieve customer data","combine customers from sales data and custmer data", "return finished product"]
 
-                Return a valid json with the 'plan': generated list of steps, and the reasoning as 'explanation': why these steps are needed and in which order and "explanation": the reasoning for each step and why the attribute is choosen
+                Return a valid json with the 'step': the generated step 
                 
                 Remember that you need to combine data if multiple data products are necerssary
                 Ensure that all filter attributes are present in the retrieved data products
                 
-        """
+                
+                """
 
     input_prompt = PromptTemplate.from_template("""
                 User Query:{query}
-                product catalog :{catalog}
+                product catalog :{catalog_}
                 """)
-    input_prompt = input_prompt.format(query=query, catalog=catalog)
+
+    input_prompt = input_prompt.format(query=query, catalog_=small_catalog)
     messages = [
         ("system", sys_prompt),
         ("human", input_prompt),
     ]
-    # llm = models.get_LLM()
-    llm = models.get_structured_LLM()
-    response = llm.invoke(messages)
-    print(response['explanation'])
-    return response["plan"]
+
+    stop = False
+    previous = "-1"
+    plan = []
+    while not stop:
+        messages.append(("assistant",str(plan)))
+        llm = models.get_structured_LLM()
+        response = llm.invoke(messages)
+        print(response["step"])
+        plan.append(response["step"])
+
+        if plan[-1] == "return finished product":
+            stop = True
+        if previous == plan[-1]:
+            stop = True
+
+        print(plan)
+
+
+    return plan
 
 
 @tool(parse_docstring=True)
@@ -352,12 +504,11 @@ def reiterate_plan(steps, collection_name, query):
     catalog = json.loads(response.text)
     print(catalog)
 
-    sys_prompt = """ Your task is to verify an execution plan and correct it if necerssary.
-        You are given a list of steps and a dict of the available columns in all data products. 
-        Keep all steps that can be solved with the provided information and correct or remove the ones that are unnecessary.
-        A step is considerd unfeasible if there is no way to filter for a specific attribute given the provided columns,if that is the case add anoter retrieval step
-
-        Return a valid json with the 'plan': generated list of steps, and the reasoning as 'explanation': why these steps are needed and what needed to be change for each step
+    sys_prompt = """ Your task is to decide wheather a plan is executable or not
+        For this consider if all necerssary columns are in the retrieved data product, if the column selection makes sense etc.
+        If a cloumn is present in the data product do not say it is not present
+        Ignore computations such as mean of or sum
+        The output should be a valid json with "decision": either True or False, and "explanation": a list of problems you see
 
         """
 
@@ -374,42 +525,8 @@ def reiterate_plan(steps, collection_name, query):
     # llm = models.get_LLM()
     llm = models.get_structured_LLM()
     response = llm.invoke(messages)
-    print(response['explanation'])
-    return response["plan"]
-
-
-@tool(parse_docstring=False)
-def sql_plan(collection_name, query):
-    """
-        Breaks down a user query into its multiple steps
-        Args:
-            query:  a natural languge query
-            collection_name: the name of the collection needed to solve
-        Returns:
-            a list of corrected steps necerssary to solve the query
-        """
-    response = requests.get("http://127.0.0.1:5000/catalog/collection",
-                            json={"file": collection_name})
-    catalog = json.loads(response.text)
-    print(catalog)
-    sys_prompt = """ Your task is to create an sql that can solve a user query, you are provided with the user query as input as well as all data products and their corresponding columns
-                the output should be a valid json with "sql": the generated sql and 'explanation': as an explanantion of the sql
-        """
-
-    input_prompt = PromptTemplate.from_template("""
-                User Query:{query}
-                product catalog :{catalog}
-                """)
-    input_prompt = input_prompt.format(query=query, catalog=catalog)
-    messages = [
-        ("system", sys_prompt),
-        ("human", input_prompt),
-    ]
-    # llm = models.get_LLM()
-    llm = models.get_structured_LLM()
-    response = llm.invoke(messages)
-    return response["sql"]
-
+    print(response["explanation"])
+    return response["decision"]
 
 def init_agent():
     sys_prompt = """Your task is to create an execution plan for a user query. 
@@ -447,15 +564,14 @@ if __name__ == "__main__":
         agent_i = init_agent()
 
         sql = "Calculate the average overall rating of Pietro Marino"
-        sql = "What was the average overall rating for Marko Arnautovic from 2007/2/22 to 2016/4/21?"
-        ev = "average overall rating refers to avg(overall_rating); Marko Arnautovic refers to player_name = 'Marko Arnautovic'; from 2007/2/22 to 2016/4/21 refers to the first 10 characters of date BETWEEN '2007-02-22' and '2016-04-21'"
+        sql = "What was the notes of the fundraising on 2019/9/14?"
+        ev = "fundraising on 2019/9/14 refers to source = 'Fundraising' where date_received = '2019-09-14'"
 
         #agent_result = agent_i.invoke({'query': sql, "evidence": ev})
         #print(agent_result['output'])
         query = f"The query i want to solve: {sql},some additional information:{ev}"
         print(breakDownQuery.invoke(input={"query": query}))
         # print(execute.execute_new(plan))
-        #plan = ['retrieve Player_Attributes', "filter for player_name = 'Marko Arnautovic'", "filter for date BETWEEN '2007-02-22' and '2016-04-21'", 'calculate average(overall_rating)', 'return finished product']
-        #print(reiterate_plan.invoke(input={"steps":plan, "collection_name":"european_football_2", "query":query}))
+        plan = ['retrieve Budget', "filter for event_status = 'Open' and link_to_event = 'April Speaker'", 'group by category and calculate SUM(amount) for each category', 'sort by SUM(amount) in ascending order', 'returnResult'] #print(reiterate_plan.invoke(input={"steps":plan, "collection_name":"european_football_2", "query":query}))
         # query = f"The query i want to solve: {sql},some additional information:{ev}"
-        #print(generate_combination.invoke({'step': 'combine filtered schools data with satscores data', 'first_product_name': 'filtered_schools', 'second_product_name': 'satscores'}))
+        #print(reiterate_plan.invoke({"steps":plan, "collection_name":"student_club", "query":query}))
