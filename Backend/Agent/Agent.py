@@ -65,7 +65,6 @@ def breakDownQuery(query):
     mod_query = f"I am looking for data products that can answer the query: '{query}'"
 
     prod_descriptions = retriever.collection_rag(mod_query, config=None)
-    print(prod_descriptions)
 
     # Retrieve corresponding data catalog
     response = requests.get("http://127.0.0.1:5000/catalog/collection",
@@ -75,7 +74,6 @@ def breakDownQuery(query):
     sys_prompt = """ Your task is to explain how you would slove the provided query. For this break it down into all the seperate steps
     
                 You will be provided with information for fitting data products, keep the steps short but combine them if possible.
-                
                 
                 Always combine sorting and selecting a number of resutlts into one step. I.e sort by books sold and slect top 4
                 
@@ -93,8 +91,11 @@ def breakDownQuery(query):
                 Example: All customer data of customers who have bought at least 1 book
                 result: ["retrieve sales data","filter for customers who have bought 1 book","retrieve customer data","combine customers from sales data and custmer data","return finished product"] 
 
-                Return a valid json with the 'plan': generated list of steps, and the reasoning as 'explanation': why these steps are needed and in which order
+                Return a valid json with the 'plan': generated list of steps, and the reasoning as 'explanation': why these steps are needed and in which order and "explanation": the reasoning for each step and why the attribute is choosen
+                
                 Remember that you need to combine data if multiple data products are necerssary
+                Ensure that all filter attributes are present in the retrieved data products
+                
         """
 
     input_prompt = PromptTemplate.from_template("""
@@ -109,6 +110,7 @@ def breakDownQuery(query):
     # llm = models.get_LLM()
     llm = models.get_structured_LLM()
     response = llm.invoke(messages)
+    print(response['explanation'])
     return response["plan"]
 
 
@@ -243,7 +245,7 @@ def generate_combination(step, first_product_name, second_product_name):
     Creates a the combination step
     Args:
         step:  a step in a query that is being solved
-        first_product_name: name of the data product that should be combined found with the productRetrieverStep tool
+        first_product_name: actual name of the data product, only the name without description, found with the productRetrieverStep tool
         second_product_name: name of the second product that should be combined can be found with the productRetrieverStep tool
     Returns:
         a dict containing a function api and its parameters
@@ -251,8 +253,19 @@ def generate_combination(step, first_product_name, second_product_name):
     response = requests.get("http://127.0.0.1:5000/catalog/columns", json={"file": first_product_name})
     columns_left = json.loads(response.text)
 
+    if not isinstance(columns_left,list):
+        first_product_name = productRetrieverStep.invoke({"query":"","step":first_product_name})
+        response = requests.get("http://127.0.0.1:5000/catalog/columns", json={"file": first_product_name})
+        columns_left = json.loads(response.text)
+
     response = requests.get("http://127.0.0.1:5000/catalog/columns", json={"file": second_product_name})
     columns_right = json.loads(response.text)
+
+    if not isinstance(columns_right,list):
+        second_product_name = productRetrieverStep.invoke({"query":"","step":second_product_name})
+        response = requests.get("http://127.0.0.1:5000/catalog/columns", json={"file": second_product_name})
+        columns_right = json.loads(response.text)
+
 
     sys_prompt = """ Your task is to combine all previously gatherd data into a preset output. 
                     The you are give a description of the step, and the list of all columns of the first data product and the second data product
@@ -335,12 +348,14 @@ def reiterate_plan(steps, collection_name, query):
         """
     response = requests.get("http://127.0.0.1:5000/catalog/collection",
                             json={"file": collection_name})
+
     catalog = json.loads(response.text)
+    print(catalog)
 
     sys_prompt = """ Your task is to verify an execution plan and correct it if necerssary.
         You are given a list of steps and a dict of the available columns in all data products. 
         Keep all steps that can be solved with the provided information and correct or remove the ones that are unnecessary.
-        A step is considerd unfeasible if there is no way to filter for a specific attribute given the provided columns
+        A step is considerd unfeasible if there is no way to filter for a specific attribute given the provided columns,if that is the case add anoter retrieval step
 
         Return a valid json with the 'plan': generated list of steps, and the reasoning as 'explanation': why these steps are needed and what needed to be change for each step
 
@@ -407,7 +422,7 @@ def init_agent():
                     2. to produce the correct output for each step use:
                         if a step contains the word retrieve use the generate_retrieve tools
                         if the step conatints neither combine nor retrieve use the generate_function tool
-                        if a step contains the a variation of the word combine use the generate_combination tool
+                        if a step contains the a variation of the word combine use the generate_combination tool, only use the dta products name as inputs
                     3. transfrom the output to fit the schema with the format_output tool
 
                     Directly return the result of the format_output tool !
@@ -432,11 +447,15 @@ if __name__ == "__main__":
         agent_i = init_agent()
 
         sql = "Calculate the average overall rating of Pietro Marino"
-        sql = "What is the average number of test takers from Fresno schools that opened between 1/1/1980 and 12/31/1980?"
-        ev = "between 1/1/1980 and 12/31/1980 means the year = 1980"
+        sql = "What was the average overall rating for Marko Arnautovic from 2007/2/22 to 2016/4/21?"
+        ev = "average overall rating refers to avg(overall_rating); Marko Arnautovic refers to player_name = 'Marko Arnautovic'; from 2007/2/22 to 2016/4/21 refers to the first 10 characters of date BETWEEN '2007-02-22' and '2016-04-21'"
 
-        agent_result = agent_i.invoke({'query': sql, "evidence": ev})
-        print(agent_result['output'])
-        #query = f"The query i want to solve: {sql},some additional information:{ev}"
-        #print(breakDownQuery.invoke(input={"query": query}))
+        #agent_result = agent_i.invoke({'query': sql, "evidence": ev})
+        #print(agent_result['output'])
+        query = f"The query i want to solve: {sql},some additional information:{ev}"
+        print(breakDownQuery.invoke(input={"query": query}))
         # print(execute.execute_new(plan))
+        #plan = ['retrieve Player_Attributes', "filter for player_name = 'Marko Arnautovic'", "filter for date BETWEEN '2007-02-22' and '2016-04-21'", 'calculate average(overall_rating)', 'return finished product']
+        #print(reiterate_plan.invoke(input={"steps":plan, "collection_name":"european_football_2", "query":query}))
+        # query = f"The query i want to solve: {sql},some additional information:{ev}"
+        #print(generate_combination.invoke({'step': 'combine filtered schools data with satscores data', 'first_product_name': 'filtered_schools', 'second_product_name': 'satscores'}))

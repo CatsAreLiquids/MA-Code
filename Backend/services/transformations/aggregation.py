@@ -17,7 +17,7 @@ def getSum(df, filter_dict):
 
 def mean(df, filter_dict):
     filter_dict = ast.literal_eval(filter_dict)
-    if "group_by" in filter_dict:
+    if "group_by" in filter_dict and filter_dict['group_by'] != "None":
         df = df.groupby(by=filter_dict['group_by'])
         print(df[filter_dict['columns']].mean())
         return df[filter_dict['columns']].mean().reset_index()
