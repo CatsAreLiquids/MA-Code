@@ -59,3 +59,5 @@ file = "Backend/evaluation/bird_mini_dev/prototype_eval.csv"
 df = pd.read_csv(file)
 print(df.shape)
 print(df.dropna().shape)
+
+test = {"conditions": {"CharterNum": {"not_null": true}}}

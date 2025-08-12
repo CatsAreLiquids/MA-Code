@@ -115,7 +115,7 @@ def call_mean():
 @app.route('/filter', methods=['PUT'])
 def call_filter():
     content = json.loads(request.data)
-
+    print(content['args'])
     df = pd.read_json(io.StringIO(content['data']))
     df = filters.applyFilter(df, content['args'])
 

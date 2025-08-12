@@ -120,16 +120,17 @@ def execute_new(agent_result):
     frames = {}
     i = -1
     for elem in plans:
-        #print(elem)
+        print(elem)
         if elem['function'] == 'http://127.0.0.1:5200/retrieve':
             df = getData(elem['filter_dict'])
             i += 1
             frames["df_" + str(i)] = df
+        elif elem['function'] == "http://127.0.0.1:5200/returnResult":
+            pass
         elif elem['function'] == "combination":
             previous = frames["df_" + str(i - 1)]
             new = frames["df_" + str(i)]
             df = _putDataProductCombination(previous, new, elem['filter_dict'])
-
             i += 1
             frames["df_" + str(i)] = df
 
@@ -148,11 +149,13 @@ def execute_new(agent_result):
 if __name__ == "__main__":
 
     l ={'plans': [
-{'function': 'http://127.0.0.1:5200/retrieve', 'filter_dict': {'product': 'http://127.0.0.1:5000/products/formula_1/driverStandings'}},
- {'function': 'http://127.0.0.1:5200/filter', 'filter_dict': {'conditions': {'year': {'min': 1980, 'max': 1985}}}},
- {'function': 'http://127.0.0.1:5200/retrieve', 'filter_dict': {'product': 'http://127.0.0.1:5000/products/formula_1/pitStops'}},
- {'function': 'http://127.0.0.1:5200/mean', 'filter_dict': {'group_by': None, 'columns': ['duration']}},
- {'function': 'http://127.0.0.1:5200/max', 'filter_dict': {'columns': 'duration', 'rows': 3}}]}
+{'function': 'http://127.0.0.1:5200/retrieve', 'filter_dict': {'product': 'http://127.0.0.1:5000/products/california_schools/satscores'}},
+ {'function': 'http://127.0.0.1:5200/filter', 'filter_dict': {'conditions': {'AvgScrWrite': {'min': 500}}}},
+ {'function': 'http://127.0.0.1:5200/retrieve', 'filter_dict': {'product': 'http://127.0.0.1:5000/products/california_schools/schools'}},
+ {'function': 'http://127.0.0.1:5200/filter', 'filter_dict': {'conditions': {'CharterNum': {'not_null': 'True'}}}},
+{'function': 'combination', 'filter_dict': {'columns_left': 'cds', 'columns_right': 'CDSCode', 'type': 'equals', 'values': ['None']}},
+ {'function': 'http://127.0.0.1:5200/sortby', 'filter_dict': {'columns': 'AvgScrWrite', 'ascending': 'True'}},
+ {'function': 'http://127.0.0.1:5200/returnResult', 'filter_dict': None}]}
 
 
 

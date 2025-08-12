@@ -94,6 +94,7 @@ def breakDownQuery(query):
                 result: ["retrieve sales data","filter for customers who have bought 1 book","retrieve customer data","combine customers from sales data and custmer data","return finished product"] 
 
                 Return a valid json with the 'plan': generated list of steps, and the reasoning as 'explanation': why these steps are needed and in which order
+                Remember that you need to combine data if multiple data products are necerssary
         """
 
     input_prompt = PromptTemplate.from_template("""
@@ -431,11 +432,11 @@ if __name__ == "__main__":
         agent_i = init_agent()
 
         sql = "Calculate the average overall rating of Pietro Marino"
-        sql = "Which top 4 leagues had the most games in the 2015-2016 season?"
-        ev = "in the 2015-2016 season refers to season = '2015/2016'; league with most games refers to League.name where MAX(COUNT(id)); "
+        sql = "What is the average number of test takers from Fresno schools that opened between 1/1/1980 and 12/31/1980?"
+        ev = "between 1/1/1980 and 12/31/1980 means the year = 1980"
 
         agent_result = agent_i.invoke({'query': sql, "evidence": ev})
         print(agent_result['output'])
-        # query = f"The query i want to solve: {sql},some additional information:{ev}"
-        # print(breakDownQuery.invoke(input={"query": query}))
+        #query = f"The query i want to solve: {sql},some additional information:{ev}"
+        #print(breakDownQuery.invoke(input={"query": query}))
         # print(execute.execute_new(plan))

@@ -47,7 +47,6 @@ def _range_or(df, column, or_list):
 
 def applyFilter(df, filter_dict):
     filter_dict = ast.literal_eval(filter_dict)
-    print(filter_dict)
 
 
     if 'conditions' in filter_dict:
@@ -63,7 +62,13 @@ def applyFilter(df, filter_dict):
     for key, val in filter_dict.items():
         print(key, val)
         if isinstance(val, dict):
-
+            if list(val.keys())[0] == 'not_null':
+                if  list(val.values())[0] == 'True':
+                    df = df.dropna(subset=[key])
+                    return df
+                else:
+                    mask = df[key].isna()
+                    return df[mask]
             df = _rangeFilter(df, key, val)
         elif isinstance(val, list):
             if isinstance(val[0],dict):
