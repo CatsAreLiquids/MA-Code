@@ -55,9 +55,49 @@ def helper(x):
 
     return len(x)
 
-file = "Backend/evaluation/bird_mini_dev/prototype_eval.csv"
-df = pd.read_csv(file)
-print(df.shape)
-print(df.dropna().shape)
+def manual_correction(agent_result):
+    print(agent_result)
+    agent_result = ast.literal_eval(agent_result)
+    plan = agent_result["plans"]
 
-test = {"conditions": {"CharterNum": {"not_null": true}}}
+    def helper(instance):
+        if isinstance(instance, (int, float, complex, str)) and not isinstance(instance, bool):
+            return instance
+        elif isinstance(instance,list):
+            for i in range(len(instance)):
+                if not isinstance(instance[i], (int, float, complex, str)):
+                    instance[i] = str(instance[i])
+            return instance
+        else:
+            return str(instance)
+
+    for i in range(len(plan)):
+        params = plan[i]['filter_dict']
+        for k, v in params.items():
+            print(k,v)
+            if isinstance(v, dict):
+                for kk, vv in v.items():
+                    if isinstance(vv, dict):
+                        for kkk, vvv in vv.items():
+                            params[k][kk][kkk] = helper(vvv)
+
+                    else:
+                        params[k][kk]= helper(vv)
+            else:
+                params[k] = helper(v)
+
+    agent_result["plans"] = plan
+
+    return agent_result
+
+df = pd.read_csv("Backend/evaluation/prototype_eval_column_info_2025-08-12-22-24_cirtiqued2.csv", dtype = {"response": str})
+df = df[df["question_id"] == 1505]
+df["response"] = df["response"].apply(lambda x: str(x))
+print(df["response"])
+print(manual_correction(df["response"]))
+
+l= "{'plans': [{'function': 'http://127.0.0.1:5200/retrieve', 'filter_dict': {'product': 'http://127.0.0.1:5000/products/debit_card_specializing/customers'}},{'function': 'http://127.0.0.1:5200/filter', 'filter_dict': {'conditions': {'Currency': 'EUR'}}},{'function': 'http://127.0.0.1:5200/retrieve', 'filter_dict': {'product': 'http://127.0.0.1:5000/products/debit_card_specializing/yearmonth'}},{'function': 'http://127.0.0.1:5200/filter', 'filter_dict': {'conditions': {'Consumption': {'min': 1000}}}},{'function': 'combination', 'filter_dict': {'columns_left': 'CustomerID', 'columns_right': 'CustomerID', 'type': 'equals'}},{'function': 'http://127.0.0.1:5200/count', 'filter_dict': {'columns': 'CustomerID', 'unique': True}}]}"
+print(manual_correction(l))
+
+#url = 'http://127.0.0.1:5000/products/financial/trans'
+#response = requests.get(url)

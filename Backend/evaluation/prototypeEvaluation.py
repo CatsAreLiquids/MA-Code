@@ -211,11 +211,15 @@ def generate_plan2():
 
 if __name__ == "__main__":
     #generate_plan()
-    file = "prototype_eval_column_info_2025-08-12-22-24.csv"
+    file = "prototype_eval_column_info_2025-08-12-22-24_cirtiqued2.csv"
     eval_plan(file)
     test_plan(file)
     df = pd.read_csv(file)
     print(df[["agent_error", "agent_time"]].describe())
     print(df[["planRecall", "jaccard", "planPrecision"]].describe())
     print(df[["recall", "precision","execution_error"]].describe())
-    print(df[df["execution_error"] != 1])
+    print(df[df["execution_error"] != 1].head())
+
+    df = df.sort_values(by=["planPrecision","planRecall"], ascending=False)
+    print(df[df["execution_error"] == 1].head())
+

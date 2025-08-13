@@ -114,7 +114,7 @@ def get_frpm():
 @app.route('/products/california_schools/schools', methods=['GET'])
 def get_school():
     # read from data catalog
-    df = pd.read_csv('../data/california_schools/schools.csv')
+    df = pd.read_csv('../data/california_schools/schools.csv',dtype={"CharterNum": str})
     return {'data': df.to_json()}
 
 
@@ -129,7 +129,8 @@ def get_satscores():
 @app.route('/products/card_games/cards', methods=['GET'])
 def get_cards():
     # read from data catalog
-    df = pd.read_csv('../data/card_games/cards.csv')
+    df = pd.read_csv('../data/card_games/cards.csv',dtype={"duelDeck": str, "flavorName": str, "frameVersion": str, "loyalty": str,
+                                "originalReleaseDate": str})
     return {'data': df.to_json()}
 
 
@@ -357,7 +358,8 @@ def get_loan():
 @app.route('/products/financial/trans', methods=['GET'])
 def get_trans():
     # read from data catalog
-    df = pd.read_csv('../data/financial/trans.csv')
+
+    df = pd.read_csv('../data/financial/trans.csv', dtype = {"bank": str})
     return {'data': df.to_json()}
 
 

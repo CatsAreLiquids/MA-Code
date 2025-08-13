@@ -109,11 +109,12 @@ def breakDownQuery(query):
                     2. The word retrieve is reserved for when you need to get a data product
                     3. Use returnResult for providing the finished product
                     4. Always do all steps necerssary for one product in a row.
-                    
+                    5. only use combine when combgining data not in other steps
+                                        
                 Additional Guidelines:
                     - keep the steps short but combine them if possible.
                     - Always combine sorting and selecting a number of resutlts into one step. I.e sort by books sold and slect top 4
-                    -  Retrieval instruction should only be the name of the data product
+                    - Retrieval instruction should only be the name of the data product
                     - Combining filterd products will lead to the end resutl being filterd
                     - Multiple filter steps for the same product should be combined into one step. 
                 
@@ -564,13 +565,13 @@ if __name__ == "__main__":
         agent_i = init_agent()
 
         sql = "Calculate the average overall rating of Pietro Marino"
-        sql = "What was the notes of the fundraising on 2019/9/14?"
-        ev = "fundraising on 2019/9/14 refers to source = 'Fundraising' where date_received = '2019-09-14'"
+        sql = "List and group all patients by sex for total bilirubin (T-BIL) level not within the normal range."
+        ev = "total bilirubin (T-BIL) not within normal range refers to T-BIL > = 2.0"
 
         #agent_result = agent_i.invoke({'query': sql, "evidence": ev})
         #print(agent_result['output'])
-        query = f"The query i want to solve: {sql},some additional information:{ev}"
-        print(breakDownQuery.invoke(input={"query": query}))
+        #query = f"The query i want to solve: {sql},some additional information:{ev}"
+        #print(breakDownQuery.invoke(input={"query": query}))
         # print(execute.execute_new(plan))
         plan = ['retrieve Budget', "filter for event_status = 'Open' and link_to_event = 'April Speaker'", 'group by category and calculate SUM(amount) for each category', 'sort by SUM(amount) in ascending order', 'returnResult'] #print(reiterate_plan.invoke(input={"steps":plan, "collection_name":"european_football_2", "query":query}))
         # query = f"The query i want to solve: {sql},some additional information:{ev}"

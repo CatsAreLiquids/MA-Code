@@ -148,8 +148,13 @@ def execute_new(agent_result):
 
 if __name__ == "__main__":
 
-    l ={'plans': [{'function': 'http://127.0.0.1:5200/retrieve', 'filter_dict': {'product': 'http://127.0.0.1:5000/products/california_schools/schools'}}, {'function': 'http://127.0.0.1:5200/filter', 'filter_dict': {'conditions': {'City': 'Fresno', 'OpenDate': {'min': '1980-01-01', 'max': '1980-12-31'}}}}, {'function': 'http://127.0.0.1:5200/retrieve', 'filter_dict': {'product': 'http://127.0.0.1:5000/products/california_schools/satscores'}}, {'function': 'http://127.0.0.1:5200/mean', 'filter_dict': {'group_by': 'None', 'columns': ['NumTstTakr']}}]}
-
+    l ={'plans':
+[{'function': 'http://127.0.0.1:5200/retrieve', 'filter_dict': {'product': 'http://127.0.0.1:5000/products/debit_card_specializing/customers'}},
+ {'function': 'http://127.0.0.1:5200/filter', 'filter_dict': {'conditions': {'Currency': 'EUR'}}},
+ {'function': 'http://127.0.0.1:5200/retrieve', 'filter_dict': {'product': 'http://127.0.0.1:5000/products/debit_card_specializing/yearmonth'}},
+ {'function': 'http://127.0.0.1:5200/filter', 'filter_dict': {'conditions': {'Consumption': {'min': 1000}}}},
+ {'function': 'combination', 'filter_dict': {'columns_left': 'CustomerID', 'columns_right': 'CustomerID', 'type': 'equals', 'values': ['None']}},
+ {'function': 'http://127.0.0.1:5200/count', 'filter_dict': {'columns': 'customer_id', 'unique': True}}]}
 
 
 

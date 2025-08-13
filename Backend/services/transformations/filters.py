@@ -61,7 +61,9 @@ def applyFilter(df, filter_dict):
 
     for key, val in filter_dict.items():
         print(key, val)
-        if isinstance(val, dict):
+        if key == "columns" :
+            return df
+        elif isinstance(val, dict):
             if list(val.keys())[0] == 'not_null':
                 if  list(val.values())[0] == 'True':
                     df = df.dropna(subset=[key])
