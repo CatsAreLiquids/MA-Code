@@ -30,20 +30,9 @@ def eval_rows(ref, test):
     fp = 0
     fn = 0
 
-    if isinstance(ref, pd.DataFrame):
-        p = p.values().tolist()
-    else:
-        p = p.tolist()
-    if isinstance(t, pd.DataFrame):
-        t = t.reindex(sorted(t.columns), axis=1)
-        t = t.values().tolist()
-    else:
-        t = t.tolist()
-
     for i in range(test.shape[0]):
         tmp = np.asarray(test.iloc[i])
         #print((ref == tmp))
-        print(ref.values().tolist())
         try:
             if (ref == tmp).all(1).any():
                 tp += 1
@@ -99,7 +88,6 @@ def eval_by_index(ref, test,columns):
 def test_plan(file):
     df = pd.read_csv(file)
     #df.dropna(how= "any", inplace=True)
-    df = df[df["question_id"] == 1509]
     precision = []
     recall = []
     execution_error = []
@@ -109,30 +97,21 @@ def test_plan(file):
 
         try:
             start = time.time()
-            print(row["response"])
             p = execute.execute_new(ast.literal_eval(row["response"]))
             p = p.replace({np.nan: "None"})
-            print("p is fine")
 
             end = time.time()
             t = execute.execute_new(ast.literal_eval(row["plan"]))
             t = t.replace({np.nan: "None"})
-            print("t is fine")
+
 
             if isinstance(p, pd.DataFrame):
                 p = p.reindex(sorted(p.columns), axis=1)
-                p = p.values().tolist()
-            else:
-                p = p.tolist()
+
             if isinstance(t, pd.DataFrame):
                 t = t.reindex(sorted(t.columns), axis=1)
-                t = t.values().tolist()
-            else:
-                t = t.tolist()
-            print(" t reordring done")
 
-            print(p)
-            print(t)
+
             if row['type'] == "index":
                 pre, re = eval_by_index(t, p,row['columns'])
             else:
@@ -153,7 +132,7 @@ def test_plan(file):
     df["precision"] = precision
     df["recall"] = recall
     df["execution_error"] = execution_error
-    #df.to_csv(file, index=False)
+    df.to_csv(file, index=False)
 
 
 def generate_plan():
@@ -247,7 +226,7 @@ if __name__ == "__main__":
     test_plan(file)
     df = pd.read_csv(file)
 
-    """
+
     print(df[["agent_error", "agent_time"]].describe())
     print(df[["planRecall", "jaccard", "planPrecision"]].describe())
     print(df[["recall", "precision","execution_error"]].describe())
@@ -256,4 +235,4 @@ if __name__ == "__main__":
 
     df = df.sort_values(by=["planPrecision","planRecall"], ascending=False)
     print(df[df["execution_error"] == 1].head())
-    """
+

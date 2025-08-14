@@ -122,7 +122,7 @@ def execute_new(agent_result):
     i = -1
     name = ""
     for elem in plans:
-        print(elem)
+        #print(elem)
         if elem['function'] == 'http://127.0.0.1:5200/retrieve':
             df = getData(elem['filter_dict'])
 
@@ -153,14 +153,7 @@ def execute_new(agent_result):
 
 if __name__ == "__main__":
 
-    l ={'plans': [
-        {'function': 'http://127.0.0.1:5200/retrieve', 'filter_dict': {'product': 'http://127.0.0.1:5000/products/superhero/gender'}},
-        {'function': 'http://127.0.0.1:5200/retrieve', 'filter_dict': {'product': 'http://127.0.0.1:5000/products/superhero/superhero'}},
-        {'function': 'combination', 'filter_dict': {'columns_left': 'id', 'columns_right': 'gender_id', 'type': 'equals', 'source_left': 'http://127.0.0.1:5000/products/superhero/gender', 'source_right': 'http://127.0.0.1:5000/products/superhero/superhero'}},
-        {'function': 'http://127.0.0.1:5200/retrieve', 'filter_dict': {'product': 'http://127.0.0.1:5000/products/superhero/hero_power'}},
-        {'function': 'combination', 'filter_dict': {'columns_left': 'id', 'columns_right': 'hero_id', 'type': 'equals', 'source_left': 'http://127.0.0.1:5000/products/superhero/superhero', 'source_right': 'http://127.0.0.1:5000/products/superhero/hero_power'}},
-        {'function': 'http://127.0.0.1:5200/retrieve', 'filter_dict': {'product': 'http://127.0.0.1:5000/products/superhero/superpower'}},
-        {'function': 'combination', 'filter_dict': {'columns_left': 'power_id', 'columns_right': 'id', 'type': 'equals', 'source_left': 'http://127.0.0.1:5000/products/superhero/hero_power', 'source_right': 'http://127.0.0.1:5000/products/superhero/superpower'}}]}
+    l ={'plans': [{'function': 'http://127.0.0.1:5200/retrieve', 'filter_dict': {'product': 'http://127.0.0.1:5000/products/card_games/cards'}}, {'function': 'http://127.0.0.1:5200/filter', 'filter_dict': {'conditions': {'rarity': 'mythic'}}}, {'function': 'http://127.0.0.1:5200/retrieve', 'filter_dict': {'product': 'http://127.0.0.1:5000/products/card_games/legalities'}}, {'function': 'http://127.0.0.1:5200/filter', 'filter_dict': {'conditions': {'format': 'gladiator', 'status': 'banned'}}}, {'function': 'combination', 'filter_dict': {'columns_left': 'uuid', 'columns_right': 'uuid', 'type': 'equals'}}]}
 
 
     t={'plans': [
@@ -174,6 +167,4 @@ if __name__ == "__main__":
 
 
 
-    tmp =execute_new(l)
-    tmp = tmp.reindex(sorted(tmp.columns), axis=1)
     print("result",execute_new(l))
