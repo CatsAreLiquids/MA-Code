@@ -36,17 +36,27 @@ def reiterate_plan(steps, query):
                             json={"file": prod_descriptions["collection_name"]})
 
     catalog = json.loads(response.text)
-    #print(catalog)
+    print(catalog)
     sys_prompt = """ Your task is to decide wheather a plan is executable or not, and if it is not executable how to fix the plan
         For this consider if all necerssary columns are in the retrieved data product, if the column selection makes sense etc.
-        Ignore computations such as mean of or sum
+        Ignore computations such as mean of or sum, and the value paramter
+        
         You can remove steps from the list, but this is a last resort and steps should always be updated 
+        
+        If a filter step makes no sense because the columns are not present cosider updating the  retrieval step
+        
+        When updating state explicitly what should be changed
+        
+        combination steps are a valid part of the plan as they join tables together, providing only the column name is viable
+        ensure that enough combinations are present, so that all products are combined
+        You can add combinations steps
+        
+        Steps that filter for an unklnown specific value or references previous results, are not feasible, remove them
         
         Do not list steps such as ensure, only list active steps in the instructions
         The output should be a valid json with "decision": either True or False, and "instructions" a list of steps needed to make the plan executable
         
         In the instructions do only list steps that acitvely change the plan
-
         """
 
     input_prompt = PromptTemplate.from_template("""
@@ -67,7 +77,15 @@ def reiterate_plan(steps, query):
 def correct_plan(plan, instructions):
     sys_prompt = """ You are given a plan and a number of instructiuons on how to fix this plan 
             keep to the schema of the original plan, while applying the instructions
-            The output should be a valid json with "plan": as the corrected plan
+            Combinations steps should immediatly be after the relevant data products have been processed
+            
+            Do not include duplicate steps, especially combinations
+            Combinations steps should immediatly be after the relevant data products have been processed
+            combination steps look like: {{"function":"combination","filter_dict":{{"columns_left":"customer_id","columns_right":"customer_id","type":"equals","values":["None"]}} }}
+            
+            DO not include columns in the retrieval 
+            
+            The output should be a valid json with "plans": as the corrected plan
             """
 
     input_prompt = PromptTemplate.from_template("""
@@ -116,59 +134,6 @@ def manual_correction(agent_result):
 
     return agent_result
 
-def critic(call, product_api):
-    product_name = product_api.split("/")[-1]
-    response = requests.get("http://127.0.0.1:5000/catalog/columns", json={"file": product_name})
-    columns = json.loads(response.text)
-    function_name = call["function"].split("/")[-1]
-    response = requests.get("http://127.0.0.1:5200/catalog", json={"function_name": function_name})
-    function = json.loads(response.text)
-
-
-
-    sys_prompt = """ Your task is to verrify and correct a api call if necersary, you are presented with an api call and the information used to generate that call.
-                Verify that all calls are correct, that means only parameters present in the function specification should be present in the corrected version as well as only coolumn names present in the product specification should be present 
-                The output should be a valid json concisting of 
-                "correction_needed": either True or False, True if something needed to be corrected Flase if not
-                "call": either the corrected function call or the orginal one if no corrections where needed
-                "explanation": an explanantion of the corrections
-
-                Example:
-                call: {{"function":"http://127.0.0.1:5200/filter","filter_dict":{{"columns":"categories","criteria":{{"category":"book"}} }} }}
-
-
-                Function specification:
-                filter:
-                base_api: http://127.0.0.1:5200/filter
-                description: "filters a data product based on the provided filterdict, it filters row wise keeping all input columns"
-                filter_dict:
-                - conditions: "a dict ith the corresponding columns and their values"
-                example: "{'condition':{'location':'berlin','year':{'min':2002,'max':2007}}"
-
-
-                Product specification:
-                [invoice_no,customer_id,category,quantity,price,invoice_date,shopping_mall]
-
-                result:
-                correction_needed: True, call: {{"function":"http://127.0.0.1:5200/filter","filter_dict":{{"conditions":{{"category":"book"}} }} }}, 'explanation': criteria in the filter_dict is not valid according to the function specifications, and categories does not appear in the column list, category does
-        """
-
-    input_prompt = PromptTemplate.from_template("""
-                Original Call: {call}
-                Function specification: {function}
-                Product specification:{columns}
-                """)
-    input_prompt = input_prompt.format(call=call, function=function, columns=columns)
-    messages = [
-        ("system", sys_prompt),
-        ("human", input_prompt),
-    ]
-    # llm = models.get_LLM()
-    llm = models.get_structured_LLM()
-    response = llm.invoke(messages)
-    return response["call"]
-
-
 def critique_plan(agent_result):
     plan = agent_result["plans"]
 
@@ -205,11 +170,21 @@ def critique_plan_df(agent_result):
 
 def critique_plan_df2(steps, query,evidence):
     mod_query = f"The query i want to solve: {query}, some additional information: {evidence}"
-    #response = reiterate_plan(steps, mod_query)
+    num_iterations = 0
 
-    #if not response["decision"]:
-    #    steps = correct_plan(steps,response["instructions"])["plan"]
+    while num_iterations <= 3:
+        response = reiterate_plan(steps, mod_query)
 
+        if not response["decision"]:
+            tmp = correct_plan(steps,response["instructions"])
+            if isinstance(list(tmp.values())[0], list):
+                steps = tmp
+            elif isinstance(list(tmp.values())[0], dict):
+                steps = correct_plan(steps,response["instructions"])["plans"]
+            num_iterations+= 1
+
+        else:
+            break
 
     try:
         steps = ast.literal_eval(steps)
@@ -228,7 +203,7 @@ def correct_run2(file):
         res.append(tmp)
 
     df["response"] = res
-    df.to_csv(f"{file}_cirtiqued",index=False)
+    df.to_csv(f"{file}_cirtiqued_single",index=False)
 
 def correct_run(file):
     df = pd.read_csv(file)
@@ -242,22 +217,19 @@ if __name__ == "__main__":
     file = "../evaluation/prototype_eval_column_info_2025-08-12-22-24_cirtiqued.csv"
     correct_run2(file)
 
-    test = {'plans':
-[{'function': 'http://127.0.0.1:5200/retrieve', 'filter_dict': {'product': 'http://127.0.0.1:5000/products/debit_card_specializing/customers'}},
- {'function': 'http://127.0.0.1:5200/filter', 'filter_dict': {'conditions': {'Currency': 'EUR'}}},
- {'function': 'http://127.0.0.1:5200/retrieve', 'filter_dict': {'product': 'http://127.0.0.1:5000/products/debit_card_specializing/yearmonth'}},
- {'function': 'http://127.0.0.1:5200/filter', 'filter_dict': {'conditions': {'Consumption': {'min': 1000}}}},
- {'function': 'combination', 'filter_dict': {'columns_left': 'CustomerID', 'columns_right': 'CustomerID', 'type': 'equals', 'values': ['None']}},
- {'function': 'http://127.0.0.1:5200/count', 'filter_dict': {'columns': 'customer_id', 'unique': True}}]}
+    test = {'plans': [{'function': 'http://127.0.0.1:5200/retrieve', 'filter_dict': {'product': 'http://127.0.0.1:5000/products/formula_1/races'}},
+ {'function': 'http://127.0.0.1:5200/filter', 'filter_dict': {'conditions': {'raceId': 901}}},
+ {'function': 'http://127.0.0.1:5200/retrieve', 'filter_dict': {'product': 'http://127.0.0.1:5000/products/formula_1/seasons'}}]}
+
     #print(critique_plan(test))
 
-    sql = "Among the customers who paid in euro, how many of them have a monthly consumption of over 1000?"
-    ev = "Pays in euro = Currency = 'EUR'."
+    sql = "Show me the season page of year when the race No. 901 took place."
+    ev = "the season page refers to url; race number refers to raceId;"
 
     query = f"The query i want to solve: {sql},some additional information:{ev}"
     inst = [
-{'step': 5, 'update': {'function': 'combination', 'filter_dict': {'columns_left': 'CustomerID', 'columns_right': 'CustomerID', 'type': 'equals'}}},
-{'step': 6, 'update': {'filter_dict': {'columns': 'CustomerID', 'unique': True}}}]
-    print(manual_correction(test))
+{'step': "Update the retrieval step for 'races' to include the 'year' column, as it is necessary to determine the year of the race."},
+{'step': "Add a combination step to join the 'races' and 'seasons' products using the 'year' column, as this is required to link the race year to the season URL."}]
+    #print(manual_correction(test))
     #print(correct_plan(test,inst))
     #print(reiterate_plan(test, query))

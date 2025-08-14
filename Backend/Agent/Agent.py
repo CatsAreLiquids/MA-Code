@@ -90,26 +90,29 @@ def breakDownQuery(query):
     llm = models.get_structured_LLM()
     response = llm.invoke(messages)['products']
 
-    print(catalog)
-
     small_catalog = {}
     for key in response:
         if key in catalog:
             small_catalog[key] = catalog[key]
 
-    print(small_catalog)
 
     sys_prompt = """ Your task is to explain how you would slove the provided query. For this break it down into all the seperate steps
                 Complete the query in the most direct but feasible way necerssary
+                Your plan should always follow the steps retrieve process combine for each data product
+                
                 Keep to the user query as much as possible
+                
+                Every data product needs to be combined with the all other data products
+                join data products 
+                
                 when perfoming any action activley name the columns
                 
-                The most important rules are:
-                    1. Remember that you need to combine data if multiple data products are necerssary, when combining data always list both names 
-                    2. The word retrieve is reserved for when you need to get a data product
-                    3. Use returnResult for providing the finished product
-                    4. Always do all steps necerssary for one product in a row.
-                    5. only use combine when combgining data not in other steps
+                
+                You need to combine all data products you retrieve, when combining data always list both names, combination steps should be after the preocessing steps of the relevant data producst
+                The word retrieve is reserved for when you need to get a data product
+                Use returnResult for providing the finished product
+                Always do all steps necerssary for one product in a row. including combinations
+                only use combine when combgining data not in other steps
                                         
                 Additional Guidelines:
                     - keep the steps short but combine them if possible.
@@ -120,7 +123,7 @@ def breakDownQuery(query):
                 
                 Example: All customer data of customers who have bought at least 1 book
                 result: ["retrieve sales data","filter for customers who have bought 1 book","retrieve customer data","combine customers from sales data and custmer data","return finished product"] 
-
+                
                 Return a valid json with the 'plan': generated list of steps, and the reasoning as 'explanation': why the steps are needed
                 Keep to the user query as much as possible
         """
@@ -454,13 +457,14 @@ def format_output(steps, function_calls):
     """
     Breaks down a user query into its multiple steps
     Args:
-        function_calls:  a list the output from the generate_function_call Tool or generate_combination Tool
+        function_calls:  a list of all the outputs from the generate_function_call Tool or generate_combination Tool
         steps: the list of steps necerssary to solve the problem
     Returns:
         a dict containing a function api and its parameters
     """
     sys_prompt = """ Your task is to combine all previously gatherd data into a preset output. 
                     The result should be a orderd list of function calls according to the steps 
+                    Combination steps should be after the both data products in the combination are finished
 
                     Example:
                     steps: ["retrieve sales data","filter for book sales","group sales by shoping mall","sort sales by quantity descending"]
@@ -565,12 +569,12 @@ if __name__ == "__main__":
         agent_i = init_agent()
 
         sql = "Calculate the average overall rating of Pietro Marino"
-        sql = "List and group all patients by sex for total bilirubin (T-BIL) level not within the normal range."
-        ev = "total bilirubin (T-BIL) not within normal range refers to T-BIL > = 2.0"
+        sql = "What was Lewis Hamilton's final rank in the 2008 Chinese Grand Prix?"
+        ev = "Lewis Hamilton refers to the full name of the driver; Full name of the driver refers to drivers.forename and drivers.surname; final rank refers to positionOrder; Chinese Grand Prix refers to races.name = 'Chinese Grand Prix';"
 
-        #agent_result = agent_i.invoke({'query': sql, "evidence": ev})
-        #print(agent_result['output'])
-        #query = f"The query i want to solve: {sql},some additional information:{ev}"
+        agent_result = agent_i.invoke({'query': sql, "evidence": ev})
+        print(agent_result['output'])
+        query = f"The query i want to solve: {sql},some additional information:{ev}"
         #print(breakDownQuery.invoke(input={"query": query}))
         # print(execute.execute_new(plan))
         plan = ['retrieve Budget', "filter for event_status = 'Open' and link_to_event = 'April Speaker'", 'group by category and calculate SUM(amount) for each category', 'sort by SUM(amount) in ascending order', 'returnResult'] #print(reiterate_plan.invoke(input={"steps":plan, "collection_name":"european_football_2", "query":query}))

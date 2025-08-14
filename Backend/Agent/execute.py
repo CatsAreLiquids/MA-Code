@@ -125,7 +125,7 @@ def execute_new(agent_result):
             df = getData(elem['filter_dict'])
             i += 1
             frames["df_" + str(i)] = df
-        elif elem['function'] == "http://127.0.0.1:5200/returnResult":
+        elif elem['function'] == "http://127.0.0.1:5200/returnResult" or elem['function'] == "returnResult":
             pass
         elif elem['function'] == "combination":
             previous = frames["df_" + str(i - 1)]
@@ -148,14 +148,10 @@ def execute_new(agent_result):
 
 if __name__ == "__main__":
 
-    l ={'plans':
-[{'function': 'http://127.0.0.1:5200/retrieve', 'filter_dict': {'product': 'http://127.0.0.1:5000/products/debit_card_specializing/customers'}},
- {'function': 'http://127.0.0.1:5200/filter', 'filter_dict': {'conditions': {'Currency': 'EUR'}}},
- {'function': 'http://127.0.0.1:5200/retrieve', 'filter_dict': {'product': 'http://127.0.0.1:5000/products/debit_card_specializing/yearmonth'}},
- {'function': 'http://127.0.0.1:5200/filter', 'filter_dict': {'conditions': {'Consumption': {'min': 1000}}}},
- {'function': 'combination', 'filter_dict': {'columns_left': 'CustomerID', 'columns_right': 'CustomerID', 'type': 'equals', 'values': ['None']}},
- {'function': 'http://127.0.0.1:5200/count', 'filter_dict': {'columns': 'customer_id', 'unique': True}}]}
-
+    l ={'plans': [{'function': 'http://127.0.0.1:5200/retrieve', 'filter_dict': {'product': 'http://127.0.0.1:5000/products/formula_1/races'}},
+ {'function': 'http://127.0.0.1:5200/filter', 'filter_dict': {'conditions': {'raceId': 901}}},
+{'function': 'http://127.0.0.1:5200/retrieve', 'filter_dict': {'product': 'http://127.0.0.1:5000/products/formula_1/seasons'}},
+{'function': 'combination', 'filter_dict': {'columns_left': 'year', 'columns_right': 'year', 'type': 'equals', 'values': ['None']}}]}
 
 
 
