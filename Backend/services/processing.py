@@ -86,7 +86,7 @@ def call_combine():
     except ValueError:
         df2 = pd.Series(ast.literal_eval(content['data_2']))
 
-    df = aggregation.combineProducts(df1,df2, content['args'])
+    df = aggregation.combineProducts(df1,df2,content["data_1_name"],content["data_2_name"], content['args'])
 
     return {'data': df.to_json()}
 

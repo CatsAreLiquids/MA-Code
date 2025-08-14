@@ -3,7 +3,7 @@ import json
 import pandas as pd
 import requests
 import io
-
+import numpy as np
 
 def getData(func_dict):
     url = func_dict["product"]
@@ -62,7 +62,8 @@ def _putDataProduct(df, function):
 def _putDataProductCombination(first,second, function):
 
     response = requests.put('http://127.0.0.1:5200/combine',
-                            json={"data_1": first.to_json(),"data_2": second.to_json() ,"args": json.dumps(function)})
+                            json={"data_1": first["df"].to_json(), "data_1_name" : first["name"],
+                                "data_2": second["df"].to_json() ,"data_2_name" : second["name"] ,"args": json.dumps(function)})
 
     content = json.loads(response.text)
 
@@ -119,12 +120,16 @@ def execute_new(agent_result):
 
     frames = {}
     i = -1
+    name = ""
     for elem in plans:
-        #print(elem)
+        print(elem)
         if elem['function'] == 'http://127.0.0.1:5200/retrieve':
             df = getData(elem['filter_dict'])
+
             i += 1
-            frames["df_" + str(i)] = df
+
+            name = elem['filter_dict']["product"].split("/")[-1]
+            frames["df_" + str(i)] = {"df":df,"name":name}
         elif elem['function'] == "http://127.0.0.1:5200/returnResult" or elem['function'] == "returnResult":
             pass
         elif elem['function'] == "combination":
@@ -132,11 +137,11 @@ def execute_new(agent_result):
             new = frames["df_" + str(i)]
             df = _putDataProductCombination(previous, new, elem['filter_dict'])
             i += 1
-            frames["df_" + str(i)] = df
+            frames["df_" + str(i)] = {"df":df,"name":"combination"}
 
         else:
             df = _putDataProduct(df, elem)
-            frames["df_" + str(i)] = df
+            frames["df_" + str(i)] = {"df":df,"name":name}
         #print(frames["df_" + str(i)])
         try:
             tmp = frames["df_" + str(i)]
@@ -144,18 +149,31 @@ def execute_new(agent_result):
         except:
             pass
 
-    return frames["df_" + str(i)]
+    return frames["df_" + str(i)]["df"]
 
 if __name__ == "__main__":
 
-    l ={'plans': [{'function': 'http://127.0.0.1:5200/retrieve', 'filter_dict': {'product': 'http://127.0.0.1:5000/products/formula_1/races'}},
- {'function': 'http://127.0.0.1:5200/filter', 'filter_dict': {'conditions': {'raceId': 901}}},
-{'function': 'http://127.0.0.1:5200/retrieve', 'filter_dict': {'product': 'http://127.0.0.1:5000/products/formula_1/seasons'}},
-{'function': 'combination', 'filter_dict': {'columns_left': 'year', 'columns_right': 'year', 'type': 'equals', 'values': ['None']}}]}
+    l ={'plans': [
+        {'function': 'http://127.0.0.1:5200/retrieve', 'filter_dict': {'product': 'http://127.0.0.1:5000/products/superhero/gender'}},
+        {'function': 'http://127.0.0.1:5200/retrieve', 'filter_dict': {'product': 'http://127.0.0.1:5000/products/superhero/superhero'}},
+        {'function': 'combination', 'filter_dict': {'columns_left': 'id', 'columns_right': 'gender_id', 'type': 'equals', 'source_left': 'http://127.0.0.1:5000/products/superhero/gender', 'source_right': 'http://127.0.0.1:5000/products/superhero/superhero'}},
+        {'function': 'http://127.0.0.1:5200/retrieve', 'filter_dict': {'product': 'http://127.0.0.1:5000/products/superhero/hero_power'}},
+        {'function': 'combination', 'filter_dict': {'columns_left': 'id', 'columns_right': 'hero_id', 'type': 'equals', 'source_left': 'http://127.0.0.1:5000/products/superhero/superhero', 'source_right': 'http://127.0.0.1:5000/products/superhero/hero_power'}},
+        {'function': 'http://127.0.0.1:5200/retrieve', 'filter_dict': {'product': 'http://127.0.0.1:5000/products/superhero/superpower'}},
+        {'function': 'combination', 'filter_dict': {'columns_left': 'power_id', 'columns_right': 'id', 'type': 'equals', 'source_left': 'http://127.0.0.1:5000/products/superhero/hero_power', 'source_right': 'http://127.0.0.1:5000/products/superhero/superpower'}}]}
+
+
+    t={'plans': [
+        {'function': 'http://127.0.0.1:5200/retrieve',
+         'filter_dict': {'product': 'http://127.0.0.1:5000/products/codebase_community/users'}},
+{'function': 'http://127.0.0.1:5200/retrieve', 'filter_dict': {'product': 'http://127.0.0.1:5000/products/codebase_community/posts'}},
+{'function': 'http://127.0.0.1:5200/filter', 'filter_dict': {'conditions': {'Title': 'Understanding what Dassault iSight is doing?'}}},
+ {'function': 'combination', 'filter_dict': {'columns_left': 'Id', 'columns_right': 'OwnerUserId', 'type': 'equals'}}]}
 
 
 
 
 
-
+    tmp =execute_new(l)
+    tmp = tmp.reindex(sorted(tmp.columns), axis=1)
     print("result",execute_new(l))

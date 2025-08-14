@@ -49,7 +49,7 @@ def reiterate_plan(steps, query):
         
         combination steps are a valid part of the plan as they join tables together, providing only the column name is viable
         ensure that enough combinations are present, so that all products are combined
-        You can add combinations steps
+        You can add combinations steps an example: {{"function":"combination","filter_dict":{{"columns_left":"column_name","columns_right":"column_name","type":"equals","values":["None"]}} }}
         
         Steps that filter for an unklnown specific value or references previous results, are not feasible, remove them
         
@@ -174,7 +174,7 @@ def critique_plan_df2(steps, query,evidence):
 
     while num_iterations <= 3:
         response = reiterate_plan(steps, mod_query)
-
+        print(num_iterations,response["decision"])
         if not response["decision"]:
             tmp = correct_plan(steps,response["instructions"])
             if isinstance(list(tmp.values())[0], list):
@@ -182,10 +182,9 @@ def critique_plan_df2(steps, query,evidence):
             elif isinstance(list(tmp.values())[0], dict):
                 steps = correct_plan(steps,response["instructions"])["plans"]
             num_iterations+= 1
-
         else:
             break
-
+        print(steps)
     try:
         steps = ast.literal_eval(steps)
         steps = manual_correction(steps)
@@ -198,12 +197,13 @@ def correct_run2(file):
     df = pd.read_csv(file)
     res = []
 
+    df = df[df["question_id"] == 875]
     for index, row in df.iterrows():
         tmp = critique_plan_df2(row["response"],row["query"],row["evidence"])
         res.append(tmp)
 
-    df["response"] = res
-    df.to_csv(f"{file}_cirtiqued_single",index=False)
+    #df["response"] = res
+    #df.to_csv(f"{file}_cirtiqued_single",index=False)
 
 def correct_run(file):
     df = pd.read_csv(file)
@@ -217,7 +217,8 @@ if __name__ == "__main__":
     file = "../evaluation/prototype_eval_column_info_2025-08-12-22-24_cirtiqued.csv"
     correct_run2(file)
 
-    test = {'plans': [{'function': 'http://127.0.0.1:5200/retrieve', 'filter_dict': {'product': 'http://127.0.0.1:5000/products/formula_1/races'}},
+    test = {'plans': [
+{'function': 'http://127.0.0.1:5200/retrieve', 'filter_dict': {'product': 'http://127.0.0.1:5000/products/formula_1/races'}},
  {'function': 'http://127.0.0.1:5200/filter', 'filter_dict': {'conditions': {'raceId': 901}}},
  {'function': 'http://127.0.0.1:5200/retrieve', 'filter_dict': {'product': 'http://127.0.0.1:5000/products/formula_1/seasons'}}]}
 
@@ -229,7 +230,7 @@ if __name__ == "__main__":
     query = f"The query i want to solve: {sql},some additional information:{ev}"
     inst = [
 {'step': "Update the retrieval step for 'races' to include the 'year' column, as it is necessary to determine the year of the race."},
-{'step': "Add a combination step to join the 'races' and 'seasons' products using the 'year' column, as this is required to link the race year to the season URL."}]
+ {'step': "Add a combination step to join the 'races' and 'seasons' products on the 'year' column, as this is required to link the race year to the season URL."}]
     #print(manual_correction(test))
     #print(correct_plan(test,inst))
     #print(reiterate_plan(test, query))

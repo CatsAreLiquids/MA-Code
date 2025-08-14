@@ -47,11 +47,20 @@ def count(df, filter_dict):
         return df[filter_dict[key]].count()
 
 
-def combineProducts(first, second, filter_dict):
+def combineProducts(first, second, first_name,second_name,filter_dict):
     filter_dict = ast.literal_eval(filter_dict)
+    print(first.columns)
+    print(second.columns)
+    left = ""
+    right = "_y"
     if isinstance(first, pd.DataFrame) and isinstance(second, pd.DataFrame):
         if ("columns_left" in filter_dict) and ("columns_right" in filter_dict):
-            first = first.merge(second, left_on=filter_dict["columns_left"], right_on=filter_dict["columns_right"],suffixes=["","_y"])
+            if "combination" != first_name:
+                left = f"_{first_name}"
+            if "combination" != second_name:
+                right = f"_{second_name}"
+
+            first = first.merge(second, left_on=filter_dict["columns_left"], right_on=filter_dict["columns_right"],suffixes=[left,right])
             first.drop(first.filter(regex='_y$').columns, axis=1, inplace=True)
 
         else:
