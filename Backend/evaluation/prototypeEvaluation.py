@@ -221,8 +221,8 @@ def generate_plan2():
 
 if __name__ == "__main__":
     #generate_plan()
-    file = "prototype_eval_column_info_2025-08-12-22-24_cirtiqued4.csv"
-    #eval_plan(file)
+    file = "prototype_eval_column_info_2025-08-15-20-46.csv"
+    eval_plan(file)
     test_plan(file)
     df = pd.read_csv(file)
 
