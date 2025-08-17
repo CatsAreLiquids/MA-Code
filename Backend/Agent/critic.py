@@ -197,13 +197,12 @@ def correct_run2(file):
     df = pd.read_csv(file)
     res = []
 
-    df = df[df["question_id"] == 875]
     for index, row in df.iterrows():
         tmp = critique_plan_df2(row["response"],row["query"],row["evidence"])
         res.append(tmp)
 
-    #df["response"] = res
-    #df.to_csv(f"{file}_cirtiqued_single",index=False)
+    df["response"] = res
+    df.to_csv(f"{file}_cirtiqued_single",index=False)
 
 def correct_run(file):
     df = pd.read_csv(file)
@@ -214,7 +213,7 @@ def correct_run(file):
     df.to_csv(f"{file}_cirtiqued",index=False)
 
 if __name__ == "__main__":
-    file = "../evaluation/prototype_eval_column_info_2025-08-12-22-24_cirtiqued.csv"
+    file = "../evaluation/prototype_eval_column_info_2025-08-16-12-44.csv"
     correct_run2(file)
 
     test = {'plans': [

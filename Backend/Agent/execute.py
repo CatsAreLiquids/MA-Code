@@ -122,7 +122,7 @@ def execute_new(agent_result):
     i = -1
     name = ""
     for elem in plans:
-        #print(elem)
+        print(elem)
         if elem['function'] == 'http://127.0.0.1:5200/retrieve':
             df = getData(elem['filter_dict'])
 
@@ -152,9 +152,14 @@ def execute_new(agent_result):
     return frames["df_" + str(i)]["df"]
 
 if __name__ == "__main__":
+    file = "../evaluation/prototype_eval_column_info_2025-08-16-12-44_cirtiqued.csv"
+    df = pd.read_csv(file)
+    df = df[df["question_id"]==1505]
 
-    l ={'plans': [{'function': 'http://127.0.0.1:5200/retrieve', 'filter_dict': {'product': 'http://127.0.0.1:5000/products/card_games/cards'}}, {'function': 'http://127.0.0.1:5200/filter', 'filter_dict': {'conditions': {'rarity': 'mythic'}}}, {'function': 'http://127.0.0.1:5200/retrieve', 'filter_dict': {'product': 'http://127.0.0.1:5000/products/card_games/legalities'}}, {'function': 'http://127.0.0.1:5200/filter', 'filter_dict': {'conditions': {'format': 'gladiator', 'status': 'banned'}}}, {'function': 'combination', 'filter_dict': {'columns_left': 'uuid', 'columns_right': 'uuid', 'type': 'equals'}}]}
-
+    l = df["plan"].values.tolist()[0]
+    print(l)
+    l = ast.literal_eval(l)
+    print(l)
 
     t={'plans': [
         {'function': 'http://127.0.0.1:5200/retrieve',
@@ -163,6 +168,13 @@ if __name__ == "__main__":
 {'function': 'http://127.0.0.1:5200/filter', 'filter_dict': {'conditions': {'Title': 'Understanding what Dassault iSight is doing?'}}},
  {'function': 'combination', 'filter_dict': {'columns_left': 'Id', 'columns_right': 'OwnerUserId', 'type': 'equals'}}]}
 
+    t = {"plans":[
+        {"function":"http://127.0.0.1:5200/retrieve","filter_dict":{"product":"http://127.0.0.1:5000/products/debit_card_specializing/customers"}},
+        {"function":"http://127.0.0.1:5200/filter","filter_dict":{"conditions":{"Currency":"EUR"}}},
+        {"function":"http://127.0.0.1:5200/retrieve","filter_dict":{"product":"http://127.0.0.1:5000/products/debit_card_specializing/yearmonth"}},
+        {"function":"http://127.0.0.1:5200/filter","filter_dict":{"conditions":{"Consumption":{"min":1000}}}},
+        {"function":'combination', 'filter_dict': {"columns_left": "CustomerID", "columns_right": "CustomerID", "type": "equals", "values": ["None"]}},
+        {"function":"http://127.0.0.1:5200/count","filter_dict":{"columns":["CustomerID"],'unique':'True'}}]}
 
 
 

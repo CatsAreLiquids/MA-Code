@@ -51,6 +51,8 @@ def applyFilter(df, filter_dict):
 
     if 'conditions' in filter_dict:
         filter_dict = filter_dict['conditions']
+    elif 'condition' in filter_dict:
+        filter_dict = filter_dict['condition']
     elif "criteria" in filter_dict:
         filter_dict = filter_dict['criteria']
     elif 'columns' in filter_dict:

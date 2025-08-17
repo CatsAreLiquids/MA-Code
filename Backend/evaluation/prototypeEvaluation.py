@@ -1,6 +1,5 @@
 import pandas as pd
 from Backend.Agent.Agent import init_agent
-from Backend.Agent.Agent_new import run_agent
 from Backend.Agent import execute
 from dotenv import load_dotenv
 from Backend.evaluation import metrics
@@ -221,11 +220,11 @@ def generate_plan2():
 
 if __name__ == "__main__":
     #generate_plan()
-    file = "prototype_eval_column_info_2025-08-15-20-46.csv"
+    file = "prototype_eval_column_info_2025-08-16-12-44_cirtiqued.csv"
     eval_plan(file)
     test_plan(file)
     df = pd.read_csv(file)
-
+    print(df[df["planRecall"].isna()])
 
     print(df[["agent_error", "agent_time"]].describe())
     print(df[["planRecall", "jaccard", "planPrecision"]].describe())

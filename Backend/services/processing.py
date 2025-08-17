@@ -20,11 +20,11 @@ def getCatalog():
         with open("../data/Catalogs/function_catalog.yml") as stream:
             catalog = yaml.safe_load(stream)
     except FileNotFoundError:
-        return "could not find the main catalog"
+        return {"text":"could not find the main catalog"}
     try:
         return catalog[content['function_name']]
     except KeyError:
-        return catalog
+        return {"text":"no such function found"}
 
 @app.route('/sum', methods=['PUT'])
 def call_sum():

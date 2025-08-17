@@ -94,3 +94,7 @@ def manual_correction(agent_result):
 a = [1,2]
 b = [2,1]
 print(a==b)
+
+l = {'function':'http://127.0.0.1:5200/sum','filter_dict':{'column': 'remaining budget',} }
+{'function':'http://127.0.0.1:5200/sum','filter_dict':{'column': ['remaining budget'], 'group_by': ['event'],} }
+{'function':'http://127.0.0.1:5200/filter','filter_dict':{ 'condition': {'remaining_budget': {'min': 50, 'max': 100}},} }

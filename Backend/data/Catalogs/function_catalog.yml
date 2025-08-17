@@ -4,7 +4,7 @@
     default_column: "sum"
     filter_dict:
       - group_by: "a list of coulmns in the dataframe, can be None"
-      - columns: "a list of columns for hicht the sum should be calculated, cant be None"
+      - columns: "a list of columns for which the sum should be calculated, cant be None"
   mean:
     base_api: http://127.0.0.1:5200/mean
     description: "Calcuates the mean of a dataframe based on a list of group_by columns and"
@@ -45,7 +45,7 @@
       - rows: "number of rows to be returned"
   min:
     base_api: http://127.0.0.1:5200/min
-    description: "Retrieves the maximum value for a list of specified columns in a dataframe"
+    description: "Retrieves the minimum value for a list of specified columns in a dataframe"
     return_type: "single value"
     filter_dict:
       - columns: "a list of columns for which the minimum should be retrieved"

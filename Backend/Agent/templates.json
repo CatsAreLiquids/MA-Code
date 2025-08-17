@@ -1,0 +1,28 @@
+{"sum":
+  {"call":"{{'function':'{0}','filter_dict':{{'column': {1},{2}}} }}",
+    "extension": " 'column' a list of columns to compute the sum on and 'group_by' as the columns to group on can be 'None' if no grouping is needed "
+  },
+  "mean": {
+    "call": "{{'function':'{0}','filter_dict':{{'column': {1},{2}}} }}",
+    "extension": " 'column' a list of columns to compute the mean on and 'group_by' as the columns to group on can be 'None' if no grouping is needed "
+  },
+  "max": {
+    "call": "{{'function':'{0}','filter_dict':{{'columns': {1},{2}}} }}",
+    "extension": " 'columns' a list of columns from which the maximum should be retrieved 'rows' as number of items to be retrieved, if top 4 rows = 4  "
+  },"min": {
+    "call": "{{'function':'{0}','filter_dict':{{'columns': {1},{2}}} }}",
+    "extension": " 'columns' a list of columns from which the minimum should be retrieved 'rows' as number of items to be retrieved, if top 4 rows = 4  "
+  },"filter": {
+    "call": "{{'function':'{0}','filter_dict':{{{1}}} }}",
+    "extension": " 'conditions' a dict of thfilter conditions, example {'conditions':{'location':'berlin','year':{'min':2002,'max':2007}}"
+  },"sortby": {
+    "call": "{{'function':'{0}','filter_dict':{{'columns': {1},{2}}} }}",
+    "extension": " 'columns' a list of columns on which the sorting is based on 'rows' 'True' if the data is sorted ascending, 'False' for descending "
+  },"count": {
+    "call": "{{'function':'{0}','filter_dict':{{'columns': {1},{2} {3}}} }}",
+    "extension": " 'columns' a column in which the value to count is present, 'value' the value to count, 'unique' 'True' if only distinct values should be counted, 'False' otherwise"
+  },"returnResult": {
+    "call": "{{'function':'{0}','filter_dict':{{}}",
+    "extension": ""
+  }
+}
