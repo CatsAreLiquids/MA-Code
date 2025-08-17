@@ -72,9 +72,9 @@ def fromatInput(frame, max_row):
 
 
 def generateTags(titles, values, file_name, tagNumber):
-    sys_prompt = PromptTemplate.from_template(json.load(open("../../preprocessing/A/prompts.json"))['tagger_system_prompt'])
+    sys_prompt = PromptTemplate.from_template(json.load(open("prompts.json"))['tagger_system_prompt'])
     sys_prompt = sys_prompt.format(count=tagNumber)
-    input_prompt = PromptTemplate.from_template(json.load(open("../../preprocessing/A/prompts.json"))['data_input_prompt'])
+    input_prompt = PromptTemplate.from_template(json.load(open("prompts.json"))['data_input_prompt'])
     input_prompt = input_prompt.format(titles=titles, values=values, file=file_name)
 
     messages = [
@@ -85,7 +85,7 @@ def generateTags(titles, values, file_name, tagNumber):
 
 
 def generateCollection(collection_name):
-    sys_prompt = json.load(open("../../preprocessing/A/prompts.json"))['collection_system_prompt']
+    sys_prompt = json.load(open("prompts.json"))['collection_system_prompt']
     meta_data = json.load(open(f"{collection_name}/metadata_automatic.json"))
     llm = models.get_LLM()
 
@@ -124,8 +124,8 @@ def generateCollection(collection_name):
 
 
 def generateText(titles, values, file_name):
-    sys_prompt = json.load(open("../../preprocessing/A/prompts.json"))['text_system_prompt']
-    input_prompt = PromptTemplate.from_template(json.load(open("../../preprocessing/A/prompts.json"))['data_input_prompt'])
+    sys_prompt = json.load(open("prompts.json"))['text_system_prompt']
+    input_prompt = PromptTemplate.from_template(json.load(open("prompts.json"))['data_input_prompt'])
     input_prompt = input_prompt.format(titles=titles, values=values, file=file_name)
     messages = [
         ("system", sys_prompt),

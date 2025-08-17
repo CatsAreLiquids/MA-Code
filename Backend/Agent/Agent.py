@@ -15,7 +15,7 @@ from langchain_core.prompts import PromptTemplate, ChatPromptTemplate
 from langchain_core.callbacks import UsageMetadataCallbackHandler
 from langchain_community.callbacks import get_openai_callback
 from Backend import models
-from Backend.Agent import execute
+from Backend.Agent import execute, critic
 from Backend.RAG import vector_db, retriever
 
 
@@ -141,134 +141,7 @@ def breakDownQuery(query):
     # llm = models.get_LLM()
     llm = models.get_structured_LLM()
     response = llm.invoke(messages)
-    print(response['explanation'])
     return response["plan"]
-
-
-@tool(parse_docstring=True)
-def breakDownQuery2(query):
-    """
-    Breaks down a user query into its multiple steps
-    Args:
-        query:  a natural languge query
-    Returns:
-        a list of steps necerssary to solve the query
-    """
-
-    # Identify fitting data collection
-    mod_query = f"I am looking for data products that can answer the query: '{query}'"
-
-    prod_descriptions = retriever.collection_rag(mod_query, config=None)
-
-    # Retrieve corresponding data catalog
-    response = requests.get("http://127.0.0.1:5000/catalog/collection",
-                            json={"file": prod_descriptions["collection_name"]})
-    catalog = json.loads(response.text)
-
-    sys_prompt = """ Your task is not narrow down which data products are necerssary to solve a user query.
-    To do that you are provided with a data catalog, and the user query.
-    Only return necerssary data products by name
-    
-
-    the output should be a valid json  with "products":["product_name_1", "product_name_2", ...]
-    """
-    input_prompt = PromptTemplate.from_template("""
-                    User Query:{query}
-                    product catalog :{catalog}
-                    """)
-    input_prompt = input_prompt.format(query=query, catalog=catalog)
-    messages = [
-        ("system", sys_prompt),
-        ("human", input_prompt),
-    ]
-    # llm = models.get_LLM()
-    llm = models.get_structured_LLM()
-    response = llm.invoke(messages)['products']
-
-    small_catalog = {}
-    for key in response:
-        if key in catalog:
-            small_catalog[key] = catalog[key]
-
-    print(small_catalog)
-
-    sys_prompt = f""" Your task is to explain how you would slove a user query step by step.
-                Only ever provide the next step
-                Once you are done output: "return finished product"
-    
-                You will be provided with information for fitting data products and previous steps
-                Keep the steps short but combine them if possible.
-                
-                Always combine sorting and selecting a number of resutlts into one step. I.e sort by books sold and slect top 4
-                
-                The word retrieve is reserved for when you need to get a data product. Keep these steps short. Retrieval instruction should only be the name of the data product
-                
-                Combining filterd products will lead to the end resutl being filterd
-                Multiple filter steps for the same product should be combined into one step. 
-                
-                Use returnResult for providing the finished product
-                
-                Always do all steps necerssary for one product in a row.
-                When combining data always list both names 
-                Remember that you need to combine data if multiple data products are necerssary
-                
-                When no more steps are needed use "return finished product"
-                
-                Example: All customer data of customers who have bought at least 1 book
-                steps: []
-                result: ["retrieve sales data"]
-                
-                steps: ["retrieve sales data"]
-                result: ["retrieve sales data","filter for customers who have bought 1 book"]
-                
-                steps: ["retrieve sales data","filter for customers who have bought 1 book"]
-                result: ["retrieve sales data","filter for customers who have bought 1 book", "retrieve customer data"]
-                
-                steps: ["retrieve sales data","filter for customers who have bought 1 book", "retrieve customer data"]
-                result: ["retrieve sales data","filter for customers who have bought 1 book", 'retrieve customer data","combine customers from sales data and custmer data"]
-                
-                steps: ["retrieve sales data","filter for customers who have bought 1 book", "retrieve customer data","combine customers from sales data and custmer data"]
-                result: ["retrieve sales data","filter for customers who have bought 1 book", 'retrieve customer data","combine customers from sales data and custmer data", "return finished product"]
-
-                Return a valid json with the 'step': the generated step 
-                
-                Remember that you need to combine data if multiple data products are necerssary
-                Ensure that all filter attributes are present in the retrieved data products
-                
-                
-                """
-
-    input_prompt = PromptTemplate.from_template("""
-                User Query:{query}
-                product catalog :{catalog_}
-                """)
-
-    input_prompt = input_prompt.format(query=query, catalog_=small_catalog)
-    messages = [
-        ("system", sys_prompt),
-        ("human", input_prompt),
-    ]
-
-    stop = False
-    previous = "-1"
-    plan = []
-    while not stop:
-        messages.append(("assistant",str(plan)))
-        llm = models.get_structured_LLM()
-        response = llm.invoke(messages)
-        print(response["step"])
-        plan.append(response["step"])
-
-        if plan[-1] == "return finished product":
-            stop = True
-        if previous == plan[-1]:
-            stop = True
-
-        print(plan)
-
-
-    return plan
-
 
 @tool(parse_docstring=True)
 def generate_retrieve(step, product_name):
@@ -507,7 +380,6 @@ def reiterate_plan(steps, collection_name, query):
                             json={"file": collection_name})
 
     catalog = json.loads(response.text)
-    print(catalog)
 
     sys_prompt = """ Your task is to decide wheather a plan is executable or not
         For this consider if all necerssary columns are in the retrieved data product, if the column selection makes sense etc.
@@ -530,10 +402,9 @@ def reiterate_plan(steps, collection_name, query):
     # llm = models.get_LLM()
     llm = models.get_structured_LLM()
     response = llm.invoke(messages)
-    print(response["explanation"])
     return response["decision"]
 
-def init_agent():
+def init_agent(dual_prompt=True):
     sys_prompt = """Your task is to create an execution plan for a user query. 
                     The first step is to break down the user query into ist substeps using the breakDownQuery tool, creating a list of tasks
                     
@@ -549,10 +420,16 @@ def init_agent():
 
                     Directly return the result of the format_output tool !
         """
+    if dual_prompt:
+        human_prompt = "The query i want to solve: {query},some additional information:{evidence}"
+    else:
+        human_prompt = "{query}"
+
+
     prompt = ChatPromptTemplate.from_messages(
         [
             ("system", sys_prompt),
-            ("human", "The query i want to solve: {query},some additional information:{evidence}"),
+            ("human", human_prompt),
             ("placeholder", "{agent_scratchpad}"),
         ]
     )
@@ -563,6 +440,29 @@ def init_agent():
     agent = create_tool_calling_agent(models.get_LLM(), tools, prompt)
     return AgentExecutor(agent=agent, tools=tools, verbose=True, return_intermediate_steps=True)
 
+def invoke_agent(agent_instance,query,evidence):
+    ciritique = True
+
+    agent_result = agent_instance.invoke({'query': query, "evidence": evidence})
+
+    if ciritique:
+        mod_query = f"The query i want to solve: {query}, some additional information: {evidence}"
+        res = critic.critique_plan(agent_result['output'],mod_query)
+
+    return res
+
+def invoke_agent_remote(query):
+    ciritique = True
+
+    agent_instance = init_agent(dual_prompt=False)
+
+    agent_result = agent_instance.invoke({'query': query})
+
+    if ciritique:
+        res = critic.critique_plan(agent_result['output'],query)
+
+    res = execute.execute_new(res)
+    return res
 
 if __name__ == "__main__":
     with get_openai_callback() as cb:
@@ -572,8 +472,10 @@ if __name__ == "__main__":
         sql = "What was Lewis Hamilton's final rank in the 2008 Chinese Grand Prix?"
         ev = "Lewis Hamilton refers to the full name of the driver; Full name of the driver refers to drivers.forename and drivers.surname; final rank refers to positionOrder; Chinese Grand Prix refers to races.name = 'Chinese Grand Prix';"
 
-        agent_result = agent_i.invoke({'query': sql, "evidence": ev})
-        print(agent_result['output'])
+        print(invoke_agent(agent_i,sql,ev))
+
+        #agent_result = agent_i.invoke({'query': sql, "evidence": ev})
+        #print(agent_result['output'])
         query = f"The query i want to solve: {sql},some additional information:{ev}"
         #print(breakDownQuery.invoke(input={"query": query}))
         # print(execute.execute_new(plan))

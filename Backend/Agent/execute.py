@@ -122,7 +122,7 @@ def execute_new(agent_result):
     i = -1
     name = ""
     for elem in plans:
-        print(elem)
+        #print(elem)
         if elem['function'] == 'http://127.0.0.1:5200/retrieve':
             df = getData(elem['filter_dict'])
 
@@ -152,21 +152,15 @@ def execute_new(agent_result):
     return frames["df_" + str(i)]["df"]
 
 if __name__ == "__main__":
-    file = "../evaluation/prototype_eval_column_info_2025-08-16-12-44_cirtiqued.csv"
-    df = pd.read_csv(file)
-    df = df[df["question_id"]==1505]
 
-    l = df["plan"].values.tolist()[0]
-    print(l)
-    l = ast.literal_eval(l)
-    print(l)
-
-    t={'plans': [
-        {'function': 'http://127.0.0.1:5200/retrieve',
-         'filter_dict': {'product': 'http://127.0.0.1:5000/products/codebase_community/users'}},
-{'function': 'http://127.0.0.1:5200/retrieve', 'filter_dict': {'product': 'http://127.0.0.1:5000/products/codebase_community/posts'}},
-{'function': 'http://127.0.0.1:5200/filter', 'filter_dict': {'conditions': {'Title': 'Understanding what Dassault iSight is doing?'}}},
- {'function': 'combination', 'filter_dict': {'columns_left': 'Id', 'columns_right': 'OwnerUserId', 'type': 'equals'}}]}
+    l = {'plans': [
+{'function': 'http://127.0.0.1:5200/retrieve', 'filter_dict': {'product': 'http://127.0.0.1:5000/products/formula_1/races'}},
+ {'function': 'http://127.0.0.1:5200/filter', 'filter_dict': {'conditions': {'name': 'Chinese Grand Prix', 'year': 2008}}},
+ {'function': 'http://127.0.0.1:5200/retrieve', 'filter_dict': {'product': 'http://127.0.0.1:5000/products/formula_1/results'}},
+ {'function': 'combination', 'filter_dict': {'columns_left': 'raceId', 'columns_right': 'raceId', 'type': 'equals', 'values': ['None']}},
+ {'function': 'http://127.0.0.1:5200/retrieve', 'filter_dict': {'product': 'http://127.0.0.1:5000/products/formula_1/drivers'}},
+ {'function': 'http://127.0.0.1:5200/filter', 'filter_dict': {'conditions': {'forename': 'Lewis', 'surname': 'Hamilton'}}},
+ {'function': 'combination', 'filter_dict': {'columns_left': 'driverId', 'columns_right': 'driverId', 'type': 'equals', 'values': ['None']}}]}
 
     t = {"plans":[
         {"function":"http://127.0.0.1:5200/retrieve","filter_dict":{"product":"http://127.0.0.1:5000/products/debit_card_specializing/customers"}},

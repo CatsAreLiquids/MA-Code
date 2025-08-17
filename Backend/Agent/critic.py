@@ -168,13 +168,11 @@ def critique_plan_df(agent_result):
 
     return agent_result
 
-def critique_plan_df2(steps, query,evidence):
-    mod_query = f"The query i want to solve: {query}, some additional information: {evidence}"
+def critique_plan(steps, query):
     num_iterations = 0
 
     while num_iterations <= 3:
-        response = reiterate_plan(steps, mod_query)
-        print(num_iterations,response["decision"])
+        response = reiterate_plan(steps, query)
         if not response["decision"]:
             tmp = correct_plan(steps,response["instructions"])
             if isinstance(list(tmp.values())[0], list):
@@ -184,7 +182,6 @@ def critique_plan_df2(steps, query,evidence):
             num_iterations+= 1
         else:
             break
-        print(steps)
     try:
         steps = ast.literal_eval(steps)
         steps = manual_correction(steps)
@@ -193,24 +190,19 @@ def critique_plan_df2(steps, query,evidence):
 
     return steps
 
-def correct_run2(file):
+def correct_full_run(file):
     df = pd.read_csv(file)
     res = []
 
     for index, row in df.iterrows():
-        tmp = critique_plan_df2(row["response"],row["query"],row["evidence"])
+        mod_query = f"The query i want to solve: {row['query']}, some additional information: {row['evidence']}"
+        tmp = critique_plan(row["response"],mod_query)
         res.append(tmp)
 
     df["response"] = res
     df.to_csv(f"{file}_cirtiqued_single",index=False)
 
-def correct_run(file):
-    df = pd.read_csv(file)
 
-    df = df[df["question_id"] == 1505]
-    df["response"] = df["response"].apply(lambda x:critique_plan_df2(x))
-
-    df.to_csv(f"{file}_cirtiqued",index=False)
 
 if __name__ == "__main__":
     file = "../evaluation/prototype_eval_column_info_2025-08-16-12-44.csv"

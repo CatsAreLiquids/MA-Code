@@ -43,12 +43,6 @@ def parseData(urls,titles):
     else:
         st.dataframe(df)
 
-def formatHistory():
-    pass
-
-#TODO
-    # get chat streaming ready
-    # https://docs.streamlit.io/develop/tutorials/chat-and-llm-apps/build-conversational-apps
 
 st.title("Demo Interface")
 bot = st.chat_message("assistant")
@@ -65,9 +59,9 @@ for message in st.session_state.messages:
     with st.chat_message(message["role"]):
         st.markdown(message["content"])
 
-prompt = st.chat_input("Say something")
+prompt = st.chat_input("Please describe what kind of data you are looking for")
 
-bot.write("Hello human")
+bot.write("How can I help ?")
 
 if prompt:
     with st.chat_message("user"):
@@ -82,7 +76,5 @@ if prompt:
         df = pd.read_json(io.StringIO(content['data']))
     except ValueError:
         df = pd.Series(ast.literal_eval(content['data']))
-
-
 
     st.dataframe(df)
