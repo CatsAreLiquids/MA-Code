@@ -208,7 +208,7 @@ def correct_full_run(file):
 
 
 if __name__ == "__main__":
-    file = "../evaluation/prototype_eval_column_info_2025-08-16-12-44.csv"
+    file = "../evaluation/evidence_description.csv"
     correct_full_run(file)
 
     test = {'plans': [

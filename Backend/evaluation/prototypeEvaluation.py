@@ -16,14 +16,6 @@ import io
 load_dotenv()
 pd.set_option('display.max_columns', None)
 
-
-def _get_df(product, collection):
-    response = requests.get(f"http://127.0.0.1:5000/products/{collection}/{product}")
-    content = json.loads(response.text)
-    df = pd.read_json(io.StringIO(content['data']))
-    return df
-
-
 def eval_rows(ref, test):
     tp = 0
     fp = 0
@@ -171,40 +163,11 @@ def eval_plan(file):
 
     df.to_csv(file, index=False)
 
-def generate_plan2():
-
-    df = pd.read_csv("bird_mini_dev/prototype_eval.csv")
-    df = df.dropna()
-
-    res = {"response": [], "agent_error": [], "time": []}
-    agent = init_agent()
-
-    for index, row in tqdm(df.iterrows()):
-        try:
-            start = time.time()
-            response = run_agent(row["query"],row["evidence"])
-
-            end = time.time()
-            res["time"].append(end - start)
-            res["response"].append(response)
-            res["agent_error"].append(0)
-
-        except:
-            end = time.time()
-            print(row["question_id"])
-            res["response"].append("")
-            res["agent_error"].append(1)
-            res["time"].append(end - start)
-
-    df["response"] = res["response"]
-    df["agent_error"] = res["agent_error"]
-    df["agent_time"] = res["time"]
-    timestamp = datetime.now().strftime("%Y-%m-%d-%H-%M")
-    df.to_csv(f"prototype_eval_{timestamp}.csv", index=False)
 
 if __name__ == "__main__":
     #generate_plan()
-    file = "prototype_eval_column_info_2025-08-16-12-44_cirtiqued3.csv"
+
+    file = "evidence_description_cirtiqued.csv"
     eval_plan(file)
     test_plan(file)
     df = pd.read_csv(file)
