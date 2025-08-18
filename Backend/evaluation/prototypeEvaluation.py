@@ -73,7 +73,7 @@ def eval_by_index(ref, test,columns):
 
 def test_plan(file):
     df = pd.read_csv(file)
-    #df= df[df["question_id"]==933]
+    #df= df[df["question_id"]==671]
     precision = []
     recall = []
     execution_error = []
@@ -87,7 +87,6 @@ def test_plan(file):
 
             t = execute.execute_new(ast.literal_eval(row["plan"]))
             t = t.replace({np.nan: "None"})
-
 
             if isinstance(p, pd.DataFrame):
                 p = p.reindex(sorted(p.columns), axis=1)
@@ -205,9 +204,9 @@ def generate_plan2():
 
 if __name__ == "__main__":
     #generate_plan()
-    file = "prototype_eval_column_info_2025-08-16-12-44_cirtiqued.csv"
-    #eval_plan(file)
-    #test_plan(file)
+    file = "prototype_eval_column_info_2025-08-16-12-44_cirtiqued3.csv"
+    eval_plan(file)
+    test_plan(file)
     df = pd.read_csv(file)
 
 
@@ -215,8 +214,8 @@ if __name__ == "__main__":
     print(df[["planRecall", "jaccard", "planPrecision"]].describe())
     print(df[["recall", "precision","execution_error"]].describe())
     df = df.sort_values(by=["precision", "recall"], ascending=False)
-    print(df[df["execution_error"] != 1])
+    #print(df[df["execution_error"] != 1])
 
     df = df.sort_values(by=["planPrecision","planRecall"], ascending=False)
-    print(df[df["execution_error"] == 1].head())
+    print(df[df["execution_error"] == 1].head(n=10))
 

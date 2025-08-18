@@ -36,7 +36,7 @@ def reiterate_plan(steps, query):
                             json={"file": prod_descriptions["collection_name"]})
 
     catalog = json.loads(response.text)
-    print(catalog)
+
     sys_prompt = """ Your task is to decide wheather a plan is executable or not, and if it is not executable how to fix the plan
         For this consider if all necerssary columns are in the retrieved data product, if the column selection makes sense etc.
         Ignore computations such as mean of or sum, and the value paramter
@@ -52,7 +52,7 @@ def reiterate_plan(steps, query):
         combination steps are a valid part of the plan as they join tables together, providing only the column name is viable
         ensure that enough combinations are present, so that all products are combined
         You can add combinations steps an example: {{"function":"combination","filter_dict":{{"columns_left":"column_name","columns_right":"column_name","type":"equals","values":["None"]}} }}
-        
+        For any combination step you add make sure the fitting data product is present as well
         
         Steps that filter for an unklnown specific value or references previous results, are not feasible, remove them
         
@@ -209,22 +209,23 @@ def correct_full_run(file):
 
 if __name__ == "__main__":
     file = "../evaluation/prototype_eval_column_info_2025-08-16-12-44.csv"
-    #correct_run2(file)
+    correct_full_run(file)
 
     test = {'plans': [
-{'function': 'http://127.0.0.1:5200/retrieve', 'filter_dict': {'product': 'http://127.0.0.1:5000/products/toxicology/atom'}},
- {'function': 'http://127.0.0.1:5200/filter', 'filter_dict': {'conditions': {'element': ['p', 'n']}}},
- {'function': 'http://127.0.0.1:5200/retrieve', 'filter_dict': {'product': 'http://127.0.0.1:5000/products/toxicology/connected'}},
- {'function': 'combination', 'filter_dict': {'columns_left': 'atom_id', 'columns_right': 'atom_id', 'type': 'equals', 'values': ['None']}}]}
+{'function': 'http://127.0.0.1:5200/retrieve', 'filter_dict': {'product': 'http://127.0.0.1:5000/products/student_club/Event'}},
+{'function': 'http://127.0.0.1:5200/filter', 'filter_dict': {'conditions': {'event_name': 'April Speaker'}}},
+{'function': 'http://127.0.0.1:5200/retrieve', 'filter_dict': {'product': 'http://127.0.0.1:5000/products/student_club/Budget'}},
+{'function': 'combination', 'filter_dict': {'columns_left': 'link_to_event', 'columns_right': 'event_id', 'type': 'equals', 'values': ['None']}}]}
+
 
     #print(critique_plan(test))
 
-    sql = "What are the bonds that have phosphorus and nitrogen as their atom elements?"
-    ev = "have phosphorus as atom elements refers to element = 'p'; have nitrogen as atom elements refers to element = 'n'"
+    sql = "Calculate the amount budgeted for 'April Speaker' event. List all the budgeted categories for said event in an ascending order based on their amount budgeted."
+    ev = "'April Speaker' is an event name; amount budgeted refers to SUM(amount); budget categories refers to category"
     query = f"The query i want to solve: {sql},some additional information:{ev}"
-    inst = [
-{'function': 'update', 'step': 3, 'changes': {'filter_dict': {'columns_left': 'atom_id', 'columns_right': 'atom_id2', 'type': 'equals', 'values': ['None']}}},
- {'function': 'add', 'step': 4, 'changes': {'function': 'combination', 'filter_dict': {'columns_left': 'bond_id', 'columns_right': 'bond_id', 'type': 'equals', 'values': ['None']}}}]
+    inst =  [
+{'function': 'update', 'step': 3, 'changes': {'filter_dict': {'conditions': {'label': '-'}}}},
+ {'function': 'update', 'step': 4, 'changes': {'filter_dict': {'columns': 'molecule_id', 'value': '> 5'}}}]
     #print(manual_correction(test))
-    print(correct_plan(test,inst))
+    #print(correct_plan(test,inst))
     #print(reiterate_plan(test, query))
