@@ -45,11 +45,14 @@ def reiterate_plan(steps, query):
         
         If a filter step makes no sense because the columns are not present cosider updating the  retrieval step
         
+        count and mean need an existing column as basis
+        
         When updating state explicitly what should be changed
         
         combination steps are a valid part of the plan as they join tables together, providing only the column name is viable
         ensure that enough combinations are present, so that all products are combined
         You can add combinations steps an example: {{"function":"combination","filter_dict":{{"columns_left":"column_name","columns_right":"column_name","type":"equals","values":["None"]}} }}
+        
         
         Steps that filter for an unklnown specific value or references previous results, are not feasible, remove them
         
@@ -206,22 +209,22 @@ def correct_full_run(file):
 
 if __name__ == "__main__":
     file = "../evaluation/prototype_eval_column_info_2025-08-16-12-44.csv"
-    correct_run2(file)
+    #correct_run2(file)
 
     test = {'plans': [
-{'function': 'http://127.0.0.1:5200/retrieve', 'filter_dict': {'product': 'http://127.0.0.1:5000/products/formula_1/races'}},
- {'function': 'http://127.0.0.1:5200/filter', 'filter_dict': {'conditions': {'raceId': 901}}},
- {'function': 'http://127.0.0.1:5200/retrieve', 'filter_dict': {'product': 'http://127.0.0.1:5000/products/formula_1/seasons'}}]}
+{'function': 'http://127.0.0.1:5200/retrieve', 'filter_dict': {'product': 'http://127.0.0.1:5000/products/toxicology/atom'}},
+ {'function': 'http://127.0.0.1:5200/filter', 'filter_dict': {'conditions': {'element': ['p', 'n']}}},
+ {'function': 'http://127.0.0.1:5200/retrieve', 'filter_dict': {'product': 'http://127.0.0.1:5000/products/toxicology/connected'}},
+ {'function': 'combination', 'filter_dict': {'columns_left': 'atom_id', 'columns_right': 'atom_id', 'type': 'equals', 'values': ['None']}}]}
 
     #print(critique_plan(test))
 
-    sql = "Show me the season page of year when the race No. 901 took place."
-    ev = "the season page refers to url; race number refers to raceId;"
-
+    sql = "What are the bonds that have phosphorus and nitrogen as their atom elements?"
+    ev = "have phosphorus as atom elements refers to element = 'p'; have nitrogen as atom elements refers to element = 'n'"
     query = f"The query i want to solve: {sql},some additional information:{ev}"
     inst = [
-{'step': "Update the retrieval step for 'races' to include the 'year' column, as it is necessary to determine the year of the race."},
- {'step': "Add a combination step to join the 'races' and 'seasons' products on the 'year' column, as this is required to link the race year to the season URL."}]
+{'function': 'update', 'step': 3, 'changes': {'filter_dict': {'columns_left': 'atom_id', 'columns_right': 'atom_id2', 'type': 'equals', 'values': ['None']}}},
+ {'function': 'add', 'step': 4, 'changes': {'function': 'combination', 'filter_dict': {'columns_left': 'bond_id', 'columns_right': 'bond_id', 'type': 'equals', 'values': ['None']}}}]
     #print(manual_correction(test))
-    #print(correct_plan(test,inst))
+    print(correct_plan(test,inst))
     #print(reiterate_plan(test, query))

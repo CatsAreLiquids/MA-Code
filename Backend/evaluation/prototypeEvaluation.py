@@ -30,31 +30,19 @@ def eval_rows(ref, test):
     fn = 0
 
     for i in range(test.shape[0]):
-        tmp = np.asarray(test.iloc[i])
-        #print((ref == tmp))
-        try:
-            if (ref == tmp).all(1).any():
-                tp += 1
-            else:
-                fp += 1
-        except ValueError:
-            if (ref == tmp).all().any():
+        test_tmp = np.asarray(test.iloc[i])
+        for i in range(ref.shape[0]):
+            ref_tmp = np.asarray(test.iloc[i])
+            if np.array_equal(test_tmp, ref_tmp):
                 tp += 1
             else:
                 fp += 1
 
     for i in range(ref.shape[0]):
-        tmp = np.asarray(ref.iloc[i])
-        try:
-            if (test == tmp).all(1).any():
-                pass
-            else:
-                fn += 1
-        except ValueError:
-            print(test.shape,tmp.shape)
-            if (test == tmp).all().any():
-                pass
-            else:
+        ref_tmp = np.asarray(ref.iloc[i])
+        for i in range(test.shape[0]):
+            test_tmp = np.asarray(test.iloc[i])
+            if not np.array_equal(test_tmp, ref_tmp):
                 fn += 1
 
     try :
@@ -66,7 +54,6 @@ def eval_rows(ref, test):
         r = tp / (tp + fn)
     except ZeroDivisionError:
         r = 0
-
 
     return p, r
 
@@ -86,7 +73,7 @@ def eval_by_index(ref, test,columns):
 
 def test_plan(file):
     df = pd.read_csv(file)
-    #df.dropna(how= "any", inplace=True)
+    #df= df[df["question_id"]==933]
     precision = []
     recall = []
     execution_error = []
@@ -95,11 +82,9 @@ def test_plan(file):
     for index, row in tqdm(df.iterrows()):
 
         try:
-            start = time.time()
             p = execute.execute_new(ast.literal_eval(row["response"]))
             p = p.replace({np.nan: "None"})
 
-            end = time.time()
             t = execute.execute_new(ast.literal_eval(row["plan"]))
             t = t.replace({np.nan: "None"})
 
@@ -221,10 +206,10 @@ def generate_plan2():
 if __name__ == "__main__":
     #generate_plan()
     file = "prototype_eval_column_info_2025-08-16-12-44_cirtiqued.csv"
-    eval_plan(file)
-    test_plan(file)
+    #eval_plan(file)
+    #test_plan(file)
     df = pd.read_csv(file)
-    print(df[df["planRecall"].isna()])
+
 
     print(df[["agent_error", "agent_time"]].describe())
     print(df[["planRecall", "jaccard", "planPrecision"]].describe())

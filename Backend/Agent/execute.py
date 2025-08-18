@@ -122,7 +122,7 @@ def execute_new(agent_result):
     i = -1
     name = ""
     for elem in plans:
-        #print(elem)
+        print(elem)
         if elem['function'] == 'http://127.0.0.1:5200/retrieve':
             df = getData(elem['filter_dict'])
 
@@ -153,7 +153,18 @@ def execute_new(agent_result):
 
 if __name__ == "__main__":
 
-    l = {'plans': [
+    l = {"plans":[
+{"function":"http://127.0.0.1:5200/retrieve","filter_dict":{"product":"http://127.0.0.1:5000/products/financial/account"}},
+{"function":"http://127.0.0.1:5200/retrieve","filter_dict":{"product":"http://127.0.0.1:5000/products/financial/loan"}},
+{"function":"http://127.0.0.1:5200/filter","filter_dict":{"conditions":{"status":["C","D"]}}},
+{"function":'combination', 'filter_dict': {"columns_left": "account_id", "columns_right": "account_id", "type": "equals", "values": ["None"]}},
+{"function":"http://127.0.0.1:5200/retrieve","filter_dict":{"product":"http://127.0.0.1:5000/products/financial/district"}},
+{"function":"http://127.0.0.1:5200/filter","filter_dict":{"conditions":{"district_id":1}}},
+{"function":'combination', 'filter_dict': {"columns_left": "district_id", "columns_right": "district_id", "type": "equals", "values": ["None"]}},
+{'function': 'http://127.0.0.1:5200/count', 'filter_dict': {'columns': 'account_id'}}
+    ]}
+
+    t = {'plans': [
 {'function': 'http://127.0.0.1:5200/retrieve', 'filter_dict': {'product': 'http://127.0.0.1:5000/products/formula_1/races'}},
  {'function': 'http://127.0.0.1:5200/filter', 'filter_dict': {'conditions': {'name': 'Chinese Grand Prix', 'year': 2008}}},
  {'function': 'http://127.0.0.1:5200/retrieve', 'filter_dict': {'product': 'http://127.0.0.1:5000/products/formula_1/results'}},
@@ -161,16 +172,6 @@ if __name__ == "__main__":
  {'function': 'http://127.0.0.1:5200/retrieve', 'filter_dict': {'product': 'http://127.0.0.1:5000/products/formula_1/drivers'}},
  {'function': 'http://127.0.0.1:5200/filter', 'filter_dict': {'conditions': {'forename': 'Lewis', 'surname': 'Hamilton'}}},
  {'function': 'combination', 'filter_dict': {'columns_left': 'driverId', 'columns_right': 'driverId', 'type': 'equals', 'values': ['None']}}]}
-
-    t = {"plans":[
-        {"function":"http://127.0.0.1:5200/retrieve","filter_dict":{"product":"http://127.0.0.1:5000/products/debit_card_specializing/customers"}},
-        {"function":"http://127.0.0.1:5200/filter","filter_dict":{"conditions":{"Currency":"EUR"}}},
-        {"function":"http://127.0.0.1:5200/retrieve","filter_dict":{"product":"http://127.0.0.1:5000/products/debit_card_specializing/yearmonth"}},
-        {"function":"http://127.0.0.1:5200/filter","filter_dict":{"conditions":{"Consumption":{"min":1000}}}},
-        {"function":'combination', 'filter_dict': {"columns_left": "CustomerID", "columns_right": "CustomerID", "type": "equals", "values": ["None"]}},
-        {"function":"http://127.0.0.1:5200/count","filter_dict":{"columns":["CustomerID"],'unique':'True'}}]}
-
-
 
 
     print("result",execute_new(l))
