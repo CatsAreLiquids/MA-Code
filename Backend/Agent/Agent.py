@@ -364,46 +364,6 @@ def format_output(steps, function_calls):
 
     return llm.invoke(messages)
 
-
-@tool(parse_docstring=False)
-def reiterate_plan(steps, collection_name, query):
-    """
-        Breaks down a user query into its multiple steps
-        Args:
-            query:  a natural languge query
-            steps: the first ioteration of steps
-            collection_name: the name of the collection needed to solve
-        Returns:
-            a list of corrected steps necerssary to solve the query
-        """
-    response = requests.get("http://127.0.0.1:5000/catalog/collection",
-                            json={"file": collection_name})
-
-    catalog = json.loads(response.text)
-
-    sys_prompt = """ Your task is to decide wheather a plan is executable or not
-        For this consider if all necerssary columns are in the retrieved data product, if the column selection makes sense etc.
-        If a cloumn is present in the data product do not say it is not present
-        Ignore computations such as mean of or sum
-        The output should be a valid json with "decision": either True or False, and "explanation": a list of problems you see
-
-        """
-
-    input_prompt = PromptTemplate.from_template("""
-                User Query:{query}
-                product catalog :{catalog}
-                steps:{steps}
-                """)
-    input_prompt = input_prompt.format(query=query, catalog=catalog, steps=steps)
-    messages = [
-        ("system", sys_prompt),
-        ("human", input_prompt),
-    ]
-    # llm = models.get_LLM()
-    llm = models.get_structured_LLM()
-    response = llm.invoke(messages)
-    return response["decision"]
-
 def init_agent(dual_prompt=True):
     sys_prompt = """Your task is to create an execution plan for a user query. 
                     The first step is to break down the user query into ist substeps using the breakDownQuery tool, creating a list of tasks
@@ -423,7 +383,7 @@ def init_agent(dual_prompt=True):
     if dual_prompt:
         human_prompt = "The query i want to solve: {query},some additional information:{evidence}"
     else:
-        human_prompt = "{query}"
+        human_prompt = "The query i want to solve: {query}"
 
 
     prompt = ChatPromptTemplate.from_messages(
@@ -472,12 +432,12 @@ if __name__ == "__main__":
         sql = "What was Lewis Hamilton's final rank in the 2008 Chinese Grand Prix?"
         ev = "Lewis Hamilton refers to the full name of the driver; Full name of the driver refers to drivers.forename and drivers.surname; final rank refers to positionOrder; Chinese Grand Prix refers to races.name = 'Chinese Grand Prix';"
 
-        print(invoke_agent(agent_i,sql,ev))
+        #print(invoke_agent(agent_i,sql,ev))
 
         #agent_result = agent_i.invoke({'query': sql, "evidence": ev})
         #print(agent_result['output'])
         query = f"The query i want to solve: {sql},some additional information:{ev}"
-        #print(breakDownQuery.invoke(input={"query": query}))
+        print(breakDownQuery.invoke(input={"query": query}))
         # print(execute.execute_new(plan))
         plan = ['retrieve Budget', "filter for event_status = 'Open' and link_to_event = 'April Speaker'", 'group by category and calculate SUM(amount) for each category', 'sort by SUM(amount) in ascending order', 'returnResult'] #print(reiterate_plan.invoke(input={"steps":plan, "collection_name":"european_football_2", "query":query}))
         # query = f"The query i want to solve: {sql},some additional information:{ev}"

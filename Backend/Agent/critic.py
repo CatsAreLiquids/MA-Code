@@ -174,7 +174,8 @@ def critique_plan_df(agent_result):
 def critique_plan(steps, query):
     num_iterations = 0
 
-    while num_iterations <= 3:
+    while num_iterations < 1:
+        print(steps)
         response = reiterate_plan(steps, query)
         if not response["decision"]:
             tmp = correct_plan(steps,response["instructions"])
@@ -199,6 +200,7 @@ def correct_full_run(file):
 
     for index, row in df.iterrows():
         mod_query = f"The query i want to solve: {row['query']}, some additional information: {row['evidence']}"
+        #mod_query = f"The query i want to solve: {row['query']}"
         tmp = critique_plan(row["response"],mod_query)
         res.append(tmp)
 
@@ -208,7 +210,7 @@ def correct_full_run(file):
 
 
 if __name__ == "__main__":
-    file = "../evaluation/evidence_description.csv"
+    file = "../evaluation/prototype_eval_column_info_2025-08-16-12-44_cirtiqued4.csv"
     correct_full_run(file)
 
     test = {'plans': [

@@ -116,7 +116,7 @@ def generate_plan():
     df = df.dropna()
 
     res = {"response": [], "agent_error": [], "time": []}
-    agent = init_agent()
+    agent = init_agent(dual_prompt=False)
 
     for index, row in tqdm(df.iterrows()):
         try:
@@ -167,7 +167,7 @@ def eval_plan(file):
 if __name__ == "__main__":
     #generate_plan()
 
-    file = "evidence_description_cirtiqued.csv"
+    file = "prototype_eval_column_info_2025-08-16-12-44_cirtiqued5.csv"
     eval_plan(file)
     test_plan(file)
     df = pd.read_csv(file)
@@ -176,9 +176,9 @@ if __name__ == "__main__":
     print(df[["agent_error", "agent_time"]].describe())
     print(df[["planRecall", "jaccard", "planPrecision"]].describe())
     print(df[["recall", "precision","execution_error"]].describe())
-    df = df.sort_values(by=["precision", "recall"], ascending=False)
+    #df = df.sort_values(by=["precision", "recall"], ascending=False)
     #print(df[df["execution_error"] != 1])
 
-    df = df.sort_values(by=["planPrecision","planRecall"], ascending=False)
-    print(df[df["execution_error"] == 1].head(n=10))
+    #df = df.sort_values(by=["planPrecision","planRecall"], ascending=False)
+    #print(df[df["execution_error"] == 1].head(n=10))
 

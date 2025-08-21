@@ -34,7 +34,7 @@ def _get_or_create(columns, api, collection, product):
             with open(f"Catalogs/{collection}.yml") as stream:
                 data = yaml.safe_load(stream)
         except FileNotFoundError:
-            print("FIle exists but error")
+            print("File exists but error")
     else:
         data = {}
 
@@ -99,7 +99,7 @@ def identify_columns():
 
 
 if __name__ == '__main__':
-    files = glob.glob("california_schools/*.csv")
+    files = glob.glob("toxicology/*.csv")
     for file in files:
         print(file)
         process_product(file)

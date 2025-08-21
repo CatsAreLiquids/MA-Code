@@ -387,7 +387,6 @@ def getEvaluationChainFunc( config, query, collection=None):
     docs = ensemble_retriever.invoke(query)
 
 
-
     #docs = retriever.invoke(query)
     docs = [doc.page_content for doc in docs]
     docs = [ helper(doc) if len(re.findall(pattern,doc))> 0 else doc for doc in docs ]
@@ -406,28 +405,4 @@ def getEvaluationChainFunc( config, query, collection=None):
 
     return {"response": llm.invoke(messages)["function_name"], "docs": docs}
 
-def rephrase_query_func(step):
-    sys_prompt = """Your goal is to rephrase a short description of a processing step into a longer more complete query which can be used to query a vector store
-    The goal is to identify the functions necerssary, therfore focus on the processing step. Keep the rephrasing short and focus on the action not the parameters"""
 
-    input_prompt= PromptTemplate.from_template(""" The task I am currently trying to achieve is:{step}""")
-    input_prompt = input_prompt.format( step=step)
-    messages = [
-        ("system", sys_prompt),
-        ("human", input_prompt),
-    ]
-    llm = models.get_LLM()
-    return llm.invoke(messages).content
-
-def rephrase_query_prod(step,org):
-    sys_prompt = """Your goal is to rephrase a short description of a processing step into a longer more complete query which can be used to query a vector store
-    The goal is to identify a data product, use the context provided by the original query to extend the provided step"""
-
-    input_prompt= PromptTemplate.from_template(""" The task I am currently trying to achieve is:{step}, the original query is: {org}""")
-    input_prompt = input_prompt.format( step=step, org=org)
-    messages = [
-        ("system", sys_prompt),
-        ("human", input_prompt),
-    ]
-    llm = models.get_LLM()
-    return llm.invoke(messages).content
