@@ -116,7 +116,7 @@ def generate_plan():
     df = df.dropna()
 
     res = {"response": [], "agent_error": [], "time": []}
-    agent = init_agent(dual_prompt=False)
+    agent = init_agent(dual_prompt=True)
 
     for index, row in tqdm(df.iterrows()):
         try:
@@ -167,9 +167,9 @@ def eval_plan(file):
 if __name__ == "__main__":
     #generate_plan()
 
-    file = "prototype_eval_column_info_2025-08-16-12-44_cirtiqued5.csv"
-    eval_plan(file)
-    test_plan(file)
+    file = "no_explanation_no_example.csv"
+    #eval_plan(file)
+    #test_plan(file)
     df = pd.read_csv(file)
 
 
