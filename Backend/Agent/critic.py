@@ -5,6 +5,7 @@ import pandas as pd
 import yaml
 import requests
 import json
+import time
 
 from dotenv import load_dotenv
 from langchain_postgres.vectorstores import PGVector
@@ -34,8 +35,10 @@ def reiterate_plan(steps, query):
     # Retrieve corresponding data catalog
     response = requests.get("http://127.0.0.1:5000/catalog/collection",
                             json={"file": prod_descriptions["collection_name"]})
-
-    catalog = json.loads(response.text)
+    try:
+        catalog = json.loads(response.text)
+    except:
+        catalog = ""
 
     sys_prompt = """ Your task is to decide wheather a plan is executable or not, and if it is not executable how to fix the plan
         For this consider if all necerssary columns are in the retrieved data product, if the column selection makes sense etc.
@@ -174,7 +177,7 @@ def critique_plan_df(agent_result):
 def critique_plan(steps, query):
     num_iterations = 0
 
-    while num_iterations < 1:
+    while num_iterations < 3 :
         print(steps)
         response = reiterate_plan(steps, query)
         if not response["decision"]:
@@ -197,6 +200,7 @@ def critique_plan(steps, query):
 def correct_full_run(file):
     df = pd.read_csv(file)
     res = []
+    start = time.time()
 
     for index, row in df.iterrows():
         mod_query = f"The query i want to solve: {row['query']}, some additional information: {row['evidence']}"
@@ -207,10 +211,11 @@ def correct_full_run(file):
     df["response"] = res
     df.to_csv(f"{file}_cirtiqued_single",index=False)
 
-
+    end = time.time()
+    print(end - start)
 
 if __name__ == "__main__":
-    file = "../evaluation/prototype_eval_column_info_2025-08-16-12-44_cirtiqued4.csv"
+    file = "../evaluation/gpt4.csv"
     correct_full_run(file)
 
     test = {'plans': [

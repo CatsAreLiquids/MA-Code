@@ -167,7 +167,7 @@ def eval_plan(file):
 if __name__ == "__main__":
     #generate_plan()
 
-    file = "no_explanation_no_example.csv"
+    file = "4o-mini.csv"
     #eval_plan(file)
     #test_plan(file)
     df = pd.read_csv(file)
@@ -176,8 +176,8 @@ if __name__ == "__main__":
     print(df[["agent_error", "agent_time"]].describe())
     print(df[["planRecall", "jaccard", "planPrecision"]].describe())
     print(df[["recall", "precision","execution_error"]].describe())
-    #df = df.sort_values(by=["precision", "recall"], ascending=False)
-    #print(df[df["execution_error"] != 1])
+    df = df.sort_values(by=["precision", "recall"], ascending=False)
+    print(df[df["execution_error"] != 1])
 
     #df = df.sort_values(by=["planPrecision","planRecall"], ascending=False)
     #print(df[df["execution_error"] == 1].head(n=10))

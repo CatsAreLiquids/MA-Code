@@ -436,9 +436,10 @@ if __name__ == "__main__":
 
         #agent_result = agent_i.invoke({'query': sql, "evidence": ev})
         #print(agent_result['output'])
-        query = f"The query i want to solve: {sql},some additional information:{ev}"
+        #query = f"The query i want to solve: {sql},some additional information:{ev}"
+        query= "I wnat the all male superheros"
         print(breakDownQuery.invoke(input={"query": query}))
         # print(execute.execute_new(plan))
-        plan = ['retrieve Budget', "filter for event_status = 'Open' and link_to_event = 'April Speaker'", 'group by category and calculate SUM(amount) for each category', 'sort by SUM(amount) in ascending order', 'returnResult'] #print(reiterate_plan.invoke(input={"steps":plan, "collection_name":"european_football_2", "query":query}))
+       # plan = ['retrieve Budget', "filter for event_status = 'Open' and link_to_event = 'April Speaker'", 'group by category and calculate SUM(amount) for each category', 'sort by SUM(amount) in ascending order', 'returnResult'] #print(reiterate_plan.invoke(input={"steps":plan, "collection_name":"european_football_2", "query":query}))
         # query = f"The query i want to solve: {sql},some additional information:{ev}"
         #print(reiterate_plan.invoke({"steps":plan, "collection_name":"student_club", "query":query}))

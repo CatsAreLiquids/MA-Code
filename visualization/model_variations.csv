@@ -1,0 +1,4 @@
+,recall,precision,jaccard,planrecall,planprecision,time
+GPT 4,0.31,0.35,0.21,0.00,0.00,58.80
+GPT-4o mini,0.40,0.38,0.27,0.02,0.03,272.20
+GPT-4o,0.47,0.47,0.32,0.08,0.09,34.00

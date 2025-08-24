@@ -1,0 +1,5 @@
+,agent eroor,avg tine,recalls,precision,jaccard,planrecall,planprecision
+no example,0.0,57.94,0.03,0.0,0.02,0.0,0.0
+minmal examples,0.64,172.21,0.0,0.0,0.0,0.0,0.0
+no explanantion,0.0,33.59,0.45,0.47,0.32,0.09,0.09
+no examples no explanantion ,0.0,49.63,0.01,0.01,0.0,0.0,0.0

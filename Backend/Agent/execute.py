@@ -154,10 +154,8 @@ def execute_new(agent_result):
 if __name__ == "__main__":
 
     l = {'plans': [
-{'function': 'http://127.0.0.1:5200/retrieve', 'filter_dict': {'product': 'http://127.0.0.1:5000/products/student_club/Event'}},
-{'function': 'http://127.0.0.1:5200/filter', 'filter_dict': {'conditions': {'event_name': 'April Speaker'}}},
-{'function': 'http://127.0.0.1:5200/retrieve', 'filter_dict': {'product': 'http://127.0.0.1:5000/products/student_club/Budget'}},
-{'function': 'combination', 'filter_dict': {'columns_left': 'link_to_event', 'columns_right': 'event_id', 'type': 'equals', 'values': ['None']}}]}
+{'function': 'http://127.0.0.1:5200/retrieve', 'filter_dict': {'product': 'http://127.0.0.1:5000/products/card_games/cards'}},
+ {'function': 'http://127.0.0.1:5200/filter', 'filter_dict': {'conditions': {'cardKingdomFoilId': {'not_null': 'True'}, 'cardKingdomId': {'not_null': 'True'}}}}]}
 
     t = {'plans': [
 {'function': 'http://127.0.0.1:5200/retrieve', 'filter_dict': {'product': 'http://127.0.0.1:5000/products/formula_1/races'}},
