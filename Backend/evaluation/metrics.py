@@ -1,18 +1,13 @@
+import ast
+import json
 import re
 
-from Backend import models
-import numpy as np
-from ragas.metrics import ResponseGroundedness
-from ragas.metrics import Faithfulness
-from ragas.metrics import SemanticSimilarity
-from ragas.embeddings import LangchainEmbeddingsWrapper
-from ragas.dataset_schema import SingleTurnSample
+import requests
+from dotenv import load_dotenv
 from langchain_core.prompts import PromptTemplate
 from ragas.llms import LangchainLLMWrapper
-from dotenv import load_dotenv
-import requests
-import json
-import ast
+
+from Backend import models
 
 load_dotenv()
 llm = models.get_LLM()

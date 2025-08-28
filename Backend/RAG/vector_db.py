@@ -1,42 +1,13 @@
-import ast
-import itertools
-import os
-
-import pandas as pd
-from langchain_core.documents import Document
-from langchain_postgres import PGVector
-from langchain_postgres.vectorstores import PGVector
-from langchain_openai import AzureOpenAIEmbeddings, AzureChatOpenAI
-from dotenv import load_dotenv
 import json
-from langchain_core.output_parsers import StrOutputParser
-from langchain_core.runnables import RunnablePassthrough
-from langchain_core.runnables import RunnableLambda
-from langchain_core.prompts import PromptTemplate
-from langchain.retrievers import EnsembleRetriever
-from langchain_community.retrievers import BM25Retriever
-import re
-from langchain_community.document_transformers import LongContextReorder
-from typing import Optional, List
 import uuid
+from typing import List
+
+import yaml
+from dotenv import load_dotenv
+from langchain_core.documents import Document
 
 from Backend import models
-from dotenv import load_dotenv
-import yaml
-import numpy as np
-import copy
 
-from numpy import dot
-from numpy.linalg import norm
-from collections import defaultdict
-import seaborn as sns
-import matplotlib
-import matplotlib.pyplot as plt
-import numpy as np
-
-import matplotlib
-import matplotlib as mpl
-matplotlib.use('TkAgg')
 load_dotenv()
 
 
@@ -170,38 +141,6 @@ def get_docs(query, max: int, filter=None, collection=None):
     #    print(i)
 
     return vector_store.similarity_search(query, k=max, filter=filter)
-
-
-def evalEmbbeds(docs):
-
-    emb_func = models.get_embeddings()
-
-    docs = get_docs(query = "",max= 30,filter={"type": {"$eq": "function_NoManual"}})
-    df_dict = defaultdict(list)
-    for doc in docs:
-        df_dict[doc.metadata["name"]]
-
-    for doc in docs:
-        self_emb = emb_func.embed_query(doc.page_content)
-        for doc2 in docs:
-            other_emb = emb_func.embed_query(doc2.page_content)
-            cos_sim = dot(self_emb, other_emb) / (norm(self_emb) * norm(other_emb))
-            df_dict[doc.metadata["name"]].append(cos_sim)
-
-    names = [doc.metadata["name"] for doc in docs]
-    df = pd.DataFrame(df_dict)
-    df["function"] = names
-    df = df.set_index('function')
-    df.to_csv("functions_cos_sim_NoManual.csv")
-
-def stuff():
-    df = pd.read_csv("functions_cos_sim_NoManual.csv")
-    ax = plt.axes()
-
-    heatmap= sns.heatmap(df.loc[:, df.columns != "function"],yticklabels=df["function"].tolist(),cmap=sns.cubehelix_palette(as_cmap=True),vmin=0)
-    fig = heatmap.get_figure()
-    fig.tight_layout()
-    fig.savefig("NoManual.png")
 
 if __name__ == "__main__":
     # add_collections()

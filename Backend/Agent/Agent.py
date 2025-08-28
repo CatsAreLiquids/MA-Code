@@ -1,22 +1,12 @@
-import ast
-import os
-
-import pandas as pd
-import yaml
-import requests
 import json
 
-from dotenv import load_dotenv
-from langchain_postgres.vectorstores import PGVector
+import requests
 from langchain.agents import AgentExecutor, create_tool_calling_agent, tool
-from langchain_openai import AzureOpenAIEmbeddings, AzureChatOpenAI
-from langchain.tools.retriever import create_retriever_tool
 from langchain_core.prompts import PromptTemplate, ChatPromptTemplate
-from langchain_core.callbacks import UsageMetadataCallbackHandler
-from langchain_community.callbacks import get_openai_callback
+
 from Backend import models
 from Backend.Agent import execute, critic
-from Backend.RAG import vector_db, retriever
+from Backend.RAG import retriever
 
 
 @tool(parse_docstring=True)
@@ -45,8 +35,8 @@ def productRetrieverStep(query,step):
         a text descrbing potential functions
     """
 
-    #mod_query = f"I am looking for data products that can answer the query: '{query}'\n Specifically the retrieval question {step} "
-    mod_query = f"I am looking for data products that can answer the retrieval question {step} "
+    mod_query = f"I am looking for data products that can answer the query: '{query}'\n Specifically the retrieval question {step} "
+
     product = retriever.product_rag(mod_query)
     return product["name"]
 
@@ -86,7 +76,7 @@ def breakDownQuery(query):
         ("system", sys_prompt),
         ("human", input_prompt),
     ]
-    # llm = models.get_LLM()
+
     llm = models.get_structured_LLM()
     response = llm.invoke(messages)['products']
 
@@ -155,7 +145,6 @@ def generate_retrieve(step, product_name):
     """
 
     # Retrieve corresponding data catalog
-
     if 'http' in product_name:
         product_name = file.split("/")[-1]
 
@@ -271,7 +260,7 @@ def generate_function(step, function_name, product_name):
 @tool(parse_docstring=True)
 def generate_combination(step, first_product_name, second_product_name):
     """
-    Creates a the combination step
+    Creates a combination step
     Args:
         step:  a step in a query that is being solved
         first_product_name: actual name of the data product, only the name without description, found with the productRetrieverStep tool
@@ -408,6 +397,8 @@ def invoke_agent(agent_instance,query,evidence):
     if ciritique:
         mod_query = f"The query i want to solve: {query}, some additional information: {evidence}"
         res = critic.critique_plan(agent_result['output'],mod_query)
+    else:
+        res = agent_result['output']
 
     return res
 
@@ -420,27 +411,26 @@ def invoke_agent_remote(query):
 
     if ciritique:
         res = critic.critique_plan(agent_result['output'],query)
+    else:
+        res = agent_result['output']
 
-    res = execute.execute_new(res)
+    res = execute.execute(res)
     return res
 
 if __name__ == "__main__":
-    with get_openai_callback() as cb:
-        agent_i = init_agent()
-
-        sql = "Calculate the average overall rating of Pietro Marino"
-        sql = "What was Lewis Hamilton's final rank in the 2008 Chinese Grand Prix?"
-        ev = "Lewis Hamilton refers to the full name of the driver; Full name of the driver refers to drivers.forename and drivers.surname; final rank refers to positionOrder; Chinese Grand Prix refers to races.name = 'Chinese Grand Prix';"
-
-        #print(invoke_agent(agent_i,sql,ev))
-
-        #agent_result = agent_i.invoke({'query': sql, "evidence": ev})
-        #print(agent_result['output'])
-        #query = f"The query i want to solve: {sql},some additional information:{ev}"
-        query= "I want all female clients"
-        #['retrieve client', "filter for gender column where value is 'F'", 'returnResult']
-        print(breakDownQuery.invoke(input={"query": query}))
-        # print(execute.execute_new(plan))
-       # plan = ['retrieve Budget', "filter for event_status = 'Open' and link_to_event = 'April Speaker'", 'group by category and calculate SUM(amount) for each category', 'sort by SUM(amount) in ascending order', 'returnResult'] #print(reiterate_plan.invoke(input={"steps":plan, "collection_name":"european_football_2", "query":query}))
-        # query = f"The query i want to solve: {sql},some additional information:{ev}"
-        #print(reiterate_plan.invoke({"steps":plan, "collection_name":"student_club", "query":query}))
+    """
+    always necerssary:  
+    agent_instance = init_agent()
+    
+    To generate a singular output for a query there are two options
+    
+    critiqued:
+    invoke_agent(agent_instance,query,evidence)
+    
+    uncritiqued:
+    agent_instance.invoke({'query': query, "evidence": evidence})
+    
+    with 
+    query as the user query and evidence as additional informtion, can be ""
+    """
+    pass

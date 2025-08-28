@@ -1,12 +1,7 @@
 import os
 
-from dotenv import load_dotenv
-from langchain_postgres.vectorstores import PGVector
-from langchain.agents import AgentExecutor, create_tool_calling_agent, tool
 from langchain_openai import AzureOpenAIEmbeddings, AzureChatOpenAI
-from langchain.tools.retriever import create_retriever_tool
-from langchain_core.prompts import PromptTemplate, ChatPromptTemplate
-from langchain_core.callbacks import UsageMetadataCallbackHandler
+from langchain_postgres.vectorstores import PGVector
 
 
 def get_LLM():
@@ -16,7 +11,6 @@ def get_LLM():
         model=os.environ["GPT-4o_model_name"],
         deployment_name=os.environ["GPT-4o_deployment"],
         temperature=0,
-
     )
     return llm
 

@@ -1,17 +1,15 @@
-import pandas as pd
-from Backend.Agent.Agent import init_agent
-from Backend.Agent import execute
-from dotenv import load_dotenv
-from Backend.evaluation import metrics
 import ast
-from tqdm import tqdm
-from datetime import datetime
 import time
+from datetime import datetime
+
 import numpy as np
-import duckdb
-import requests
-import json
-import io
+import pandas as pd
+from dotenv import load_dotenv
+from tqdm import tqdm
+
+from Backend.Agent import execute
+from Backend.Agent.Agent import init_agent
+from Backend.evaluation import metrics
 
 load_dotenv()
 pd.set_option('display.max_columns', None)

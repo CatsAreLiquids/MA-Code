@@ -1,22 +1,13 @@
 import ast
-import os
+import json
 
 import pandas as pd
-import yaml
 import requests
-import json
-import time
+from langchain_core.prompts import PromptTemplate
 
-from dotenv import load_dotenv
-from langchain_postgres.vectorstores import PGVector
-from langchain.agents import AgentExecutor, create_tool_calling_agent, tool
-from langchain_openai import AzureOpenAIEmbeddings, AzureChatOpenAI
-from langchain_core.prompts import PromptTemplate, ChatPromptTemplate
-from langchain_core.callbacks import UsageMetadataCallbackHandler
-from langchain_community.callbacks import get_openai_callback
 from Backend import models
-from Backend.Agent import execute
-from Backend.RAG import vector_db,retriever
+from Backend.RAG import retriever
+
 
 def reiterate_plan(steps, query):
     """
@@ -140,45 +131,10 @@ def manual_correction(agent_result):
 
     return agent_result
 
-def critique_plan(agent_result):
-    plan = agent_result["plans"]
-
-    for i in range(len(plan)):
-        print(i)
-        elem = plan[i]
-        if elem['function'] == 'http://127.0.0.1:5200/retrieve':
-            product = elem["filter_dict"]["product"]
-        if elem['function'] == 'combination':
-            continue
-        plan[i] = critic(elem, product)
-
-    agent_result["plans"] = plan
-    return agent_result
-
-def critique_plan_df(agent_result):
-    try:
-        agent_result = ast.literal_eval(agent_result)
-        plan = agent_result["plans"]
-
-        for i in range(len(plan)):
-            elem = plan[i]
-            if elem['function'] == 'http://127.0.0.1:5200/retrieve':
-                product = elem["filter_dict"]["product"]
-            if elem['function'] == 'combination':
-                continue
-            plan[i] = critic(elem, product)
-
-        agent_result["plans"] = plan
-    except:
-        pass
-
-    return agent_result
-
 def critique_plan(steps, query):
     num_iterations = 0
 
     while num_iterations < 3 :
-        print(steps)
         response = reiterate_plan(steps, query)
         if not response["decision"]:
             tmp = correct_plan(steps,response["instructions"])
@@ -197,42 +153,25 @@ def critique_plan(steps, query):
 
     return steps
 
-def correct_full_run(file):
+def correct_run(file, evidence=True):
     df = pd.read_csv(file)
     res = []
-    start = time.time()
 
     for index, row in df.iterrows():
-        mod_query = f"The query i want to solve: {row['query']}, some additional information: {row['evidence']}"
-        #mod_query = f"The query i want to solve: {row['query']}"
-        tmp = critique_plan(row["response"],mod_query)
+        if evidence:
+            modded_query = f"The query i want to solve: {row['query']}, some additional information: {row['evidence']}"
+        else:
+            modded_query = f"The query i want to solve: {row['query']}"
+
+        tmp = critique_plan(row["response"],modded_query)
         res.append(tmp)
 
     df["response"] = res
     df.to_csv(f"{file}_cirtiqued_single",index=False)
 
-    end = time.time()
-    print(end - start)
 
 if __name__ == "__main__":
-    file = "../evaluation/gpt4.csv"
-    correct_full_run(file)
-
-    test = {'plans': [
-{'function': 'http://127.0.0.1:5200/retrieve', 'filter_dict': {'product': 'http://127.0.0.1:5000/products/student_club/Event'}},
-{'function': 'http://127.0.0.1:5200/filter', 'filter_dict': {'conditions': {'event_name': 'April Speaker'}}},
-{'function': 'http://127.0.0.1:5200/retrieve', 'filter_dict': {'product': 'http://127.0.0.1:5000/products/student_club/Budget'}},
-{'function': 'combination', 'filter_dict': {'columns_left': 'link_to_event', 'columns_right': 'event_id', 'type': 'equals', 'values': ['None']}}]}
-
-
-    #print(critique_plan(test))
-
-    sql = "Calculate the amount budgeted for 'April Speaker' event. List all the budgeted categories for said event in an ascending order based on their amount budgeted."
-    ev = "'April Speaker' is an event name; amount budgeted refers to SUM(amount); budget categories refers to category"
-    query = f"The query i want to solve: {sql},some additional information:{ev}"
-    inst =  [
-{'function': 'update', 'step': 3, 'changes': {'filter_dict': {'conditions': {'label': '-'}}}},
- {'function': 'update', 'step': 4, 'changes': {'filter_dict': {'columns': 'molecule_id', 'value': '> 5'}}}]
-    #print(manual_correction(test))
-    #print(correct_plan(test,inst))
-    #print(reiterate_plan(test, query))
+    """
+    To correct a full run use correct_run, alternativley the reiterate_plan and correct_plan can be used to correct a singluar plan
+    """
+    pass

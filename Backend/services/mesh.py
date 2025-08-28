@@ -1,8 +1,9 @@
-import pandas as pd
-import os
-from flask import Flask, request
-import yaml
 import json
+import os
+
+import pandas as pd
+import yaml
+from flask import Flask, request
 
 app = Flask(__name__)
 port = int(os.environ.get('PORT', 5000))
@@ -39,7 +40,6 @@ def getCatalogCollection():
     file = content['file']
     if "/" in file:
         file = file.split("/")[-1]
-    print(file)
     try:
         with open("../data/Catalogs/catalog.yml") as stream:
             catalog = yaml.safe_load(stream)
@@ -55,7 +55,7 @@ def getCatalogCollection():
 
             except FileNotFoundError:
                 return "could not find the specific collection catalog"
-
+    return {"text": "No fitting collection found"}
 
 @app.route('/catalog/columns', methods=['GET'])
 def getCatalogColumns():
@@ -82,26 +82,6 @@ def getCatalogColumns():
             except KeyError:
                 return collection_dict
     return {"text": "No fitting catalog columns found"}
-# ----------------------Single Catalogs-----------------------
-@app.route('/catalog/EDGAR_2024_GHG', methods=['GET'])
-def getCatalogEDGAR_2024_GHG():
-    file = request.args.get('file')
-    try:
-        with open("../dataCatalog/Catalogs/" + file + ".yml") as stream:
-            return yaml.safe_load(stream)
-    except FileNotFoundError:
-        return "Could not find a catalog item asociated to your request"
-
-
-@app.route('/catalog/Sales_Data', methods=['GET'])
-def getCatalogSales_Data():
-    file = request.args.get('file')
-    try:
-        with open("../dataCatalog/Catalogs/" + file + ".yml") as stream:
-            return yaml.safe_load(stream)
-    except FileNotFoundError:
-        return "Could not find a catalog item asociated to your request"
-
 
 # ----------------------california_schools-----------------------
 @app.route('/products/california_schools/frpm', methods=['GET'])
@@ -646,7 +626,6 @@ def get_molecule():
 
 
 # ----------------------END-----------------------
-
 
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=port)

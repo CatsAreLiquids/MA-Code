@@ -1,9 +1,10 @@
 import ast
+import io
 import json
+
 import pandas as pd
 import requests
-import io
-import numpy as np
+
 
 def getData(func_dict):
     url = func_dict["product"]
@@ -24,22 +25,10 @@ def getData(func_dict):
         try:
             df = df[columns]
         except KeyError:
-            df
+            return df
     return df
 
 
-def _getDataProduct(url):
-    """
-    :param agent_result:
-    :return:
-    """
-    try:
-        return getData(url)
-    except:
-        return "could not access data product is the URL correct ?"
-
-
-# TODO manage when data is to big
 def _putDataProduct(df, function):
     if 'values' in function:
         args = json.dumps(function['values'])
@@ -75,54 +64,13 @@ def _putDataProductCombination(first,second, function):
     return df
 
 
-def _executeProcessing(df, plan):
-    for elem in plan:
-        df = _putDataProduct(df, elem)
-    return df
-
-def executeStep(plan):
-
-    retrieve = plan[0]
-    df = getData(retrieve['values']['product'],retrieve['values']['columns'])
-
-    for elem in plan[1:]:
-        df = _putDataProduct(df, elem)
-
-    return df
-
-
 def execute(agent_result):
-    plan = agent_result['products']
-    combination = agent_result['combination']
-    frames = {}
-
-    for i in range(len(plan)):
-        df = _getDataProduct(plan[i]["product"])
-        if isinstance(df,str):
-            return None
-        df = _executeProcessing(df, plan[i]["transformation"])
-        frames["df_" + str(i)] = df
-
-    if len(plan) -1 != len(combination): #& len(combination[0]) != 0:
-        return frames
-
-    previous = frames["df_0"]
-    for i in range(len(combination)):
-        new = frames["df_"+str(i+1)]
-        previous = _putDataProductCombination(previous,new,combination[i])
-
-    return previous
-
-
-
-def execute_new(agent_result):
     plans = agent_result['plans']
 
     frames = {}
     i = -1
     name = ""
     for elem in plans:
-        #print(elem)
         if elem['function'] == 'http://127.0.0.1:5200/retrieve':
             df = getData(elem['filter_dict'])
 
@@ -142,30 +90,19 @@ def execute_new(agent_result):
         else:
             df = _putDataProduct(df, elem)
             frames["df_" + str(i)] = {"df":df,"name":name}
-        #print(frames["df_" + str(i)])
+
         try:
             tmp = frames["df_" + str(i)]
-            print(tmp["DisplayName"].unique())
         except:
             pass
 
     return frames["df_" + str(i)]["df"]
 
 if __name__ == "__main__":
-
-    l = {'plans': [{'function': 'http://127.0.0.1:5200/retrieve', 'filter_dict': {'product': 'http://127.0.0.1:5000/products/superhero/superhero'}},
- {'function': 'http://127.0.0.1:5200/filter', 'filter_dict': {'conditions': {'superhero_name': 'Copycat'}}},
- {'function': 'http://127.0.0.1:5200/retrieve', 'filter_dict': {'product': 'http://127.0.0.1:5000/products/superhero/race'}},
- {'function': 'combination', 'filter_dict': {'columns_left': 'race_id', 'columns_right': 'id', 'type': 'equals', 'values': ['None']}}]}
-
-    t = {'plans': [
-{'function': 'http://127.0.0.1:5200/retrieve', 'filter_dict': {'product': 'http://127.0.0.1:5000/products/formula_1/races'}},
- {'function': 'http://127.0.0.1:5200/filter', 'filter_dict': {'conditions': {'name': 'Chinese Grand Prix', 'year': 2008}}},
- {'function': 'http://127.0.0.1:5200/retrieve', 'filter_dict': {'product': 'http://127.0.0.1:5000/products/formula_1/results'}},
- {'function': 'combination', 'filter_dict': {'columns_left': 'raceId', 'columns_right': 'raceId', 'type': 'equals', 'values': ['None']}},
- {'function': 'http://127.0.0.1:5200/retrieve', 'filter_dict': {'product': 'http://127.0.0.1:5000/products/formula_1/drivers'}},
- {'function': 'http://127.0.0.1:5200/filter', 'filter_dict': {'conditions': {'forename': 'Lewis', 'surname': 'Hamilton'}}},
- {'function': 'combination', 'filter_dict': {'columns_left': 'driverId', 'columns_right': 'driverId', 'type': 'equals', 'values': ['None']}}]}
-
-
-    print("result",execute_new(l))
+    """
+    Use this code when testing functionality localy without having to generate airflow code:
+    
+    execute(plan)
+    
+    """
+    pass

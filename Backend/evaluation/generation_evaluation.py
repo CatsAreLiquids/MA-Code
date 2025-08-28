@@ -1,10 +1,11 @@
 import pandas as pd
-from Backend import models
-from Backend.evaluation import metrics
-from langchain_core.prompts import PromptTemplate
-from Backend.RAG import eval_retriever
 from dotenv import load_dotenv
+from langchain_core.prompts import PromptTemplate
 from tqdm import tqdm
+
+from Backend import models
+from Backend.RAG import eval_retriever
+from Backend.evaluation import metrics
 
 load_dotenv()
 

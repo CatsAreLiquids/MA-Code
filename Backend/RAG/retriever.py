@@ -1,41 +1,20 @@
-import ast
-import itertools
-import os
 import requests
-import pandas as pd
-from langchain_core.documents import Document
-from langchain_postgres import PGVector
-from langchain_postgres.vectorstores import PGVector
-from langchain_openai import AzureOpenAIEmbeddings, AzureChatOpenAI
-from dotenv import load_dotenv
 import json
-from langchain_core.output_parsers import StrOutputParser
-from langchain_core.runnables import RunnablePassthrough
-from langchain_core.runnables import RunnableLambda
-from langchain_core.prompts import PromptTemplate
-from langchain.retrievers import EnsembleRetriever
-from langchain_community.retrievers import BM25Retriever
 import re
+
+import matplotlib
+import requests
+from dotenv import load_dotenv
+from langchain.retrievers import EnsembleRetriever
 from langchain_community.document_transformers import LongContextReorder
-from typing import Optional, List
-import uuid
+from langchain_community.retrievers import BM25Retriever
+from langchain_core.output_parsers import StrOutputParser
+from langchain_core.prompts import PromptTemplate
+from langchain_core.runnables import RunnablePassthrough
 
 from Backend import models
-from dotenv import load_dotenv
-import yaml
-import numpy as np
-import copy
-
-from numpy import dot
-from numpy.linalg import norm
-from collections import defaultdict
-import seaborn as sns
-import matplotlib
-import matplotlib.pyplot as plt
-import numpy as np
 from Backend.RAG.vector_db import get_docs
-import matplotlib
-import matplotlib as mpl
+
 matplotlib.use('TkAgg')
 load_dotenv()
 

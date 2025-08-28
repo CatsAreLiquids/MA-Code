@@ -8,14 +8,21 @@ import requests
 import pandas as df
 import io
 
-import util
 from uuid import uuid4
 import ast
 
 
 
+def fallBack(df,urls):
+    st.dataframe(df)
+
+    for url in urls:
+        response = requests.get(url)
+        content = json.loads(response.text)
+        df = pd.read_json(io.StringIO(content['data']))
+        st.dataframe(df)
+
 def parseData(urls,titles):
-    content = []
 
     url = urls.pop()
     title = titles.pop()
@@ -34,11 +41,10 @@ def parseData(urls,titles):
         try:
             df = pd.concat([df, df_to_merge], axis=1, join="inner")
         except:
-            util.fallBack(df,urls)
+            fallBack(df,urls)
             return None
 
     if len(df.shape) < 2:
-        #TODO chcek if this could be nicer
         st.table(df.values)
     else:
         st.dataframe(df)

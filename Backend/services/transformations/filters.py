@@ -1,5 +1,6 @@
-import numpy as np
 import ast
+
+import numpy as np
 import pandas as pd
 
 
@@ -62,7 +63,6 @@ def applyFilter(df, filter_dict):
         filter_dict = filter_dict[0]
 
     for key, val in filter_dict.items():
-        print(key, val)
         if key == "columns" :
             return df
         elif isinstance(val, dict):
@@ -112,10 +112,6 @@ def _matchValues(df, column, values):
         idx += tmp
 
     return df.iloc[idx]
-
-def _getInDf(df, column):
-    pass
-
 
 def getMax(df, filter_dict):
     filter_dict = ast.literal_eval(filter_dict)

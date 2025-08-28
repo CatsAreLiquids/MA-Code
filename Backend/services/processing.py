@@ -1,13 +1,16 @@
-import os
-from flask import Flask, request
-import pandas as pd
-import json
-import io
-import yaml
 import ast
+import io
+import json
+import os
+
+import pandas as pd
+import yaml
+from flask import Flask, request
+
 from Backend.services.transformations import aggregation
 from Backend.services.transformations import filters
 from Backend.services.transformations import misc
+
 app = Flask(__name__)
 port = int(os.environ.get('PORT', 5200))
 
@@ -54,7 +57,6 @@ def call_max():
     if isinstance(df,pd.Series) or isinstance(df,pd.DataFrame):
         return {'data': df.to_json()}
     else:
-        print(df)
         return {'data': json.dumps(df)}
 
 @app.route('/min', methods=['PUT'])
@@ -115,7 +117,6 @@ def call_mean():
 @app.route('/filter', methods=['PUT'])
 def call_filter():
     content = json.loads(request.data)
-    print(content['args'])
     df = pd.read_json(io.StringIO(content['data']))
     df = filters.applyFilter(df, content['args'])
 

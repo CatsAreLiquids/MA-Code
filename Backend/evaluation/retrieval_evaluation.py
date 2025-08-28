@@ -1,16 +1,13 @@
 import ast
-
-from Backend.RAG import vector_db
-from Backend import models
-from Backend.evaluation import metrics
-import pandas as pd
-from pathlib import Path
-from datetime import datetime
-from tqdm import tqdm
-from numpy.random import default_rng
-from Backend.RAG.eval_retriever import productRetriever_eval,functionRetriever_eval, multilevelRetriever, functionRetriever_hybrid,productRetriever_eval_both
 import time
+from datetime import datetime
 
+import pandas as pd
+from tqdm import tqdm
+
+from Backend.RAG.eval_retriever import productRetriever_eval, functionRetriever_eval, multilevelRetriever, \
+    functionRetriever_hybrid, productRetriever_eval_both
+from Backend.evaluation import metrics
 
 functions = {"product": productRetriever_eval, "function": functionRetriever_eval,"function_text":functionRetriever_eval, "multilevel":multilevelRetriever,"hybrid":functionRetriever_hybrid,
              "both":productRetriever_eval_both}

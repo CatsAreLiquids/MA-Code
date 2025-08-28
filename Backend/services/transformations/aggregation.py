@@ -19,7 +19,6 @@ def mean(df, filter_dict):
     filter_dict = ast.literal_eval(filter_dict)
     if "group_by" in filter_dict and filter_dict['group_by'] != "None":
         df = df.groupby(by=filter_dict['group_by'])
-        print(df[filter_dict['columns']].mean())
         return df[filter_dict['columns']].mean().reset_index()
     else:
         return df[filter_dict['columns']].mean()
@@ -49,8 +48,7 @@ def count(df, filter_dict):
 
 def combineProducts(first, second, first_name,second_name,filter_dict):
     filter_dict = ast.literal_eval(filter_dict)
-    print(first.columns)
-    print(second.columns)
+
     left = ""
     right = "_y"
     if isinstance(first, pd.DataFrame) and isinstance(second, pd.DataFrame):
@@ -83,6 +81,5 @@ def combineProducts(first, second, first_name,second_name,filter_dict):
             values = second[filter_dict['column']].unique().tolist()
 
         first = first[~first[filter_dict['column']].isin(values)]
-    print(first)
     return first
 
