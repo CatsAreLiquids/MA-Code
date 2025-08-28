@@ -18,7 +18,6 @@ load_dotenv()
 llm = models.get_LLM()
 evaluator_llm = LangchainLLMWrapper(llm)
 
-#def exact_match_product(truth, response):
 
 def correctness_LLM(truth, response):
     sys_prompt = """Your Task is to decide wether a response allings with an expected output. Return a valid json with output either True if the output describes the same Function as the given response and False otherwise"""
@@ -168,6 +167,7 @@ def hit_rate_func(targets, contexts) -> float:
             return 1
 
     return 0
+
 # ----------------------------------------- stuff -------------------------------------
 
 def planRecall(generated_plan, groundTruth):
@@ -229,7 +229,3 @@ def _check_block(block):
             return 0
 
     return 1
-
-
-def TPR():
-    pass

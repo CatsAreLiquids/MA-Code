@@ -179,7 +179,7 @@ if __name__ == "__main__":
     config = {"file":"bird_mini_dev/functions_simplel.csv","num_of_querys":111,"retriever":"function"}
 
     #file= "dbpedia_entity/semantic_queries.csv"
-    file = "bird_mini_dev/bird_minidev_questions_eval.csv"
+    file = "test_files/bird_minidev_questions_eval.csv"
     start = time.time()
     #run_test(config)
     #run_test_step_both(config=config)

@@ -112,7 +112,7 @@ def test_plan(file):
 
 def generate_plan():
 
-    df = pd.read_csv("bird_mini_dev/prototype_eval.csv")
+    df = pd.read_csv("test_files/prototype_eval.csv")
     df = df.dropna()
 
     res = {"response": [], "agent_error": [], "time": []}
