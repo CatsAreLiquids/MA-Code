@@ -167,18 +167,27 @@ def eval_plan(file):
 if __name__ == "__main__":
     #generate_plan()
 
-    file = "4o-mini.csv"
+    file = "prototype_eval_column_info_2025-08-16-12-44_cirtiqued.csv"
     #eval_plan(file)
     #test_plan(file)
     df = pd.read_csv(file)
 
 
-    print(df[["agent_error", "agent_time"]].describe())
-    print(df[["planRecall", "jaccard", "planPrecision"]].describe())
-    print(df[["recall", "precision","execution_error"]].describe())
+    #print(df[["agent_error", "agent_time"]].describe())
+    #print(df[["planRecall", "jaccard", "planPrecision"]].describe())
+    #print(df[["recall", "precision","execution_error"]].describe())
     df = df.sort_values(by=["precision", "recall"], ascending=False)
-    print(df[df["execution_error"] != 1])
+    print(df[df["execution_error"] == 1])
 
+    """
+    df = df.groupby('dataset')
+    print(df[["planRecall"]].describe())
+    print(df[["jaccard"]].describe())
+    print(df[["planPrecision"]].describe())
+    print(df[["recall"]].describe())
+    print(df[["precision"]].describe())
+    print(df[["execution_error"]].describe())
+    """
     #df = df.sort_values(by=["planPrecision","planRecall"], ascending=False)
     #print(df[df["execution_error"] == 1].head(n=10))
 
