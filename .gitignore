@@ -7,3 +7,5 @@ venv
 postHistory.csv
 Match.csv
 visualization
+__pycache__
+.gitattributes
