@@ -127,7 +127,7 @@ Laboratory:
       the value can be null or missing. The format is not applicable (N/A), and the
       integer value indicates the level of anti-DNA, with a normal range defined as
       less than 8.
-  description:"The dataset titled \"Laboratory\" contains laboratory test results recorded on two specific dates: September 11, 1991, and September 17, 1991. It includes a variety of biochemical markers such as GOT, GPT, LDH, ALP, and others, which are essential for assessing liver function, kidney function, and overall metabolic health. Additionally, the dataset features hematological parameters like WBC, RBC, HGB, and PLT, which provide insights into the patient's blood composition. Some values are marked as 'nan', indicating missing data for certain tests. Overall, this dataset serves as a historical reference for clinical laboratory results from the early 1990s."
+  description: "The dataset titled \"Laboratory\" contains laboratory test results recorded on two specific dates: September 11, 1991, and September 17, 1991. It includes a variety of biochemical markers such as GOT, GPT, LDH, ALP, and others, which are essential for assessing liver function, kidney function, and overall metabolic health. Additionally, the dataset features hematological parameters like WBC, RBC, HGB, and PLT, which provide insights into the patient's blood composition. Some values are marked as 'nan', indicating missing data for certain tests. Overall, this dataset serves as a historical reference for clinical laboratory results from the early 1990s."
 Patient:
   base_api: http://127.0.0.1:5000/products/thrombosis_prediction/Patient
   columns:

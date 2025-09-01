@@ -1,5 +1,6 @@
 Attendance:
   base_api: http://127.0.0.1:5000/products/student_club/Attendance
+  description: "The dataset titled \"Attendance\" contains a single column named \"link_to_member,\" which includes two entries representing unique identifiers for members. Each entry is formatted as a string with a newline character at the end. This data likely serves to link to specific member records within a larger database, facilitating attendance tracking or member management."
   columns:
   - link_to_event: Alphanumeric string representing a unique identifier for an attended
       event, referencing the Event table.
@@ -7,6 +8,7 @@ Attendance:
       who attended an event, referencing the Member table.
 Budget:
   base_api: http://127.0.0.1:5000/products/student_club/Budget
+  description: "The dataset titled \"Budget\" contains financial information related to various categories of expenses. It includes two entries: one for Advertisement and another for Food. Each entry provides details such as the total amount spent, the remaining budget, the overall allocated amount, the status of the event (both marked as \"Closed\"), and a link to the respective event. This data can be useful for analyzing budget allocation and expenditure in different categories."
   columns:
   - budget_id: Alphanumeric strings representing unique identifiers for budget entries.
   - category: A string representing the category for which a budget amount is allocated,
@@ -27,6 +29,7 @@ Budget:
       referencing the Event table.
 Event:
   base_api: http://127.0.0.1:5000/products/student_club/Event
+  description: "The dataset titled \"Event\" contains information about various meetings held in 2020. It includes two entries: the first is a March meeting scheduled for March 10, 2020, at MU 215, while the second is an Officers meeting that took place on January 14, 2020. Each entry provides details such as the event name, date, type, notes, location, and status, with both meetings currently marked as open. The data highlights the scheduling and organization of events within a specific timeframe."
   columns:
   - event_id: Alphanumeric strings representing event identifiers and associated text
       data.
@@ -42,6 +45,7 @@ Event:
       'Closed', or 'Planning'.
 Expense:
   base_api: http://127.0.0.1:5000/products/student_club/Expense
+  description: "The dataset titled \"Expense\" contains information about various expenses incurred, including descriptions, dates, costs, approval status, and links to associated members and budgets. It includes two entries: one for postcards and posters dated August 20, 2019, with a cost of $122.06, and another for water and cookies dated October 8, 2019, costing $20.20. Both expenses have been approved, indicating they are valid and accounted for. The links provided allow for further exploration of the related member and budget details."
   columns:
   - expense_id: Alphanumeric strings representing unique identifiers for expenses.
   - expense_description: A comma-separated list of textual descriptions detailing
@@ -59,6 +63,7 @@ Expense:
       and events.
 Income:
   base_api: http://127.0.0.1:5000/products/student_club/Income
+  description: "The dataset titled \"Income\" contains financial transaction records with five key columns: date_received, amount, source, notes, and link_to_member. It includes two entries, both reflecting dues received on different dates in 2019. The first entry is dated October 17, 2019, with an amount of $50, and the second entry is from September 4, 2019, also for $50. The notes column contains 'nan', indicating no additional information was provided for these transactions, while the link_to_member column includes unique identifiers for each member associated with the dues."
   columns:
   - income_id: A collection of alphanumeric strings representing unique identifiers
       for income records.
@@ -74,6 +79,7 @@ Income:
       as texts.
 Major:
   base_api: http://127.0.0.1:5000/products/student_club/Major
+  description: "The dataset titled \"Major\" contains information about academic programs offered within specific colleges. It includes three columns: \"major_name,\" which lists the names of the majors, \"department,\" which indicates the associated department, and \"college,\" which specifies the college to which the department belongs. The data features two entries: \"Outdoor Product Design and Development\" and \"Agricultural Communication,\" both housed under the School of Applied Sciences, Technology and Education within the College of Agriculture and Applied Sciences. This dataset provides insights into the structure of academic offerings in this particular college."
   columns:
   - major_id: Alphanumeric strings representing unique identifiers for each major.
   - major_name: List of academic programs or fields of study in text format, including
@@ -84,6 +90,7 @@ Major:
       offering the major.
 Member:
   base_api: http://127.0.0.1:5000/products/student_club/Member
+  description: "The dataset titled \"Member\" contains information about two individuals, Angela Sanders and Grant Gilmour, who are both members of an organization. Each entry includes personal details such as first and last names, email addresses, positions held, t-shirt sizes, phone numbers, and zip codes. The data also features a link to their major, which may provide additional context about their academic or professional background. This structured information can be useful for managing member profiles and communication within the organization."
   columns:
   - member_id: Alphanumeric strings representing unique identifiers for members.
   - first_name: A string data type representing a member's first name.
@@ -103,6 +110,7 @@ Member:
       for a member's major, referencing the Major table.
 Zip_Code:
   base_api: http://127.0.0.1:5000/products/student_club/Zip_Code
+  description: "The dataset titled \"Zip_Code\" contains information about unique entries related to Holtsville, located in Suffolk County, New York. It includes columns for type, city, county, state, and a short state abbreviation. The data indicates that all entries pertain to the same location, highlighting the unique characteristics of Holtsville within its county and state context. This dataset may be useful for geographic analysis or demographic studies focused on this specific area."
   columns:
   - zip_code: A five-digit numerical identifier for a US post office, represented
       as an integer.

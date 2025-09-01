@@ -1,11 +1,13 @@
 alignment:
   base_api: http://127.0.0.1:5000/products/superhero/alignment
+  description: "The dataset titled \"alignment\" contains a single column labeled \"alignment,\" which categorizes data into two distinct values: 'Good' and 'Bad'. Each entry is followed by a newline character, indicating that the data may have been formatted for display or processing in a specific way. This simple binary classification could be useful for various applications, such as sentiment analysis or performance evaluation. Overall, the dataset provides a straightforward representation of alignment quality."
   columns:
   - id: Numerical data in integer format representing unique identifiers for alignments.
   - alignment: 'Categorical data representing the alignment of superheroes with three
       possible values: ''Good'', ''Neutral'', and ''Bad''.'
 attribute:
   base_api: http://127.0.0.1:5000/products/superhero/attribute
+  description: "The dataset titled \"attribute\" contains a single column named \"attribute_name,\" which lists various attributes relevant to character traits or abilities. The values included in this dataset are \"Intelligence\" and \"Strength,\" indicating a focus on cognitive and physical capabilities. Each attribute is presented with a newline character, suggesting that the data may have been formatted for display purposes. This dataset could be useful for applications in gaming, character development, or psychological assessments."
   columns:
   - id: Numerical data consisting of integers representing unique identifiers for
       attributes.
@@ -14,18 +16,21 @@ attribute:
       significance.
 colour:
   base_api: http://127.0.0.1:5000/products/superhero/colour
+  description: "The dataset titled \"colour\" contains a single column labeled \"colour,\" which includes two distinct entries: \"No Colour\" and \"Amber.\" Each entry is followed by a newline character, indicating that the data may have been formatted for display purposes. This dataset appears to categorize or describe different color options, with a specific focus on the absence of color and the presence of amber. Overall, it provides a simple overview of color classifications within the specified context."
   columns:
   - id: Numerical data in integer format representing unique identifiers for colors.
   - colour: Text data representing color names for various attributes of a superhero,
       such as skin, eye, and hair color.
 gender:
   base_api: http://127.0.0.1:5000/products/superhero/gender
+  description: "The dataset titled \"gender\" contains a single column that categorizes individuals based on their gender. The column includes two distinct values: 'Male' and 'Female', each represented with a newline character at the end. This simple dataset can be utilized for various analyses related to gender distribution or demographic studies. The data is straightforward and serves as a foundational element for more complex datasets or research."
   columns:
   - id: Numerical data in integer format representing unique identifiers for gender.
   - gender: Categorical data representing the gender of a superhero, with possible
       values 'Male', 'Female', or null.
 hero_attribute:
   base_api: http://127.0.0.1:5000/products/superhero/hero_attribute
+  description: "The dataset \"hero_attribute\" contains information about various attributes associated with heroes, represented by two columns: attribute_id and attribute_value. The attribute_id column indicates the unique identifier for each attribute, while the attribute_value column provides the corresponding values for these attributes. In this dataset, there are two entries with attribute_id '1' having values of '80' and '75', suggesting a potential comparison or ranking of a specific hero's attribute. Overall, this data could be useful for analyzing hero characteristics in a gaming or storytelling context."
   columns:
   - hero_id: Numerical data in integer format representing the unique identifier for
       a hero, mapped to a superhero.
@@ -34,6 +39,7 @@ hero_attribute:
       of superheroes, indicating their skill or power level in specific areas.
 hero_power:
   base_api: http://127.0.0.1:5000/products/superhero/hero_power
+  description: "The dataset titled \"hero_power\" contains a single column labeled \"power_id,\" which includes two entries: '1' and '18'. Each entry represents a unique identifier for different powers associated with heroes. The values are formatted as strings with newline characters, indicating that they may have been extracted from a text-based source. This dataset could be useful for analyzing the various powers attributed to heroes in a specific context, such as a game or a comic book universe."
   columns:
   - hero_id: A numerical dataset containing integer values representing the unique
       identifier for superheroes.
@@ -41,6 +47,7 @@ hero_power:
       with superhero attributes and abilities.
 publisher:
   base_api: http://127.0.0.1:5000/products/superhero/publisher
+  description: "The dataset titled \"publisher\" contains information about publishers, specifically focusing on their names. It includes two entries: one is a placeholder represented as 'nan' indicating a missing or undefined value, while the other entry is 'ABC Studios', a recognized publisher. This data may be useful for analyzing the presence of publishers in a given context or for identifying gaps in the dataset where publisher information is lacking."
   columns:
   - id: A numerical dataset containing unique identifiers for publishers, formatted
       as integers.
@@ -48,12 +55,14 @@ publisher:
       by the text, separated by commas.
 race:
   base_api: http://127.0.0.1:5000/products/superhero/race
+  description: "The dataset titled \"race\" contains a single column with values representing different racial or ethnic categories. The entries include a placeholder value represented by a hyphen ('-') and a specific category labeled as 'Alien'. This suggests that the dataset may be focused on distinguishing between various identities, potentially in a context related to immigration or extraterrestrial classifications. The presence of a placeholder indicates that there may be missing or undefined data points."
   columns:
   - id: Numerical data in integer format representing unique identifiers for races.
   - race: This data represents a text string that describes the race of a superhero,
       emphasizing the physical characteristics that define their racial group.
 superhero:
   base_api: http://127.0.0.1:5000/products/superhero/superhero
+  description: "The dataset titled \"superhero\" contains information about various superheroes, including their names, full names, and physical characteristics. It features two entries: 3-D Man (Charles Chandler) and A-Bomb (Richard Milhouse Jones), detailing attributes such as gender, eye color, hair color, skin color, race, publisher, alignment, height in centimeters, and weight in kilograms. The data is structured with specific identifiers for each attribute, allowing for easy analysis of superhero demographics and characteristics. This dataset could be useful for studies related to representation in comic books or for creating character profiles in gaming and storytelling contexts."
   columns:
   - id: Numerical data in integer format representing the unique identifier of a superhero.
   - superhero_name: A string format containing the name of a superhero, referred to
@@ -81,6 +90,7 @@ superhero:
       information.
 superpower:
   base_api: http://127.0.0.1:5000/products/superhero/superpower
+  description: "The dataset titled \"superpower\" contains a single column named \"power_name,\" which lists various superpowers. The current entries include \"Agility\" and \"Accelerated Healing,\" each followed by a newline character. This data provides a glimpse into the types of abilities that may be associated with superheroes or fictional characters, highlighting their unique traits and skills."
   columns:
   - id: Numerical data in integer format representing unique identifiers for superpowers.
   - power_name: A list of strings containing superpower names and associated text

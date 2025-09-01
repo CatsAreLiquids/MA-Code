@@ -1,5 +1,6 @@
 badges:
   base_api: http://127.0.0.1:5000/products/codebase_community/badges
+  description: "The dataset titled \"badges\" contains information about users, specifically teachers, who received badges. It includes three columns: UserId, Name, and Date. The data reveals that two teachers, identified by UserIds 5 and 6, were awarded badges on July 19, 2010, at 19:39:07. This dataset provides a snapshot of user recognition within an educational context, highlighting the date of achievement for these individuals."
   columns:
   - Id: Numerical data representing badge IDs in integer format.
   - UserId: UserId is a numerical data type represented as integers, serving as a
@@ -9,6 +10,7 @@ badges:
       when a user obtained a badge.'
 comments:
   base_api: http://127.0.0.1:5000/products/codebase_community/comments
+  description: "The dataset titled \"comments\" contains user-generated feedback related to a specific topic, with each entry comprising a unique PostId, a Score indicating the user's rating, the Text of the comment, the CreationDate of the comment, the UserId of the commenter, and the UserDisplayName. The data includes two comments dated July 19, 2010, both from the same user, with scores of 5 and 0, reflecting contrasting opinions on the value of a subject, likely related to the programming language R. The comments highlight a debate on the definition of 'valuable' in the context discussed, showcasing the subjective nature of user feedback."
   columns:
   - Id: Numerical data representing comment IDs in integer format.
   - PostId: Numerical data in integer format representing the unique identifier for
@@ -25,6 +27,7 @@ comments:
       used in user interfaces.
 postHistory:
   base_api: http://127.0.0.1:5000/products/codebase_community/postHistory
+  description: "The dataset titled \"postHistory\" contains information about user-generated posts related to Bayesian modeling. It includes columns such as PostHistoryTypeId, PostId, RevisionGUID, CreationDate, UserId, Text, Comment, and UserDisplayName. The data features two entries from July 19, 2010, both authored by the same user (UserId 8.0) and linked to the same post (PostId 1). The first entry discusses the process of eliciting prior distributions from experts, while the second entry is a more concise title on the same topic. Notably, there are no comments or user display names provided in this dataset."
   columns:
   - Id: Numerical data in integer format representing post history IDs.
   - PostHistoryTypeId: PostHistoryTypeId is a numerical data type represented as an
@@ -42,6 +45,7 @@ postHistory:
   - UserDisplayName: A string representing the user's display name in text format.
 postLinks:
   base_api: http://127.0.0.1:5000/products/codebase_community/postLinks
+  description: "The dataset \"postLinks\" contains information about relationships between posts in a social media or blogging platform. It includes four columns: CreationDate, PostId, RelatedPostId, and LinkTypeId. The CreationDate indicates when the link was created, while PostId and RelatedPostId represent the unique identifiers for the main post and the related post, respectively. The LinkTypeId specifies the type of relationship between the two posts. The data spans from July 21, 2010, to July 23, 2010, capturing two distinct post link entries."
   columns:
   - Id: Numerical data in integer format representing the post link ID.
   - CreationDate: Creation date of the post in datetime format, specified as YYYY-MM-DD
@@ -52,6 +56,7 @@ postLinks:
   - LinkTypeId: Numerical data in integer format representing the ID of the link type.
 posts:
   base_api: http://127.0.0.1:5000/products/codebase_community/posts
+  description: "The dataset titled \"posts\" contains information about various questions and answers related to statistical methods and Bayesian modeling. It includes key attributes such as PostTypeId, AcceptedAnswerId, CreationDate, Score, ViewCount, and Body, which provide insights into user engagement and content relevance. The data features two entries, one focusing on eliciting prior distributions from experts in Bayesian models and the other discussing the concept of normality in statistical methods. Each entry is enriched with metadata like OwnerUserId, LastActivityDate, Tags, and interaction metrics such as AnswerCount and CommentCount, allowing for a comprehensive analysis of user contributions and topic popularity."
   columns:
   - Id: Numerical data in integer format representing post IDs.
   - PostTypeId: Numerical data in integer format representing the Post Type Id, which
@@ -94,6 +99,7 @@ posts:
   - LastEditorDisplayName: A string representing the display name of the last editor.
 tags:
   base_api: http://127.0.0.1:5000/products/codebase_community/tags
+  description: "The dataset titled \"tags\" contains information about specific tags used in a forum or discussion platform. It includes four columns: TagName, Count, ExcerptPostId, and WikiPostId. The data reveals that the tag \"bayesian\" has been used 1,342 times, while the tag \"prior\" has a count of 168. Each tag is associated with specific post IDs, indicating their relevance in the context of the platform's content."
   columns:
   - Id: Numerical data representing tag IDs in integer format.
   - TagName: A list of strings representing text data, specifically formatted as 'TagName,
@@ -107,6 +113,7 @@ tags:
       is an integer identifying a specific wiki post.
 users:
   base_api: http://127.0.0.1:5000/products/codebase_community/users
+  description: "The dataset titled \"users\" contains information about two distinct user profiles from a community platform. The first entry represents a community account, created on July 19, 2010, which serves as an automated background process to maintain site cleanliness, with a total of 5007 views and 1920 upvotes. The second entry is for Geoff Dalgas, a developer on the StackOverflow team, who joined the platform on the same date and has a more personal profile, including links to his Twitter and blog. This entry has 25 views and 3 upvotes, highlighting the differences in user engagement and purpose between the two profiles."
   columns:
   - Id: Numerical data representing user IDs in integer format.
   - Reputation: Numerical data representing a user's reputation as an integer, indicating
@@ -133,6 +140,7 @@ users:
       as URLs.
 votes:
   base_api: http://127.0.0.1:5000/products/codebase_community/votes
+  description: "The dataset titled \"votes\" contains information related to user votes on a platform. It includes five columns: PostId, VoteTypeId, CreationDate, UserId, and BountyAmount. The data consists of two entries, both recorded on July 19, 2010, with PostId values of 3 and 2, respectively, and a VoteTypeId of 2 for both entries. Notably, the UserId and BountyAmount fields are marked as 'nan', indicating that this information is not available for these records. This dataset provides insights into voting activity on specific posts during the specified date."
   columns:
   - Id: Numerical data representing vote IDs in integer format.
   - PostId: Numerical data representing the Post Id, which is an integer indicating

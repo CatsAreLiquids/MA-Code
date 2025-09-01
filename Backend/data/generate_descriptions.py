@@ -36,7 +36,8 @@ def fromatInput(frame, max_row):
 
 
 def generateCollection(collection_name):
-    sys_prompt = json.load(open("prompts.json"))['collection_system_prompt']
+    sys_prompt =  """You are an assitant for creating meta data your task is to provide a short textutal description of a data collection.\nThe text should be between 3-5 sentences and give the reader an idea what the data is about. \n The input will be a list of describtions of the individual data files within that collection base your description of of these, th input will be formatted as follows:\n 'data set  name': 'description'"""
+
 
     metadata = get_metadata(collection_name)
     llm = models.get_LLM()
@@ -77,9 +78,10 @@ def generateCollection(collection_name):
 def generateText(titles, values, file_name):
     llm = models.get_LLM()
 
-    sys_prompt = json.load(open("prompts.json"))['text_system_prompt']
+    sys_prompt = """text_system_prompt": "You are an assitant for creating meta data your task is to provide a short textutal description of the data you receive.\nThe text should be between 3-5 sentences and give the reader a good overview of the data and what it contains. \nBe accurate to the input data and consider the data topics the timeline.\nThe data will be in the follwoing format:\nThe first row will be the titles: title1, title2, title3,...\nThe next rows will be the values: value1, value2, value 3,..."""
 
-    input_prompt = PromptTemplate.from_template(json.load(open("prompts.json"))['data_input_prompt'])
+    input_prompt = """data_input_prompt": "Use the following data\nColumn names:{titles}\nColumn values:{values}\n\nFile name: {file}"""
+    input_prompt = PromptTemplate.from_template(input_prompt)
     input_prompt = input_prompt.format(titles=titles, values=values, file=file_name)
     messages = [
         ("system", sys_prompt),

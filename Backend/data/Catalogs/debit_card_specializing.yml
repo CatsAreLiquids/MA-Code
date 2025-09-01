@@ -1,5 +1,6 @@
 customers:
   base_api: http://127.0.0.1:5000/products/debit_card_specializing/customers
+  description: "The dataset titled \"customers\" contains information about different market segments and their associated currencies. It includes two entries: one for the Small and Medium Enterprises (SME) segment, which uses the Euro (EUR), and another for the Latin America (LAM) segment, also utilizing the Euro (EUR). This data provides insights into the currency preferences of various customer segments, specifically highlighting the use of the Euro across these markets."
   columns:
   - CustomerID: CustomerID is a numerical identifier for customers, represented as
       an integer.
@@ -9,6 +10,7 @@ customers:
       including currency name and associated text.'
 gasstations:
   base_api: http://127.0.0.1:5000/products/debit_card_specializing/gasstations
+  description: "The dataset titled \"gasstations\" contains information about gas stations, specifically focusing on their Chain ID, Country, and Segment. It includes two entries from the Czech Republic (CZE), with Chain ID 13 categorized under \"Value for money\" and Chain ID 6 categorized as \"Premium.\" This data provides insights into the types of gas station segments available in the Czech market, highlighting the diversity in pricing and service levels."
   columns:
   - GasStationID: GasStationID is a numerical data type represented as integers, used
       to uniquely identify gas stations.
@@ -19,11 +21,13 @@ gasstations:
       chain segments, separated by commas.
 products:
   base_api: http://127.0.0.1:5000/products/debit_card_specializing/products
+  description: "The dataset titled \"products\" contains a single column labeled \"Description,\" which includes two entries. The first entry is \"Rucn\u00ed zad\u00e1n\u00ed,\" which translates to \"Manual entry\" in English, suggesting a process or method related to data input. The second entry, \"Nafta,\" refers to \"Diesel,\" indicating a type of fuel. This dataset appears to focus on product descriptions, potentially related to automotive or fuel-related industries."
   columns:
   - ProductID: Numerical data representing Product IDs in integer format.
   - Description: A collection of textual data in string format, containing descriptions.
 transactions_1k:
   base_api: http://127.0.0.1:5000/products/debit_card_specializing/transactions_1k
+  description: "The dataset titled \"transactions_1k\" contains transaction records from a gas station, detailing customer purchases. Each entry includes the date and time of the transaction, along with unique identifiers for the customer, card, and gas station. Additionally, the dataset provides information on the product purchased, the quantity (Amount), and the total price of the transaction. The two sample records indicate transactions that occurred on August 24, 2012, showcasing different customers and amounts spent at the same gas station."
   columns:
   - TransactionID: A numerical dataset containing Transaction IDs represented as integers.
   - Date: A collection of dates formatted as YYYY-MM-DD.
@@ -39,6 +43,7 @@ transactions_1k:
       total price = Amount x Price.'
 yearmonth:
   base_api: http://127.0.0.1:5000/products/debit_card_specializing/yearmonth
+  description: "The dataset titled \"yearmonth\" contains two columns: \"Date\" and \"Consumption.\" The \"Date\" column represents the year and month in a YYYYMM format, while the \"Consumption\" column indicates the corresponding consumption values in a numerical format. The data includes two entries, with the first entry dated July 2012 showing a consumption of 528.3, and the second entry dated February 2013 with a significantly higher consumption of 1598.28. This dataset could be useful for analyzing trends in consumption over time."
   columns:
   - CustomerID: Numerical data representing unique customer identifiers in integer
       format.

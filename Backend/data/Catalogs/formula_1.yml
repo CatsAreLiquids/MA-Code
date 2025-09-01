@@ -1,5 +1,6 @@
 circuits:
   base_api: http://127.0.0.1:5000/products/formula_1/circuits
+  description: "The dataset titled \"circuits\" contains information about two international racing circuits: the Sepang International Circuit in Malaysia and the Bahrain International Circuit in Bahrain. Each entry includes details such as the circuit reference, name, location, country, geographical coordinates (latitude and longitude), altitude, and a URL for further information. The data provides a comprehensive overview of these circuits, including their geographical positioning and links to additional resources for enthusiasts and researchers."
   columns:
   - circuitId: A numerical dataset containing unique identification numbers for circuits,
       formatted as integers.
@@ -20,6 +21,7 @@ circuits:
       where each entry consists of a URL followed by associated text.
 constructorResults:
   base_api: http://127.0.0.1:5000/products/formula_1/constructorResults
+  description: "The dataset \"constructorResults\" contains information about race results for different constructors in a specific race event. It includes four columns: raceId, constructorId, points, and status. The data indicates that for race ID 18, constructor ID 1 earned 14.0 points, while constructor ID 2 earned 8.0 points. The status for both entries is marked as 'nan', suggesting that there may be missing or undefined status information for these results."
   columns:
   - constructorResultsId: Numerical data in integer format representing constructor
       results identification.
@@ -31,6 +33,7 @@ constructorResults:
       potential text values.
 constructorStandings:
   base_api: http://127.0.0.1:5000/products/formula_1/constructorStandings
+  description: "The dataset titled \"constructorStandings\" contains information about the performance of constructors in a specific race, identified by the raceId. It includes details such as the constructorId, points earned, finishing position, position text, and the number of wins for each constructor. The data reveals that constructor 1 secured 14 points and finished in 1st position with 1 win, while constructor 2 earned 8 points, finishing in 3rd position with no wins. This dataset provides a concise overview of the constructors' standings in the race."
   columns:
   - constructorStandingsId: Numerical data in integer format representing unique identification
       of constructor standing records.
@@ -47,6 +50,7 @@ constructorStandings:
   - wins: Numerical data representing wins, formatted as integers.
 constructors:
   base_api: http://127.0.0.1:5000/products/formula_1/constructors
+  description: "The dataset titled \"constructors\" contains information about two prominent Formula 1 teams: McLaren and BMW Sauber. Each entry includes the constructor reference, the full name of the team, their nationality, and a URL linking to their respective Wikipedia pages for further details. The data highlights McLaren as a British team and BMW Sauber as a German team, providing a glimpse into the diverse origins of Formula 1 constructors. This dataset is useful for understanding the background and identity of these racing teams within the sport."
   columns:
   - constructorId: Numerical data in integer format representing unique identification
       numbers for constructors.
@@ -59,6 +63,7 @@ constructors:
   - wins: Numeric data representing the number of wins, formatted as an integer.
 driverStandings:
   base_api: http://127.0.0.1:5000/products/formula_1/driverStandings
+  description: "The dataset \"driverStandings\" contains information about the performance of drivers in a specific race, identified by the raceId. It includes details for two drivers, with their respective driverIds, points earned, finishing positions, position text, and the number of wins. The first driver (ID 1) finished in 1st place, earning 10 points and achieving 1 win, while the second driver (ID 2) finished in 2nd place, earning 8 points with no wins. This data provides a snapshot of the competitive standings for this particular race."
   columns:
   - driverStandingsId: DriverStandingsId is a numerical data type represented as an
       integer, serving as a unique identification number for driver standing records.
@@ -75,6 +80,7 @@ driverStandings:
   - wins: Numerical data representing wins, formatted as integers.
 drivers:
   base_api: http://127.0.0.1:5000/products/formula_1/drivers
+  description: "The dataset titled \"drivers\" contains information about two Formula 1 drivers, Lewis Hamilton and Nick Heidfeld. Each entry includes the driver's reference name, racing number, code, first name, last name, date of birth, nationality, and a URL to their respective Wikipedia pages. Lewis Hamilton, born on January 7, 1985, is a British driver, while Nick Heidfeld, born on May 10, 1977, is German. The dataset provides a concise overview of these drivers' identities and backgrounds in the context of motorsport."
   columns:
   - driverId: Numerical data in integer format representing unique identification
       numbers for each driver.
@@ -93,6 +99,7 @@ drivers:
       introduction pages of drivers on Wikipedia.
 lapTimes:
   base_api: http://127.0.0.1:5000/products/formula_1/lapTimes
+  description: "The dataset \"lapTimes\" contains lap time information for a racing event, specifically detailing the performance of a driver identified by the driverId. It includes two entries, each representing a lap completed by the driver. The columns provide the lap number, the driver's finishing position for that lap, the time taken to complete the lap in a minute:second.millisecond format, and the total time in milliseconds. This data can be useful for analyzing the driver's performance over multiple laps."
   columns:
   - raceId: Numerical data in integer format representing the identification number
       of a race (raceId).
@@ -105,6 +112,7 @@ lapTimes:
   - milliseconds: Numerical data representing time in milliseconds, formatted as integers.
 pitStops:
   base_api: http://127.0.0.1:5000/products/formula_1/pitStops
+  description: "The dataset titled \"pitStops\" contains information about pit stop events during a racing event. It includes columns for driver identification (driverId), the stop number (stop), the lap number (lap), the time of the stop (time), the duration of the stop (duration), and the duration in milliseconds (milliseconds). The data provided includes two entries for driver ID 1, detailing their pit stops on laps 12 and 24, along with the corresponding times and durations for each stop. This dataset is useful for analyzing pit stop strategies and performance during the race."
   columns:
   - raceId: Numerical data in integer format representing the identification number
       for a race, referred to as raceId.
@@ -118,6 +126,7 @@ pitStops:
   - milliseconds: Numerical data representing time in milliseconds, formatted as integers.
 qualifying:
   base_api: http://127.0.0.1:5000/products/formula_1/qualifying
+  description: "The dataset titled \"qualifying\" contains information about qualifying sessions from a specific race event, identified by the raceId. It includes details for two drivers, including their unique driverId, constructorId, and their starting position for the race. Additionally, the dataset provides the lap times for each driver in three qualifying segments (q1, q2, q3), allowing for an analysis of their performance during the qualifying rounds. The data is structured in a way that facilitates comparisons between drivers and their respective teams."
   columns:
   - qualifyId: This data consists of numerical integers representing unique identification
       numbers for qualifying events in F1 Sprint qualifying.
@@ -140,6 +149,7 @@ qualifying:
       only the top 10 from Q2 have records in Q3.
 races:
   base_api: http://127.0.0.1:5000/products/formula_1/races
+  description: "The dataset titled \"races\" contains information about two Formula 1 Grand Prix events held in 2009. It includes details such as the year, round number, circuit ID, race name, date, time, and a URL for further information. The events featured are the Malaysian Grand Prix, which took place on April 5, 2009, and the Chinese Grand Prix, held on April 19, 2009. Each entry provides a comprehensive overview of the race details, making it a valuable resource for fans and researchers interested in the 2009 Formula 1 season."
   columns:
   - raceId: Numerical data in integer format representing a unique identification
       number for a race, labeled as raceId.
@@ -153,6 +163,7 @@ races:
   - url: A collection of texts in URL format related to the introduction of races.
 results:
   base_api: http://127.0.0.1:5000/products/formula_1/results
+  description: "The dataset titled \"results\" contains information about a specific race, identified by the raceId. It includes details for two drivers, including their unique driverId, constructorId, and race performance metrics such as grid position, finishing position, points earned, total laps completed, and race time. Additionally, the data provides insights into the fastest lap achieved by each driver, including lap time and speed, as well as their overall status in the race. This structured data is essential for analyzing driver performance and race outcomes."
   columns:
   - resultId: Numerical data in integer format representing a unique identification
       number for race results, labeled as 'resultId'.
@@ -191,6 +202,7 @@ results:
       category descriptions available in the status table.
 seasons:
   base_api: http://127.0.0.1:5000/products/formula_1/seasons
+  description: "The dataset titled \"seasons\" contains a single column labeled \"url,\" which includes links to Wikipedia pages detailing the Formula One seasons of 1950 and 1951. Each entry provides a direct URL to the respective season's overview, allowing users to access historical information about the early years of Formula One racing. This data is valuable for researchers and enthusiasts interested in the evolution of the sport during its formative years."
   columns:
   - year: Numerical data consisting of integers representing the year and a unique
       race ID.
@@ -199,6 +211,7 @@ seasons:
       'YYYY' represents the year of the season.
 status:
   base_api: http://127.0.0.1:5000/products/formula_1/status
+  description: "The dataset titled \"status\" contains a single column labeled \"status,\" which includes two distinct values: \"Finished\" and \"Disqualified.\" The presence of these values suggests that the data may pertain to the outcomes of a competition or event, indicating whether participants successfully completed the event or were disqualified for some reason. The newline character at the end of each value indicates that the data may have been formatted for display purposes. Overall, this dataset provides a concise overview of participant statuses in a specific context."
   columns:
   - statusId: A numerical data type consisting of integers representing unique identification
       numbers for statuses.

@@ -1,11 +1,13 @@
 Country:
   base_api: http://127.0.0.1:5000/products/european_football_2/Country
+  description: "The dataset titled \"Country\" contains a single column labeled \"name,\" which includes the names of two countries: Belgium and England. Each entry is followed by a newline character, indicating that the data may have been formatted for display or processing in a specific way. This concise dataset provides a straightforward list of countries, which could be useful for various applications such as geographical analysis or demographic studies."
   columns:
   - id: A numerical dataset containing unique integer IDs for countries.
   - name: A dataset containing country names in a text format, structured with fields
       for name, country name, and text.
 League:
   base_api: http://127.0.0.1:5000/products/european_football_2/League
+  description: "The dataset titled \"League\" contains information about football leagues from different countries. It includes two columns: \"country_id,\" which represents a unique identifier for each league, and \"name,\" which specifies the name of the league. The data features the Belgium Jupiler League and the England Premier League, providing insights into the top football competitions in these countries. Each entry is formatted with the country ID followed by the league name, making it easy to identify and categorize the leagues."
   columns:
   - id: Numerical data in integer format representing unique identifiers for leagues.
   - country_id: Numerical data representing unique country identifiers in integer
@@ -13,6 +15,7 @@ League:
   - name: String representing the name of a football league.
 Match:
   base_api: http://127.0.0.1:5000/products/european_football_2/Match
+  description: "The dataset titled \"Match\" contains detailed information about football matches from the 2008/2009 season. It includes various attributes such as country and league identifiers, match date, stage, and unique match API IDs. Additionally, the data provides insights into team performance, including goals scored by home and away teams, player lineups, and match statistics like shots on target, fouls committed, and possession percentages. The dataset also features betting odds from multiple bookmakers, offering a comprehensive view of the matches and their outcomes."
   columns:
   - id: A numerical dataset containing unique integer IDs for matches.
   - country_id: A numerical dataset containing country IDs represented as integers.
@@ -214,6 +217,7 @@ Match:
   - BSA: Numerical data representing Body Surface Area (BSA) in float format.
 Player:
   base_api: http://127.0.0.1:5000/products/european_football_2/Player
+  description: "The dataset titled \"Player\" contains information about two football players, Aaron Appindangoye and Aaron Cresswell. Each entry includes the player's unique API ID, FIFA API ID, name, birthday, height in centimeters, and weight in grams. The data provides insights into the players' physical attributes and identification numbers, which can be useful for analysis in sports analytics or player comparison studies. The birthdays indicate that both players were born in the late 20th century, with Appindangoye being born on February 29, 1992, and Cresswell on December 15, 1989."
   columns:
   - id: A numerical dataset containing unique player IDs represented as integers.
   - player_api_id: Numerical data in integer format representing the player API ID.
@@ -227,6 +231,7 @@ Player:
   - weight: Numerical data representing the player's weight in integers.
 Player_Attributes:
   base_api: http://127.0.0.1:5000/products/european_football_2/Player_Attributes
+  description: "The dataset titled \"Player_Attributes\" contains detailed information about football players, specifically focusing on their performance metrics and attributes. Each entry includes a unique player identifier, the date of the data record, overall rating, potential, and various skill ratings such as crossing, finishing, and dribbling. The data also captures physical attributes like acceleration, sprint speed, and strength, as well as tactical skills including positioning and marking. The records span two dates in 2015 and 2016, providing insights into player development over time."
   columns:
   - id: A numerical dataset containing unique integer IDs for players.
   - player_fifa_api_id: Numerical data representing the FIFA API ID of a player, formatted
@@ -319,6 +324,7 @@ Player_Attributes:
       formatted as a float, with a range from 0 to 100, calculated by FIFA.
 Team:
   base_api: http://127.0.0.1:5000/products/european_football_2/Team
+  description: "The dataset titled \"Team\" contains information about two football teams, KRC Genk and Beerschot AC. Each entry includes a unique team API ID, FIFA API ID, the full name of the team, and its short name. Specifically, KRC Genk is identified by the API IDs 9987 and 673, while Beerschot AC is represented by 9993 and 675. This data can be useful for analyzing team statistics and performance in various football-related applications."
   columns:
   - id: A numerical dataset containing unique integer IDs for teams.
   - team_api_id: Numerical data in integer format representing the unique identifier
@@ -329,6 +335,7 @@ Team:
   - team_short_name: A string of uppercase letters representing the team's short name.
 Team_Attributes:
   base_api: http://127.0.0.1:5000/products/european_football_2/Team_Attributes
+  description: "The dataset titled \"Team_Attributes\" contains detailed attributes of football teams over specific dates, focusing on various aspects of their gameplay. Each entry includes a unique team identifier, the date of the recorded attributes, and metrics related to build-up play, chance creation, and defensive strategies. Key attributes include build-up play speed, dribbling, passing, and positioning, as well as chance creation metrics like passing, crossing, and shooting. Additionally, the dataset provides insights into defensive pressure, aggression, and team width, allowing for a comprehensive analysis of team performance and tactics over time."
   columns:
   - id: A numerical dataset containing unique integer IDs for teams.
   - team_fifa_api_id: Numerical data in integer format representing the FIFA API ID

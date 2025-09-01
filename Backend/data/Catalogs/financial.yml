@@ -1,5 +1,6 @@
 account:
   base_api: http://127.0.0.1:5000/products/financial/account
+  description: "The dataset titled \"account\" contains information related to district fees, specifically focusing on the frequency and date of these fees. It includes two entries, each detailing a unique district identified by a district ID. The first entry corresponds to district ID 18 with a frequency of \"POPLATEK MESICNE\" recorded on March 24, 1995, while the second entry pertains to district ID 1 with the same frequency noted on February 26, 1993. This data provides insights into the timing and categorization of district fees over the specified dates."
   columns:
   - account_id: Numerical data representing account IDs in integer format.
   - district_id: Numerical data representing district IDs as integers, indicating
@@ -10,6 +11,7 @@ account:
       secondary format is YYMMDD.'
 card:
   base_api: http://127.0.0.1:5000/products/financial/card
+  description: "The dataset titled \"card\" contains information about different types of cards, identified by their unique display IDs (disp_id). It includes two entries: one for a gold card issued on October 16, 1998, and another for a classic card issued on March 13, 1998. The data is structured in three columns: disp_id, type, and issued, providing a clear overview of the card types and their respective issuance dates. This dataset could be useful for analyzing trends in card issuance over time."
   columns:
   - card_id: Numerical data representing credit card IDs as integers.
   - disp_id: Numerical data representing disposition IDs in integer format.
@@ -20,6 +22,7 @@ card:
       when the credit card was issued.
 client:
   base_api: http://127.0.0.1:5000/products/financial/client
+  description: "The dataset titled \"client\" contains demographic information with three columns: gender, birth_date, and district_id. It includes two entries, one for a female born on December 13, 1970, residing in district 18, and another for a male born on February 4, 1945, residing in district 1. This data provides insights into the gender distribution and age demographics of individuals within specific districts."
   columns:
   - client_id: Numerical data representing unique client identifiers in integer format.
   - gender: Gender data represented as text with values 'M' for male and 'F' for female.
@@ -28,6 +31,7 @@ client:
       the location of branches.
 disp:
   base_api: http://127.0.0.1:5000/products/financial/disp
+  description: "The dataset titled \"disp\" contains information about client and account relationships. It includes three columns: client_id, account_id, and type. The data consists of two entries, both indicating that the clients (with IDs 1 and 2) are the owners of their respective accounts (also with IDs 1 and 2). This dataset provides a straightforward overview of ownership status for the specified clients and accounts."
   columns:
   - disp_id: Numerical data in integer format representing a unique identifier for
       each record, labeled as 'disp_id' or disposition id.
@@ -38,6 +42,7 @@ disp:
       capabilities.
 district:
   base_api: http://127.0.0.1:5000/products/financial/district
+  description: "The dataset titled \"district\" contains information about two districts in the Czech Republic: Hl.m. Praha (Prague) and Benesov (Central Bohemia). Each row provides various attributes, including population figures, economic indicators, and demographic statistics. For instance, Hl.m. Praha has a population of 1,204,953, while Benesov has 88,884 residents. The data also includes metrics such as employment rates, average income, and other socio-economic factors, offering a comprehensive overview of these regions."
   columns:
   - district_id: Numerical data in integer format representing district IDs and branch
       locations.
@@ -73,6 +78,7 @@ district:
       as integers.
 loan:
   base_api: http://127.0.0.1:5000/products/financial/loan
+  description: "The dataset titled \"loan\" contains information about loan accounts, with each entry detailing specific attributes of individual loans. It includes columns for account ID, date of loan issuance, loan amount, duration in months, number of payments made, and the status of the loan. The data spans two records, with the first record dated January 5, 1994, and the second dated April 29, 1996. The amounts and durations vary, providing insights into the loan characteristics and repayment statuses."
   columns:
   - loan_id: Numerical data representing loan identifiers, formatted as integers.
   - account_id: Numerical data in integer format representing account identifiers.
@@ -87,6 +93,7 @@ loan:
       for running with client in debt.'
 order:
   base_api: http://127.0.0.1:5000/products/financial/order
+  description: "The dataset titled \"order\" contains transaction information with five key attributes: account_id, bank_to, account_to, amount, and k_symbol. It includes two records of financial transactions, detailing the account identifiers, the destination banks, the recipient account numbers, the transaction amounts, and the associated symbols for each transaction. The first entry reflects a transfer of 2452.0 with the symbol SIPO, while the second entry shows a transfer of 3372.7 with the symbol UVER. This data is useful for analyzing banking transactions and understanding the flow of funds between accounts."
   columns:
   - order_id: Numerical data representing unique order identifiers in integer format.
   - account_id: Numerical data representing account IDs as integers.
@@ -100,6 +107,7 @@ order:
       of payments, including insurance, household, leasing, and loan payments.
 trans:
   base_api: http://127.0.0.1:5000/products/financial/trans
+  description: "The dataset titled \"trans\" contains transaction records with key details about financial activities. It includes columns such as transaction ID (trans_id), account ID (account_id), transaction date (date), transaction type (type), operation type (operation), transaction amount (amount), account balance (balance), currency symbol (k_symbol), bank name (bank), and account number (account). The data features two entries from March and April 1995, detailing a deposit and a transfer from an account, along with their respective amounts and resulting balances. Notably, some fields, such as currency symbol and bank name, are marked as 'nan', indicating missing information."
   columns:
   - trans_id: A numerical dataset containing transaction IDs represented as integers.
   - account_id: Numerical data in integer format representing account IDs.
