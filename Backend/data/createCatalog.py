@@ -1,11 +1,11 @@
-import pandas as pd
-from pathlib import Path
-import yaml
-import requests
-import os
 import glob
-from Backend import models
+from pathlib import Path
 
+import pandas as pd
+import requests
+import yaml
+
+from Backend import models
 
 baseAPi = "http://127.0.0.1:5000/products"
 

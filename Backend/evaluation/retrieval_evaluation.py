@@ -5,8 +5,8 @@ from datetime import datetime
 import pandas as pd
 from tqdm import tqdm
 
-from Backend.RAG.eval_retriever import productRetriever_eval, functionRetriever_eval, multilevelRetriever, \
-    functionRetriever_hybrid, productRetriever_eval_both
+from Backend.RAG.evaluation_retriever import multilevelRetriever, functionRetriever_hybrid, functionRetriever_eval, \
+    productRetriever_eval_both, productRetriever_eval
 from Backend.evaluation import metrics
 
 functions = {"product": productRetriever_eval, "function": functionRetriever_eval,"function_text":functionRetriever_eval, "multilevel":multilevelRetriever,"hybrid":functionRetriever_hybrid,
@@ -61,8 +61,6 @@ def run_test_step_both(config):
     df.to_csv(f"runs/both_multilevel_reorder_{timestamp}.csv", index=False)
 
 def run_score_steps(file):
-    #df = pd.read_csv(file)
-    #print(df.head())
     df = pd.read_csv(file,converters={'retrieved_docs': pd.eval,'names': pd.eval})
     mmr = []
     precision = []
@@ -83,8 +81,6 @@ def run_score_steps(file):
     df.to_csv(file, index=False)
 
 def run_score(file):
-    #df = pd.read_csv(file)
-    #print(df.head())
     df = pd.read_csv(file,converters={'retrieved_docs': pd.eval,'names': pd.eval,"products":pd.eval,})
     mmr = []
     precision = []

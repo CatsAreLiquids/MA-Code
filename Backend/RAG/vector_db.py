@@ -11,25 +11,22 @@ from Backend import models
 load_dotenv()
 
 
-
-
-def _add_Function(functionName: str, description: dict):
+def _add_transformation(functionName: str, description: dict):
     vector_store = models.getVectorStore()
 
     text = f"function name:{functionName}\n"
     for k, v in description.items():
         text += f"{k}: {v}\n"
 
-    doc = [Document(page_content=text, metadata={"type": "function_NoManual", "id": str(uuid.uuid4()),"name":functionName})]
+    doc = [Document(page_content=text, metadata={"type": "function", "id": str(uuid.uuid4()),"name":functionName})]
     vector_store.add_documents(doc)
 
-
-def add_Functions(functionName: str | None):
+def add_transformations(functionName: str | None):
     try:
         with open("../data/Catalogs/function_catalog.yml") as stream:
             data = yaml.safe_load(stream)
             if functionName is not None:
-                _add_Function(functionName, data[functionName])
+                _add_transformation(functionName, data[functionName])
                 return
     except FileNotFoundError:
         print("Could not find the file catalog at data/Catalogs/ . Wont proceed")
@@ -39,27 +36,10 @@ def add_Functions(functionName: str | None):
         return
 
     for k, v in data.items():
-        _add_Function(k, v)
-
-def _add_FunctionTest(data):
-    vector_store = models.getVectorStore()
-
-    text = f"function name:"
-    for k, v in data.items():
-        functionName = k
-        text += f" {k}:\n {v}\n"
-
-    doc = [Document(page_content=text, metadata={"type": "function_name", "id": str(uuid.uuid4()),"name":functionName})]
-    vector_store.add_documents(doc)
-
-def add_Functions_Test(functionName: str | None):
-    datas = json.load(open(f"../data/metadata_function_name.json"))
-
-    for data in datas:
-            _add_FunctionTest(data)
+        _add_transformation(k, v)
 
 
-def _add_doc(productName: str, description: dict,collection):
+def _add_product(productName: str, description: dict, collection):
     vector_store = models.getVectorStore()
 
     tags = description["tags"]
@@ -72,12 +52,12 @@ def _add_doc(productName: str, description: dict,collection):
     vector_store.add_documents([doc])
 
 
-def add_docs(collection, productName: str | None):
+def add_products(collection, productName: str | None):
     try:
         data = json.load(open(f"../data/{collection}/metadata_automatic.json"))
         if productName is not None:
             print(data[productName])
-            _add_doc(productName, data[productName],collection)
+            _add_product(productName, data[productName], collection)
             return
     except FileNotFoundError:
         print(f"Could not find the product describtions at /data/{collection}/. Wont proceed")
@@ -87,8 +67,7 @@ def add_docs(collection, productName: str | None):
         return
 
     for k, v in data.items():
-        _add_doc(k, v,collection)
-
+        _add_product(k, v, collection)
 
 def _add_collection(collection_name, description):
     vector_store = models.getVectorStore("collection_level")
@@ -116,7 +95,6 @@ def add_collections(collection_name=None):
     for k, v in catalog.items():
         _add_collection(catalog[k]["name"], catalog[k]["description"])
 
-
 def delete(id: List | None, collection=None):
     vector_store = models.getVectorStore(collection)
 
@@ -124,23 +102,6 @@ def delete(id: List | None, collection=None):
         vector_store.delete_collection()
     else:
         vector_store.delete(id)
-
-
-def get_docs_score(query, max: int, filter=None):
-    vector_store = models.getVectorStore()
-    res = vector_store.similarity_search_with_score(query, k=max, filter=filter)
-
-    for i in res:
-        print(i)
-
-
-def get_docs(query, max: int, filter=None, collection=None):
-    vector_store = models.getVectorStore(collection)
-    #res = vector_store.similarity_search_with_score(query, k=max, filter=filter)
-    #for i in res:
-    #    print(i)
-
-    return vector_store.similarity_search(query, k=max, filter=filter)
 
 if __name__ == "__main__":
     # add_collections()

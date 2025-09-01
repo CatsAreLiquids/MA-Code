@@ -1,25 +1,21 @@
-import random
-
-from langchain_openai import AzureOpenAIEmbeddings, AzureChatOpenAI
-from dotenv import load_dotenv
+import ast
+import glob
 import json
 import os
-import pandas as pd
+import random
 import re
-from langchain_core.prompts import PromptTemplate
-import glob
 from pathlib import Path
-import time
-import ast
-from pandas.api.types import is_datetime64_any_dtype as is_datetime
-from Backend import models
+from test import code_dict
+
+import pandas as pd
 import yaml
 from dotenv import load_dotenv
-import yaml
-import numpy as np
-from test import code_dict
-from random import sample
-import time
+from langchain_core.prompts import PromptTemplate
+from langchain_openai import AzureChatOpenAI
+from pandas.api.types import is_datetime64_any_dtype as is_datetime
+
+from Backend import models
+
 load_dotenv()
 
 

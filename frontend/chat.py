@@ -113,11 +113,22 @@ if prompt:
     else:
 
         if "yes" in prompt:
-            response = requests.get("http://127.0.0.1:5100/trigger_to_airflow", json={"plan": st.session_state["plan"]})
             with st.chat_message("assistant"):
                 st.write("Great! I triggerd the conversion to Airflow, you should see the DAG in your interface soon")
                 st.session_state.messages.append(
                     {"role": "assistant", "content": "Great! I triggerd the conversion to Airflow, you should see the DAG in your interface soon"})
+            response = requests.get("http://127.0.0.1:5100/trigger_to_airflow", json={"plan": st.session_state["plan"]})
+            content = json.loads(response.text)
+
+            with st.chat_message("assistant"):
+                if content["dag_id"] is not None:
+                    st.write(f"The DAG id is {content['dag_id']}")
+                    st.session_state.messages.append(
+                        {"role": "assistant", "content": f"The DAG id is {content['dag_id']}"})
+                else:
+                    st.write("Something seemed to have gone wrong we need to try again")
+                    st.session_state.messages.append(
+                        {"role": "assistant", "content": "Something seemed to have gone wrong we need to try again"})
         else:
             with st.chat_message("assistant"):
                 st.write("Should we try again? What data product are you looking for?")

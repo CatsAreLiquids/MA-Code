@@ -1,8 +1,9 @@
 import os
-
+import json
 from flask import Flask, request
 
 from Backend.Agent import Agent
+from Backend.to_Airflow import to_airflow
 
 app = Flask(__name__)
 port = int(os.environ.get('PORT', 5100))
@@ -20,8 +21,11 @@ def forward_agent():
 
 @app.route('/trigger_to_airflow', methods=['GET'])
 def trigger_to_airflow():
+    content = json.loads(request.data)
 
-    return {'data':'TODO'}
+    dag_id = to_airflow.convert(content["plan"]["plans"])
+    print(dag_id)
+    return {'dag_id':dag_id}
 
 
 

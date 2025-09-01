@@ -20,11 +20,11 @@ def retrieve_as_request_task(**kwargs):
     except ValueError:
         df = pd.Series(ast.literal_eval(content['data']))
 
-    df.to_csv(f"temp_storage/df_{kwargs["product_nr"]}.csv", index=False)
+    df.to_csv(f"temp_storage/df_{kwargs['product_nr']}.csv", index=False)
 
 def filter_as_request_task(**kwargs):
 
-    df = pd.read_csv(f"temp_storage/df_{kwargs["product_nr"]}.csv")
+    df = pd.read_csv(f"temp_storage/df_{kwargs['product_nr']}.csv")
 
     args = json.dumps(kwargs['filter_dict'])
     response = requests.put("http://127.0.0.1:5200/filter",
@@ -37,12 +37,12 @@ def filter_as_request_task(**kwargs):
     except ValueError:
         df = pd.Series(ast.literal_eval(content['data']))
 
-    df.to_csv(f"temp_storage/df_{kwargs["product_nr"]}.csv", index=False)
+    df.to_csv(f"temp_storage/df_{kwargs['product_nr']}.csv", index=False)
 
 def combination_as_request_task(**kwargs):
 
-    left = pd.read_csv(f"temp_storage/df_{kwargs["left_product"]}.csv")
-    right = pd.read_csv(f"temp_storage/df_{kwargs["right_product"]}.csv")
+    left = pd.read_csv(f"temp_storage/df_{kwargs['left_product']}.csv")
+    right = pd.read_csv(f"temp_storage/df_{kwargs['right_product']}.csv")
 
     args = json.dumps(kwargs['filter_dict'])
     response = requests.put('http://127.0.0.1:5200/combine',

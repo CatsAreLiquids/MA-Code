@@ -1,8 +1,9 @@
 import random
 import string
 
-import  template
+import Backend.to_Airflow.template as template
 import uuid
+import os
 
 example = {"plans":[
 {"function":"http://127.0.0.1:5200/retrieve","filter_dict":{"product":"http://127.0.0.1:5000/products/superhero/superhero",}},
@@ -84,11 +85,11 @@ def convert(plan):
     file_text += _construct_tasks(plan,dag_id)
     file_text += _construct_dependencies(plan)
 
-    with open(f"dags/{dag_id}.py","w") as file:
+    with open(f"../to_Airflow/dags/{dag_id}.py","w") as file:
         file.write(file_text)
 
-    return f"dags/{dag_id}.py"
+    return dag_id
 
 if __name__ == "__main__":
+    #print(type(example["plans"]))
     print(convert(example["plans"]))
-    #_construct_dependencies(test["plans"])
