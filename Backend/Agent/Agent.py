@@ -404,7 +404,7 @@ def invoke_agent(agent_instance,query,evidence):
 
 def invoke_agent_remote(query):
     ciritique = True
-    """
+
     agent_instance = init_agent(dual_prompt=False)
 
     agent_result = agent_instance.invoke({'query': query})
@@ -416,11 +416,7 @@ def invoke_agent_remote(query):
 
     res = execute.execute(res)
     return res,agent_result['output']
-    """
-    plan = {"plans":[
-        {"function":"http://127.0.0.1:5200/retrieve","filter_dict":{"product":"http://127.0.0.1:5000/products/superhero/superhero",}},{"function":"http://127.0.0.1:5200/filter","filter_dict":{"conditions":{"superhero_name":"Copycat"}}},{"function":"http://127.0.0.1:5200/retrieve","filter_dict":{"product":"http://127.0.0.1:5000/products/superhero/race",}},{"function":'combination', 'filter_dict': {"columns_left":"race_id","columns_right":"id","type":"equals","values":["None"]}}]}
-    res = execute.execute(plan)
-    return res,plan
+
 
 if __name__ == "__main__":
     """

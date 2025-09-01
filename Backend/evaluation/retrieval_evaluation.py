@@ -155,28 +155,4 @@ def helper(org,functionName):
         return ""
 
 if __name__ == "__main__":
-    #file = "bird_mini_dev/bird_minidev_questions_eval_multilevel_2025-06-20-10-09_07.csv"
-    #df = pd.read_csv(file)
-    #tmp =[]
-    #for index, row in tqdm(df.iterrows()):
-    #    tmp.append(helper(row["correct_context"],row["function"]))
-    #df["correct_context"] = tmp
-    #df.to_csv(file,index=False)
-    file = "runs/function_hybrid_hybrid_reorder_03_2025-07-27-14-33.csv"
-    #run_score_steps(file)
-    #run_score(file)
-    scoreFunction(file)
-    df = pd.read_csv(file)
-    print(df[["mmr", "precision", "recall", "f1"]].describe())
-
-    config = {"file":"bird_mini_dev/functions_simplel.csv","num_of_querys":111,"retriever":"function"}
-
-    #file= "dbpedia_entity/semantic_queries.csv"
-    file = "test_files/bird_minidev_questions_eval.csv"
-    start = time.time()
-    #run_test(config)
-    #run_test_step_both(config=config)
-    #run_test_step(config=config)
-    #runFunction(config)
-    end = time.time()
-    print(end - start)
+    pass

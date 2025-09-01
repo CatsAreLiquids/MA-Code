@@ -34,13 +34,7 @@ def product_rag(step):
     config = {"filter": {"type": {"$eq": "product"}}}
     retriever = vector_store.as_retriever(search_kwargs=config,k=5)
 
-    bm25_retriever = _init_bm25(config,None)
-    ensemble_retriever = EnsembleRetriever(k=5,
-                                           retrievers=[bm25_retriever, retriever], weights=[0.5, 0.5]
-                                           )
-
-
-    docs = ensemble_retriever.invoke(step)
+    docs = retriever.invoke(step)
     docs = [doc.page_content for doc in docs]
 
     sys_prompt = PromptTemplate.from_template(sys_prompt).format(context=docs)
@@ -100,12 +94,11 @@ def function_rag(step):
 
     bm25_retriever = _init_bm25({"filter": {"type": {"$eq": "function_name"}}},None)
 
-    ensemble_retriever = EnsembleRetriever(k=5,
-                                           retrievers=[bm25_retriever, retriever], weights=[0.5, 0.5]
+    ensemble_retriever = EnsembleRetriever(k=5,retrievers=[bm25_retriever, retriever], weights=[0.5, 0.5]
                                            )
+
     def helper(doc):
         name = re.findall(pattern,doc)
-
         try:
             response = requests.get("http://127.0.0.1:5200/catalog", json={"function_name": name[-1]})
             data = json.loads(response.text)

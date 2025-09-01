@@ -21,8 +21,8 @@ def eval_rows(ref, test):
 
     for i in range(test.shape[0]):
         test_tmp = np.asarray(test.iloc[i])
-        for i in range(ref.shape[0]):
-            ref_tmp = np.asarray(test.iloc[i])
+        for j in range(ref.shape[0]):
+            ref_tmp = np.asarray(test.iloc[j])
             if np.array_equal(test_tmp, ref_tmp):
                 tp += 1
             else:
@@ -30,8 +30,8 @@ def eval_rows(ref, test):
 
     for i in range(ref.shape[0]):
         ref_tmp = np.asarray(ref.iloc[i])
-        for i in range(test.shape[0]):
-            test_tmp = np.asarray(test.iloc[i])
+        for j in range(test.shape[0]):
+            test_tmp = np.asarray(test.iloc[j])
             if not np.array_equal(test_tmp, ref_tmp):
                 fn += 1
 
@@ -49,7 +49,6 @@ def eval_rows(ref, test):
 
 
 def eval_by_index(ref, test,columns):
-    #print(ref, test,columns)
     ref = set(ref[columns].tolist())
     test = set(test[columns].tolist())
 
@@ -63,7 +62,6 @@ def eval_by_index(ref, test,columns):
 
 def test_plan(file):
     df = pd.read_csv(file)
-    #df= df[df["question_id"]==671]
     precision = []
     recall = []
     execution_error = []
@@ -91,7 +89,7 @@ def test_plan(file):
                 pre, re = eval_rows(t, p)
             ex_error = 0
         except:
-            print("???")
+
             ex_error = 1
             pre = 0
             re = 0
@@ -99,9 +97,7 @@ def test_plan(file):
         precision.append(pre)
         recall.append(re)
         execution_error.append(ex_error)
-        #print(end-start)
 
-    print(precision,recall)
     df["precision"] = precision
     df["recall"] = recall
     df["execution_error"] = execution_error
@@ -127,7 +123,6 @@ def generate_plan():
             res["agent_error"].append(0)
         except:
             end = time.time()
-            print(row["question_id"])
             res["response"].append("")
             res["agent_error"].append(1)
             res["time"].append(end - start)
@@ -163,29 +158,5 @@ def eval_plan(file):
 
 
 if __name__ == "__main__":
-    #generate_plan()
-
-    file = "prototype_eval_column_info_2025-08-16-12-44_cirtiqued.csv"
-    #eval_plan(file)
-    #test_plan(file)
-    df = pd.read_csv(file)
-
-
-    #print(df[["agent_error", "agent_time"]].describe())
-    #print(df[["planRecall", "jaccard", "planPrecision"]].describe())
-    #print(df[["recall", "precision","execution_error"]].describe())
-    df = df.sort_values(by=["precision", "recall"], ascending=False)
-    print(df[df["execution_error"] == 1])
-
-    """
-    df = df.groupby('dataset')
-    print(df[["planRecall"]].describe())
-    print(df[["jaccard"]].describe())
-    print(df[["planPrecision"]].describe())
-    print(df[["recall"]].describe())
-    print(df[["precision"]].describe())
-    print(df[["execution_error"]].describe())
-    """
-    #df = df.sort_values(by=["planPrecision","planRecall"], ascending=False)
-    #print(df[df["execution_error"] == 1].head(n=10))
+    pass
 

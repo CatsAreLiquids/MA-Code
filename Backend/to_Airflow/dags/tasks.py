@@ -39,6 +39,125 @@ def filter_as_request_task(**kwargs):
 
     df.to_csv(f"temp_storage/df_{kwargs['product_nr']}.csv", index=False)
 
+def min_as_request_task(**kwargs):
+
+    df = pd.read_csv(f"temp_storage/df_{kwargs['product_nr']}.csv")
+
+    args = json.dumps(kwargs['filter_dict'])
+    response = requests.put("http://127.0.0.1:5200/min",
+                            json={"data": df.to_json(), "args": args})
+
+    content = json.loads(response.text)
+
+    try:
+        df = pd.read_json(io.StringIO(content['data']))
+    except ValueError:
+        df = pd.Series(ast.literal_eval(content['data']))
+
+    df.to_csv(f"temp_storage/df_{kwargs['product_nr']}.csv", index=False)
+
+def max_as_request_task(**kwargs):
+
+    df = pd.read_csv(f"temp_storage/df_{kwargs['product_nr']}.csv")
+
+    args = json.dumps(kwargs['filter_dict'])
+    response = requests.put("http://127.0.0.1:5200/max",
+                            json={"data": df.to_json(), "args": args})
+
+    content = json.loads(response.text)
+
+    try:
+        df = pd.read_json(io.StringIO(content['data']))
+    except ValueError:
+        df = pd.Series(ast.literal_eval(content['data']))
+
+    df.to_csv(f"temp_storage/df_{kwargs['product_nr']}.csv", index=False)
+
+def sum_as_request_task(**kwargs):
+
+    df = pd.read_csv(f"temp_storage/df_{kwargs['product_nr']}.csv")
+
+    args = json.dumps(kwargs['filter_dict'])
+    response = requests.put("http://127.0.0.1:5200/sum",
+                            json={"data": df.to_json(), "args": args})
+
+    content = json.loads(response.text)
+
+    try:
+        df = pd.read_json(io.StringIO(content['data']))
+    except ValueError:
+        df = pd.Series(ast.literal_eval(content['data']))
+
+    df.to_csv(f"temp_storage/df_{kwargs['product_nr']}.csv", index=False)
+
+def mean_as_request_task(**kwargs):
+
+    df = pd.read_csv(f"temp_storage/df_{kwargs['product_nr']}.csv")
+
+    args = json.dumps(kwargs['filter_dict'])
+    response = requests.put("http://127.0.0.1:5200/mean",
+                            json={"data": df.to_json(), "args": args})
+
+    content = json.loads(response.text)
+
+    try:
+        df = pd.read_json(io.StringIO(content['data']))
+    except ValueError:
+        df = pd.Series(ast.literal_eval(content['data']))
+
+    df.to_csv(f"temp_storage/df_{kwargs['product_nr']}.csv", index=False)
+
+def sortby_as_request_task(**kwargs):
+
+    df = pd.read_csv(f"temp_storage/df_{kwargs['product_nr']}.csv")
+
+    args = json.dumps(kwargs['filter_dict'])
+    response = requests.put("http://127.0.0.1:5200/sortby",
+                            json={"data": df.to_json(), "args": args})
+
+    content = json.loads(response.text)
+
+    try:
+        df = pd.read_json(io.StringIO(content['data']))
+    except ValueError:
+        df = pd.Series(ast.literal_eval(content['data']))
+
+    df.to_csv(f"temp_storage/df_{kwargs['product_nr']}.csv", index=False)
+
+def count_as_request_task(**kwargs):
+
+    df = pd.read_csv(f"temp_storage/df_{kwargs['product_nr']}.csv")
+
+    args = json.dumps(kwargs['filter_dict'])
+    response = requests.put("http://127.0.0.1:5200/count",
+                            json={"data": df.to_json(), "args": args})
+
+    content = json.loads(response.text)
+
+    try:
+        df = pd.read_json(io.StringIO(content['data']))
+    except ValueError:
+        df = pd.Series(ast.literal_eval(content['data']))
+
+    df.to_csv(f"temp_storage/df_{kwargs['product_nr']}.csv", index=False)
+
+def returnResult_as_request_task(**kwargs):
+
+    df = pd.read_csv(f"temp_storage/df_{kwargs['product_nr']}.csv")
+
+    args = json.dumps(kwargs['filter_dict'])
+    response = requests.put("http://127.0.0.1:5200/returnResult",
+                            json={"data": df.to_json(), "args": args})
+
+    content = json.loads(response.text)
+
+    try:
+        df = pd.read_json(io.StringIO(content['data']))
+    except ValueError:
+        df = pd.Series(ast.literal_eval(content['data']))
+
+    df.to_csv(f"temp_storage/df_{kwargs['product_nr']}.csv", index=False)
+
 def combination_as_request_task(**kwargs):
 
     left = pd.read_csv(f"temp_storage/df_{kwargs['left_product']}.csv")

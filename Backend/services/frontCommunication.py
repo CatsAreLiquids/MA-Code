@@ -24,7 +24,6 @@ def trigger_to_airflow():
     content = json.loads(request.data)
 
     dag_id = to_airflow.convert(content["plan"]["plans"])
-    print(dag_id)
     return {'dag_id':dag_id}
 
 

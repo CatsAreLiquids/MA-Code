@@ -10,15 +10,6 @@ from Backend.RAG import retriever
 
 
 def reiterate_plan(steps, query):
-    """
-        Breaks down a user query into its multiple steps
-        Args:
-            query:  a natural languge query
-            steps: the first ioteration of steps
-            collection_name: the name of the collection needed to solve
-        Returns:
-            a list of corrected steps necerssary to solve the query
-        """
 
     # Identify fitting data collection
     prod_descriptions = retriever.collection_rag(query, config=None)

@@ -4,17 +4,6 @@ import numpy as np
 import pandas as pd
 
 
-def getNRows(df,filter_dict):
-
-    filter_dict = ast.literal_eval(filter_dict)
-    if filter_dict['top'] == True:
-        return df.head(filter_dict['n'])
-    elif filter_dict['top'] == False:
-        return df.tail(filter_dict['n'])
-    else:
-        return df
-
-
 def _rangeFilter(df, column, range_dict):
     if ('min' in range_dict) & ('max' in range_dict):
         try:

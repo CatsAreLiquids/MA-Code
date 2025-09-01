@@ -193,15 +193,14 @@ thrombosis_prediction:
   - Laboratory
   - Patient
 toxicology:
-  description: The toxicology data collection encompasses several datasets that provide
-    insights into molecular structures and their components. The "atom" dataset details
-    the elemental composition of specific molecules, while the "bond" dataset focuses
-    on the types of bonds associated with these molecules. Additionally, the "connected"
-    dataset explores the relationships between atoms and their bonds, offering a deeper
-    understanding of molecular connectivity. Lastly, the "molecule" dataset presents
-    a minimalistic classification, which may require further context for interpretation.
-    Together, these datasets serve as a valuable resource for researchers in chemistry
-    and molecular biology.
+  description: The "toxicology" data collection provides information on molecular
+    structures, their elements, bonds, and connectivity. The "atom" dataset identifies
+    the elements present in molecules, while the "bond" dataset details the types
+    of bonds associated with these molecules. The "connected" dataset explores the
+    relationships between atoms and their bonds, offering insights into molecular
+    connectivity. Lastly, the "molecule" dataset includes categorical labels, potentially
+    representing classifications or properties of the molecules. Together, these datasets
+    enable the analysis of molecular composition and structure.
   name: toxicology
   products:
   - atom

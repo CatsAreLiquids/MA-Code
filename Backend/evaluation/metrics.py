@@ -114,7 +114,7 @@ def F1(precision, recall):
     return score
 
 
-# ----------------------------------------- Function stuff  -------------------------------------
+# ----------------------------------------- Functions  -------------------------------------
 def _in_targets_function(context,targets):
 
     names = re.findall(r"function name:\s*([a-z,A-Z]*):\n",context)
@@ -163,7 +163,7 @@ def hit_rate_func(targets, contexts) -> float:
 
     return 0
 
-# ----------------------------------------- stuff -------------------------------------
+# ----------------------------------------- other -------------------------------------
 
 def planRecall(generated_plan, groundTruth):
 

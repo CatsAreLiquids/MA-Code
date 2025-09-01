@@ -1,4 +1,5 @@
 import glob
+import sys
 from pathlib import Path
 
 import pandas as pd
@@ -6,6 +7,8 @@ import requests
 import yaml
 
 from Backend import models
+from Backend.data import generate_descriptions  as generate
+from Backend.RAG import vector_db
 
 baseAPi = "http://127.0.0.1:5000/products"
 
@@ -27,6 +30,35 @@ def _testAPI(url):
     else:
         return True
 
+def format_columns(columns):
+    for i in range(len(columns)):
+        columns[i] = {columns[i]: columns[i]}
+    return columns
+
+def get_products(collection):
+    with open(f"Catalogs/catalog.yml") as stream:
+        catalog = yaml.safe_load(stream)
+        try:
+            catalog = catalog[collection]
+        except KeyError:
+            print("Could not find specified collection")
+
+    return catalog["products"]
+
+def create_in_meta_catalog(collection):
+    if _collection_exists("catalog"):
+        try:
+            with open(f"Catalogs/catalog.yml") as stream:
+                data = yaml.safe_load(stream)
+        except FileNotFoundError:
+            print("File exists but error")
+    else:
+        data = {}
+
+    data[collection] = {"description": "", "name": collection,"products": get_products(collection),}
+    with open(f"Catalogs/catalog.yml", 'w') as yaml_file:
+        yaml.dump(data, yaml_file, default_flow_style=False)
+
 
 def _get_or_create(columns, api, collection, product):
     if _collection_exists(collection):
@@ -38,7 +70,7 @@ def _get_or_create(columns, api, collection, product):
     else:
         data = {}
 
-    data[product] = {"columns": columns, "base_api": api}
+    data[product] = {"columns": format_columns(columns), "base_api": api,"description": ""}
     with open(f"Catalogs/{collection}.yml", 'w') as yaml_file:
         yaml.dump(data, yaml_file, default_flow_style=False)
 
@@ -57,8 +89,7 @@ def _get_columns(file):
         df = pd.read_csv(file)
     return df.columns.tolist()
 
-
-def process_product(file):
+def _process_product(file):
     collection = Path(file).parts[0]
     product = Path(file).parts[1]
 
@@ -75,33 +106,36 @@ def process_product(file):
 
     _get_or_create(columns, api, collection, Path(product).stem)
 
+def create_catalog(collection,product_name):
+    files = glob.glob(f"{collection}/*.csv")
 
-def main(file):
-    process_Product(file)
+    for file in files:
+        if product_name is not None:
+            if product_name.lower() in file.lower():
+                _process_product(file)
+
+        else:
+            _process_product(file)
+
+    create_in_meta_catalog(collection)
 
 
-def identify_columns():
-    llm = models.get_LLM()
+def enrich_catalog(collection,product_name):
+    files = glob.glob(f"{collection}/*.csv")
 
-    sys_prompt = """ Your task is to rewrite a user query into an sql query.
-                """
-    input_prompt = PromptTemplate.from_template("""
-                        User Query:{query}
-                        """)
-    input_prompt = input_prompt.format(query=query)
-    messages = [
-        ("system", sys_prompt),
-        ("human", input_prompt),
-    ]
+    for file in files:
+        if product_name is not None:
+            if product_name.lower() in file.lower():
+                generate.create_column_description(collection,product_name)
+                generate.generate_products(collection,product_name)
+        else:
+            generate.create_column_description(collection,product_name)
+            generate.generate_products(collection, product_name)
 
-    return llm.invoke(messages)
+
+    generate.generateCollection(collection)
 
 
 
 if __name__ == '__main__':
-    files = glob.glob("toxicology/*.csv")
-    for file in files:
-        print(file)
-        process_product(file)
-    #file = "old/EDGAR_2023_GHG/GHG_per_capita_by_country_2023.csv"
-    #main(file)
+    create_catalog("toxicology","atom")

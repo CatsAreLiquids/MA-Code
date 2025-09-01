@@ -28,20 +28,4 @@ def score(file, type):
 
 
 if __name__ == "__main__":
-    #createGroundTruth(file)
-    file = "runs/function_function_reorder_2025-07-27-12-06.csv"
-    #file = "bird_minidev_questions_functions_simple_eval_function_2025-06-17-17-36.csv"
-    #score_function_no_reorder(file)
-    scoreFunction(file)
-    #score_step(file)
-    #score(file)
-    df = pd.read_csv(file)
-    print(df[["exact_match"]].describe())
-
-    #file = "runs/query_multilevel_reorder_05_2025-07-22-10-09.csv"
-    #score(file)
-    #df = pd.read_csv(file)
-    #print(df[["exact_match"]].describe())
-    #print(df[["simple_match"]].describe())
-    #print(df[[ "ragasFaithfullnes","ragasResponseGroundedness",
-    #          "ragasSemanticSimilarity"]].describe())
+    pass

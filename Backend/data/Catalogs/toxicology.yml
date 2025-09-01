@@ -1,37 +1,33 @@
 atom:
   base_api: http://127.0.0.1:5000/products/toxicology/atom
   columns:
-  - atom_id: Data consists of text entries with a specific format 'TR###_##', where
-      '###' represents a three-digit number and '##' represents a two-digit number.
-      Each entry includes an 'atom_id' which is a unique identifier for atoms.
-  - molecule_id: String values representing codes for molecule identification, where
-      'molecule_id' indicates the specific molecule and 'text' provides commonsense
-      evidence about the atom's relation to the molecule.
-  - element: Single character strings representing chemical elements in toxicology.
+  - atom_id: Unique identifier for atoms, represented as a text string.
+  - molecule_id: Text identifier for a molecule's atom in the format TRXXX_i, where
+      TRXXX is the molecule ID (text) and i is the atom index (integer).
+  - element: 'Text data listing chemical elements relevant to toxicology, formatted
+      as a list with symbols followed by names (e.g., ''cl: chlorine'').'
+  description: 'The dataset titled "atom" contains information about molecules and
+    their associated elements. It includes two columns: "molecule_id," which identifies
+    the molecule, and "element," which specifies the chemical element present. The
+    data consists of two entries, both linked to the molecule ID "TR000," with elements
+    "cl" (chlorine) and "c" (carbon).'
 bond:
   base_api: http://127.0.0.1:5000/products/toxicology/bond
   columns:
-  - bond_id: This data consists of text entries formatted as 'TRXXX_X_X', where 'TRXXX'
-      indicates a specific molecule and 'A1' and 'A2' represent specific atoms within
-      that molecule. Each entry includes a unique bond_id for identification.
-  - molecule_id: String values representing codes for molecules, specifically identifying
-      the molecule in which a bond appears.
-  - bond_type: A string representing the type of bond, with specific symbols indicating
-      single, double, or triple bonds.
+  - bond_id: bond_id
+  - molecule_id: molecule_id
+  - bond_type: bond_type
+  description: 'The dataset titled \"bond\" contains information about molecular bonds, specifically focusing on the bond types associated with different molecules. It includes two columns: \"molecule_id\" and \"bond_type.\" Both entries in the dataset refer to the same molecule ID, \"TR000,\" and indicate a bond type represented by a hyphen. This suggests that the dataset may be highlighting a specific characteristic or absence of a bond type for the molecule in question.'
 connected:
   base_api: http://127.0.0.1:5000/products/toxicology/connected
   columns:
-  - atom_id: Text data in the format TR###_##, containing atom_id, atom id, id of
-      the first atom, and text.
-  - atom_id2: Text data in the format TR###_# representing atom identifiers and associated
-      text information.
-  - bond_id: Text data representing bond information between two atoms, formatted
-      as TR###_#_# where '###' is a numeric identifier and '#' represents additional
-      identifiers.
+  - atom_id: atom_id
+  - atom_id2: atom_id2
+  - bond_id: bond_id
+  description: "The dataset titled \"connected\" contains information about atomic connections represented by two columns: \"atom_id2\" and \"bond_id.\" The \"atom_id2\" column lists identifiers for atoms, while the \"bond_id\" column specifies the corresponding bond identifiers that connect these atoms. The data includes two entries, indicating relationships between different atoms and their respective bonds. This dataset is useful for analyzing molecular structures and understanding the connectivity between atoms in a given system."
 molecule:
   base_api: http://127.0.0.1:5000/products/toxicology/molecule
   columns:
-  - molecule_id: Text data in the format TR### representing unique identifiers for
-      molecules, indicating whether each molecule/compound is carcinogenic or not.
-  - label: A text data type containing string values that represent symbols indicating
-      whether a molecule is carcinogenic or not.
+  - molecule_id: molecule_id
+  - label: label
+  description: "The dataset titled \"molecule\" contains a single column labeled \"label.\" This column includes two entries, both of which are the string '+\\n'. The data appears to represent a simple binary or categorical classification, but the specific context or application of these labels is not provided. Overall, the dataset is minimal and may require additional information for a comprehensive understanding of its purpose."

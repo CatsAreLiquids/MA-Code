@@ -36,6 +36,7 @@ def _putDataProduct(df, function):
         args = json.dumps(function['filter_dict'])
     if 'columns' in function:
         args = json.dumps(function['columns'])
+
     response = requests.put(function["function"],
                             json={"data": df.to_json(), "args": args})
 
