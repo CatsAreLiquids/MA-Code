@@ -14,9 +14,14 @@ def forward_agent():
     if message is None:
         return "Please provide input"
 
+    df,plan = Agent.invoke_agent_remote(message)
 
-    df = Agent.invoke_agent_remote(message)
-    return {'data':df.to_json()}
+    return {'data':df.to_json(),'plan':plan}
+
+@app.route('/trigger_to_airflow', methods=['GET'])
+def trigger_to_airflow():
+
+    return {'data':'TODO'}
 
 
 

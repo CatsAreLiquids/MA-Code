@@ -92,15 +92,6 @@ def call_combine():
 
     return {'data': df.to_json()}
 
-@app.route('/getRows', methods=['PUT'])
-def call_rows():
-    content = json.loads(request.data)
-
-    df = pd.read_json(io.StringIO(content['data']))
-    df = filters.getRows(df, content['args'])
-
-    return {'data': df.to_json()}
-
 @app.route('/mean', methods=['PUT'])
 def call_mean():
     content = json.loads(request.data)
@@ -134,19 +125,18 @@ def call_sortby():
 
     return {'data': df.to_json()}
 
-@app.route('/getNRows', methods=['PUT'])
-def call_getNRows():
-    content = json.loads(request.data)
-
-    df = pd.read_json(io.StringIO(content['data']))
-    df = filters.getNRows(df, content['args'])
-
-    return {'data': df.to_json()}
-
 @app.route('/retrieve', methods=['PUT'])
 def call_retrieve():
+    url = func_dict["product"]
+    response = requests.get(url)
+    content = json.loads(response.text)
 
-    return {'data': "True"}
+    try:
+        df = pd.read_json(io.StringIO(content['data']))
+    except ValueError:
+        df = pd.Series(ast.literal_eval(content['data']))
+
+    return {'data': df.to_json()}
 
 @app.route('/count', methods=['PUT'])
 def call_count():
