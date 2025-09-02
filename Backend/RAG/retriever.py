@@ -1,7 +1,6 @@
 import json
 import re
 
-import matplotlib
 import requests
 from dotenv import load_dotenv
 from langchain.retrievers import EnsembleRetriever

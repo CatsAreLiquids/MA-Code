@@ -1,14 +1,11 @@
 import glob
-import sys
 from pathlib import Path
 
 import pandas as pd
 import requests
 import yaml
 
-from Backend import models
-from Backend.data import generate_descriptions  as generate
-from Backend.RAG import vector_db
+from Backend.data import generate_descriptions as generate
 
 baseAPi = "http://127.0.0.1:5000/products"
 

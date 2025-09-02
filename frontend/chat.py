@@ -1,16 +1,11 @@
+import ast
+import io
 import json
+from uuid import uuid4
 
 import pandas as pd
-import streamlit as st
-import random
-import time
 import requests
-import pandas as df
-import io
-
-from uuid import uuid4
-import ast
-
+import streamlit as st
 
 
 def fallBack(df,urls):
