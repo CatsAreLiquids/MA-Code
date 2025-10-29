@@ -28,7 +28,7 @@ def reiterate_plan(steps, query):
         
         You can remove steps from the list, but this is a last resort and steps should always be updated 
         
-        If a filter step makes no sense because the columns are not present cosider updating the  retrieval step
+        If a filter step makes no sense because the columns are not present consider updating the  retrieval step
         
         count and mean need an existing column as basis
         
@@ -71,7 +71,7 @@ def correct_plan(plan, instructions):
             Combinations steps should immediatly be after the relevant data products have been processed
             combination steps look like: {{"function":"combination","filter_dict":{{"columns_left":"customer_id","columns_right":"customer_id","type":"equals","values":["None"]}} }}
             
-            DO not include columns in the retrieval 
+            Do not include columns in the retrieval 
             
             The output should be a valid json with "plans": as the corrected plan
             """

@@ -1,0 +1,288 @@
+agent:
+  retriever:
+    functionRetriever: "I am looking for a function that can solve the following problem for me :{step}"
+    productRetrieverStep: "I am looking for data products that can answer the query: '{query}'\n Specifically the retrieval question {step}"
+  
+  generate:
+    generate_combination:
+      sys_prompt: """ Your task is to combine all previously gatherd data into a preset output. 
+                    The you are give a description of the step, and the list of all columns of the first data product and the second data product
+                    use the following examples as a guide:
+
+                    Example:
+                    step: combine customers from sales data and customer data
+                    columns_left: [invoice_no,customer_id,category,quantity,price,invoice_date,shopping_mall]
+                    columns_right: [customer_id,gender,age,payment_method]
+
+                    result : {{'function':'combination','filter_dict':{{'columns_left':'customer_id','columns_right':'customer_id','type':'equals','values':['None']}} }}
+
+                    The result should be a vaild json with 'function':'combination' and 'filter_dict' containing the keys columns_left,columns_right,type and values set to the corresponding value
+                    """
+      input_prompt: """step:{step}
+                columns_left: {columns_left}
+                columns_right: {columns_right}
+                """
+    generate_function:
+      sys_prompt: """ Your task is to combine all previously gatherd data into a preset output. use the following examples as a guide:
+                     For setting parameters only use columns that are present in the data columns and only use parameters given in the function description. 
+                     if the mean or count of are needed but no column with a fitting name exists use only count or mean
+                     
+                     If the filter_dict is described as none dont only provide the function part
+                    Example:
+                    step: aggregate total items sold for groupd_by each mall
+                    func_description: 
+                    **Description**: This function calculates the sum of specified columns in a dataframe, optionally grouping the results by one or more columns. It requires a list of columns for which the sum should be calculated (cannot be None) and allows for grouping by a list of columns (can be None).
+                    **API Endpoint**: [http://127.0.0.1:5200/sum](http://127.0.0.1:5200/sum)
+                    **Filter Dictionary**:
+                    - `group_by`: A list of columns in the dataframe (can be None).
+                    - `columns`: A list of columns for which the sum should be calculated (cannot be None).
+
+                    data product columns:
+                    [invoice_no,customer_id,category,quantity,price,invoice_date,shopping_mall]
+
+                    result : {{'function':'http://127.0.0.1:5200/sum','filter_dict':{{'group_by':'shopping_mall','column':'quantity'}}
+
+                    The result should be a vaild json with 'function': the api to call and 'filter_dict' : a dict containin the key product and the product api
+                    """
+      input_prompt: """
+                step:{step}
+                func_description: {func_description}
+                data product columns: {data_catalog}
+                """
+    generate_retrieve:
+      sys_prompt: """ Your task is generate a retrieval step, follow the example below:
+
+                    Example:
+                    step: aggregate total items sold for each mall
+                    prod_description: 
+                    base_api: http://127.0.0.1:5000/products/Sales_Data/sales_data_23
+                    columns:
+                    - invoice_no
+                    - customer_id
+                    - category
+                    - quantity
+                    - price
+                    - invoice_date
+                    - shopping_mall
+
+                    Result: {{'function':'http://127.0.0.1:5200/retrieve','filter_dict':{{'product':'http://127.0.0.1:5000/products/Sales_Data/sales_data_23' }} }}
+
+                    The result should be a vaild json with 'function': the api to call and 'filter_dict' : a dict containin the key product and the product api       
+                    """
+      input_prompt: """
+                step:{step}
+                catalog: {catalog}
+                """
+    format_prompt:
+      sys_prompt: """ Your task is to combine all previously gatherd data into a preset output. 
+                    The result should be a orderd list of function calls according to the steps 
+                    Combination steps should be after the both data products in the combination are finished
+
+                    Example:
+                    steps: ['retrieve sales data','filter for book sales','group sales by shoping mall','sort sales by quantity descending']
+                    function_calls:[{{'function':'http://127.0.0.1:5200/retrieve','filter_dict':{{'product':'http://127.0.0.1:5000/products/Sales_Data/sales_data_23'}} }},
+                    {{'function':'http://127.0.0.1:5200/sum','filter_dict':{{'group_by':'shopping_mall','column':'quantity'}} }},
+                    {{'function':'http://127.0.0.1:5200/filter','filter_dict':{{'columns':'category','criteria':{{'category':'book'}} }} }}
+                    {{'function':'http://127.0.0.1:5200/sortby','filter_dict':{{'columns':'quantity','order':'descending'}} }}]
+
+                    result: [{{'function':'http://127.0.0.1:5200/retrieve','filter_dict':{{'product':'http://127.0.0.1:5000/products/Sales_Data/sales_data_23'}} }},{{'function':'http://127.0.0.1:5200/filter','filter_dict':{{'columns':'category','criteria':{{'category':'book'}} }} }},{{'function':'http://127.0.0.1:5200/sum','filter_dict':{{'group_by':'shopping_mall','column':'quantity'}} }},{{'function':'http://127.0.0.1:5200/sortby','filter_dict':{{'columns':'quantity','order':'descending'}} }} ]
+
+                    the result should be a list of valid jsons with 'plans': list of function calls
+                    """
+      input_prompt: """
+                function_calls: {function_calls}
+                steps:{steps}
+                """
+    breakDownQuery:
+      find_collection:
+        sys_prompt: """ Your task is not narrow down which data products are necerssary to solve a user query.
+    To do that you are provided with a data catalog, and the user query.
+    Only return necerssary data products by name
+    
+    the output should be a valid json  with 'products':['product_name_1', 'product_name_2', ...] 
+    """
+      input_prompt: """
+                    User Query:{query}
+                    product catalog :{catalog}
+                    """
+      main_prompts:
+        sys_prompt: """ Your task is to explain how you would slove the provided query. For this break it down into all the seperate steps
+                Complete the query in the most direct but feasible way necerssary
+                Your plan should always follow the steps retrieve process combine for each data product
+                
+                Keep to the user query as much as possible
+                
+                Every data product needs to be combined with the all other data products
+                join data products 
+                
+                when perfoming any action activley name the columns
+                
+                
+                You need to combine all data products you retrieve, when combining data always list both names, combination steps should be after the preocessing steps of the relevant data producst
+                The word retrieve is reserved for when you need to get a data product
+                Use returnResult for providing the finished product
+                Always do all steps necerssary for one product in a row. including combinations
+                only use combine when combgining data not in other steps
+                                        
+                Additional Guidelines:
+                    - keep the steps short but combine them if possible.
+                    - Always combine sorting and selecting a number of resutlts into one step. I.e sort by books sold and slect top 4
+                    - Retrieval instruction should only be the name of the data product
+                    - Combining filterd products will lead to the end resutl being filterd
+                    - Multiple filter steps for the same product should be combined into one step. 
+                
+                Example: All customer data of customers who have bought at least 1 book
+                result: ['retrieve sales data','filter for customers who have bought 1 book','retrieve customer data','combine customers from sales data and custmer data','return finished product'] 
+                
+                Return a valid json with the 'plan': generated list of steps, and the reasoning as 'explanation': why the steps are needed
+                Keep to the user query as much as possible
+        """
+        input_prompt: """
+                User Query:{query}
+                product catalog :{catalog}
+                """
+
+    agent_prompts:
+      sys_prompt: """Your task is to create an execution plan for a user query. 
+                    The first step is to break down the user query into ist substeps using the breakDownQuery tool, creating a list of tasks
+                    
+                    process each step created with the break down query tool. Always process them following the guide below
+                    To process each of the generated steps follow this outline:
+                    1. Identify which function or data product is needed using the productRetrieverStep Tool or the functionRetriever tool
+                    
+                    2. to produce the correct output for each step use:
+                        if a step contains the word retrieve use the generate_retrieve tools
+                        if the step conatints neither combine nor retrieve use the generate_function tool
+                        if a step contains the a variation of the word combine use the generate_combination tool, only use the dta products name as inputs
+                    3. transfrom the output to fit the schema with the format_output tool
+
+                    Directly return the result of the format_output tool !
+        """
+      input_prompt_evidence: "The query i want to solve: {query},some additional information:{evidence}"
+      input_prompt: "The query i want to solve: {query}"
+critic:
+  reiterate_plan:
+    sys_prompt: """ Your task is to decide wheather a plan is executable or not, and if it is not executable how to fix the plan
+        For this consider if all necerssary columns are in the retrieved data product, if the column selection makes sense etc.
+        Ignore computations such as mean of or sum, and the value paramter
+        
+        You can remove steps from the list, but this is a last resort and steps should always be updated 
+        
+        If a filter step makes no sense because the columns are not present consider updating the  retrieval step
+        
+        count and mean need an existing column as basis
+        
+        When updating state explicitly what should be changed
+        
+        combination steps are a valid part of the plan as they join tables together, providing only the column name is viable
+        ensure that enough combinations are present, so that all products are combined
+        You can add combinations steps an example: {{'function':'combination','filter_dict':{{'columns_left':'column_name','columns_right':'column_name','type':'equals','values':['None']}} }}
+        For any combination step you add make sure the fitting data product is present as well
+        
+        Steps that filter for an unklnown specific value or references previous results, are not feasible, remove them
+        
+        Do not list steps such as ensure, only list active steps in the instructions
+        The output should be a valid json with 'decision': either True or False, and 'instructions' a list of steps needed to make the plan executable
+        
+        In the instructions do only list steps that acitvely change the plan
+        """
+    input_prompt: """
+                User Query:{query}
+                product catalog :{catalog}
+                steps:{steps}
+                """
+  correct_plan:
+    sys_prompt: """ You are given a plan and a number of instructiuons on how to fix this plan 
+            keep to the schema of the original plan, while applying the instructions
+            Combinations steps should immediatly be after the relevant data products have been processed
+            
+            Do not include duplicate steps, especially combinations
+            Combinations steps should immediatly be after the relevant data products have been processed
+            combination steps look like: {{'function':'combination','filter_dict':{{'columns_left':'customer_id','columns_right':'customer_id','type':'equals','values':['None']}} }}
+            
+            Do not include columns in the retrieval 
+            
+            The output should be a valid json with 'plans': as the corrected plan
+            """
+    input_prompt: """
+                          Plan:{plan}
+                          instructions: {instructions}
+                          """
+  query_prompt:
+    with_evidence: "The query i want to solve: {row['query']}, some additional information: {row['evidence']}"
+    evidence: "The query i want to solve: {row['query']}"
+generate_descriptions:
+  generateCollection:
+    sys_prompt: """You are an assitant for creating meta data your task is to provide a short textutal description of a data collection.\nThe text should be between 3-5 sentences and give the reader an idea what the data is about. \n The input will be a list of describtions of the individual data files within that collection base your description of of these, th input will be formatted as follows:\n 'data set  name': 'description'"""
+    input_prompt: """The data set describtions for the collection {collection} are:
+                {descriptions}
+            """
+  generateText:
+    sys_prompt: """'text_system_prompt': 'You are an assitant for creating meta data your task is to provide a short textutal description of the data you receive.\nThe text should be between 3-5 sentences and give the reader a good overview of the data and what it contains. \nBe accurate to the input data and consider the data topics the timeline.\nThe data will be in the follwoing format:\nThe first row will be the titles: title1, title2, title3,...\nThe next rows will be the values: value1, value2, value 3,...' """
+    input_prompt: """ 'data_input_prompt': 'Use the following data\nColumn names:{titles}\nColumn values:{values}\n\nFile name: {file}' """
+  generateFunctionFullCode:
+    sys_prompt: """ Your task is to summarize a function in 1 to 2 sentences, Focus on what the goal of the function is. Tailor the description to each function
+    You are given a short textual description,its paramters and the functions python code. Do not focus on code details such as input classes rather describe what happens
+    If no code is given focus on the availabe information
+    Alwyas start the description with the function name givven as input not the name of the python function """
+    input_prompt: """I would like a description for this function : {func} 
+    The corresponding python code is: {code}
+    It is called {name}"""
+  create_column_description:
+    sys_prompt: """ Your task is to provide a short description, as short as possible
+    Include data format, especially if it is a secific format such as a url or a date format
+    The output should be a valid json with
+    'description': description of the what kind of data it is"""
+    input_prompt: """I would like a description for this data: 
+        {format}
+        {description}
+        """
+RAG:
+  retriever:
+    function_rag: """Your task is to find a the most fitting function that could solve problem described in the provided step.
+                    As a valid json format return the function name your response should look like this: 'function_name': 'name','reason':'reason'
+                    If you can not find a fitting function return 'function_name': None
+
+                    Context: {context} 
+                    Answer:
+        """
+    collection_rag: """Your task is to find the data collection that can answer a users query, in a valid json format return the collections name
+                    You are provided with a list of data collection descriptions. Return the name of the collection not of a fitting product
+                    your response should look like this: 'collection_name': 'name','reason':'reason'
+                Context: {context} 
+                Answer:
+            """
+    product_rag: """Your task is to help find the best fitting data product. You are provided with a user query.
+                Provide the most likely fitting data product, always provide the data products name and why it would fit this query.
+                Only provide one data product
+        Context: {context} 
+        The output should be a valid json with 'name': as the data product name and 'reason':
+      """
+  evaluation_retriever:
+    step_or_query_prompt: "I am looking for data products that can answer the query :{query}"
+    step_and_query_prompt: "I am looking for data products that can answer the query: '{query}', specifically the step:{step}"
+    productRetriever_eval: """Your task is to help find the best fitting data product. You are provided with a user query.
+                Provide the most likely fitting data product, always provide the data products name and why it would fit this query.
+                Only provide one data product
+        Context: {context} 
+        The output should be a valid json with 'name': as the data product name and 'reason':
+    """
+    productRetriever_eval_both: """Your task is to help find the best fitting data product. You are provided with a user query.
+                Provide the most likely fitting data product, always provide the data products name and why it would fit this query.
+                Only provide one data product
+        Context: {context} 
+        The output should be a valid json with 'name': as the data product name and 'reason':
+    """
+    multilevelRetriever: """Your task is to help find the best fitting data product. You are provided with a user query.
+                Provide the most likely fitting data product, always provide the data products name and why it would fit this query.
+                Only provide one data product
+        Context: {context} 
+        The output should be a valid json with 'name': as the data product name and 'reason': where reason should be a short explanation as to why it is the ocrrect dataset
+        """
+    functionRetriever: """Your task is to find all fitting functions that could solve the problem described in the provided query.
+                    List all functions you may need to solve the query.
+                    As a valid json format return the function names your response should look like this: 'functions': ['name_1','name_2',...],'reason':'reason'
+
+                    Context: {context} 
+                    Answer:
+        """

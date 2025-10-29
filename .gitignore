@@ -11,3 +11,6 @@ visualization
 __pycache__
 .gitattributes
 *.pyc
+*.pyc
+Backend/__pycache__/models.cpython-311.pyc
+Backend/__pycache__/models.cpython-311.pyc
