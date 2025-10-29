@@ -1,6 +1,7 @@
 import random
 import string
-
+import pandas as pd
+import ast
 import Backend.to_Airflow.template as template
 import uuid
 import os
@@ -76,8 +77,11 @@ def _construct_tasks(plan,dag_id):
 
     return task_str
 
-def convert(plan):
-    dag_id = random_num()
+def convert(plan,id=None):
+    if id is not None:
+        dag_id = id
+    else:
+        dag_id = random_num()
     file_text = ""
 
     file_text += template.imports
@@ -91,5 +95,14 @@ def convert(plan):
     return dag_id
 
 if __name__ == "__main__":
-    #print(type(example["plans"]))
-    print(convert(example["plans"]))
+    df = pd.read_csv("../evaluation/Experiment Results/Prototype Evaluation/evidence_description_cirtiqued.csv")
+
+    for index, row in df.iterrows():
+        response= ast.literal_eval(row["response"])
+
+        #only converting plans where all generated functions are available
+        try:
+            convert(response["plans"],row["question_id"])
+        except KeyError:
+            pass
+

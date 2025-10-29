@@ -3,7 +3,8 @@ task_dict= {"retrieve":"tasks.retrieve_as_request_task","filter":"tasks.filter_a
             "combination":"tasks.combination_as_request_task","min":"tasks.min_as_request_task",
             "max":"tasks.max_as_request_task","sum":"tasks.sum_as_request_task",
             "mean":"tasks.mean_as_request_task","sortby":"tasks.sortby_as_request_task",
-            "count":"tasks.count_as_request_task","returnResult":"tasks.returnResult_as_request_task"}
+            "count":"tasks.count_as_request_task","returnResult":"tasks.returnResult_as_request_task",
+            "divide":"tasks.divide_as_request_task"}
 
 imports = """
 from datetime import datetime, timedelta

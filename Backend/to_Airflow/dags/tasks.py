@@ -6,9 +6,6 @@ import ast
 import glob
 import os
 
-
-
-
 def retrieve_as_request_task(**kwargs):
     url = kwargs["filter_dict"]["product"]
 
@@ -38,6 +35,24 @@ def filter_as_request_task(**kwargs):
         df = pd.Series(ast.literal_eval(content['data']))
 
     df.to_csv(f"temp_storage/df_{kwargs['product_nr']}.csv", index=False)
+
+def divide_as_request_task(**kwargs):
+
+    df = pd.read_csv(f"temp_storage/df_{kwargs['product_nr']}.csv")
+
+    args = json.dumps(kwargs['filter_dict'])
+    response = requests.put("http://127.0.0.1:5200/divide",
+                            json={"data": df.to_json(), "args": args})
+
+    content = json.loads(response.text)
+
+    try:
+        df = pd.read_json(io.StringIO(content['data']))
+    except ValueError:
+        df = pd.Series(ast.literal_eval(content['data']))
+
+    df.to_csv(f"temp_storage/df_{kwargs['product_nr']}.csv", index=False)
+
 
 def min_as_request_task(**kwargs):
 
