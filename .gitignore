@@ -1,6 +1,7 @@
 .env
 venv
 .idea
+*.pyc
 *.jsonl
 *.sql
 *posts.csv
@@ -9,3 +10,4 @@ Match.csv
 visualization
 __pycache__
 .gitattributes
+*.pyc
