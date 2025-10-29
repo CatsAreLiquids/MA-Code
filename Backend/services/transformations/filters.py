@@ -37,8 +37,6 @@ def _range_or(df, column, or_list):
 
 def applyFilter(df, filter_dict):
     filter_dict = ast.literal_eval(filter_dict)
-
-
     if 'conditions' in filter_dict:
         filter_dict = filter_dict['conditions']
     elif 'condition' in filter_dict:
@@ -74,8 +72,7 @@ def applyFilter(df, filter_dict):
                     if val == 'max':
                         return getMax(df,{'columns':key})
                     elif val =="empty":
-                        df = np.where(df[key].isna()==True)[0].tolist()
-
+                        df = df[df[key].isna()]
                     elif val =="not empty":
                         df = df.dropna(subset=[key])
                     else:
@@ -135,7 +132,9 @@ def getMin(df, filter_dict):
         key = 'columns'
 
     if "rows" in filter_dict:
-        return df.nsmallest(filter_dict["rows"],filter_dict[key])
+        if isinstance(df, pd.Series):
+            df = df.to_frame()
+        return df.nsmallest(n=filter_dict["rows"],columns=filter_dict[key],keep='first')
     else:
         if isinstance(df, pd.Series):
             df = df.to_frame()

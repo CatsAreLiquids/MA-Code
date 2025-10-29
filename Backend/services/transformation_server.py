@@ -58,6 +58,20 @@ def call_max():
         return {'data': df.to_json()}
     else:
         return {'data': json.dumps(df)}
+@app.route('/divide', methods=['PUT'])
+def call_divide():
+    content = json.loads(request.data)
+
+    try:
+        df = pd.read_json(io.StringIO(content['data']))
+    except ValueError:
+        df = pd.Series(ast.literal_eval(content['data']))
+    df = aggregation.divide(df, content['args'])
+
+    if isinstance(df,pd.Series) or isinstance(df,pd.DataFrame):
+        return {'data': df.to_json()}
+    else:
+        return {'data': json.dumps(df)}
 
 @app.route('/min', methods=['PUT'])
 def call_min():
@@ -108,6 +122,7 @@ def call_mean():
 @app.route('/filter', methods=['PUT'])
 def call_filter():
     content = json.loads(request.data)
+
     df = pd.read_json(io.StringIO(content['data']))
     df = filters.applyFilter(df, content['args'])
 

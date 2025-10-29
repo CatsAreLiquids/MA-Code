@@ -1,6 +1,16 @@
 import ast
-
 import pandas as pd
+
+def divide(df,filter_dict):
+    filter_dict = ast.literal_eval(filter_dict)
+    if 'columns' in filter_dict:
+        key = 'columns'
+    elif 'column' in filter_dict:
+        key = 'column'
+
+    df[filter_dict[key]] = df[filter_dict[key]] /filter_dict['number']
+
+    return df
 
 
 def getSum(df, filter_dict):
