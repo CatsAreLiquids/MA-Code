@@ -1,8 +1,9 @@
 # Prerequisits:
-- Airflow needs to be installed and configured in such a way that it looks for dags in the BAckend/to_Airflow/dags folder.
+- Airflow needs to be installed and configured in such a way that it looks for dags in the Backend/to_Airflow/dags folder.
 It otherwise cant track the dags and they need to be added manually
 - Set up an env file with the credentials to access the LLMs
 - install the requirments.txt
+- install the postgres vector store, other vectorstores work as well but require code changes
 
 # Metadata Generation
 To generate metadata the prototypes expects the .csv files in the data folder sorted into collections.
@@ -35,3 +36,9 @@ Testing is split into findability evaluation, which only tests one aspect, and f
 For prototype testing, both the data_mesh and transformation_sever microservice need to be active, use generate plan to start a new testrun
 Which can be evaluated with evaluate_run and test_run 
 Findability testing is split into retrieval evlauation and generation evaluation, simply include the relevant test file and the testing type.
+
+# Important Files
+    - prompts.yml lists all prompts employed in the prototype and the evaluation in one convienient file
+    - Backend/evaluation/Experiment Results/ contains the results reported in the paper
+    - Backend/evaluation/Ground Truth/ contains the ground truth for the Bird mini-dev sqls and the ground truth plans
+    - Backend/to_Airflow/dags/ contains the converted plans from the LLM+Evidence run, named after the corresponding query

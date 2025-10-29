@@ -23,7 +23,7 @@ def forward_agent():
 def trigger_to_airflow():
     content = json.loads(request.data)
 
-    dag_id = to_airflow.convert(content["plan"]["plans"])
+    dag_id = to_airflow.convert(content["plan"]["plans"],id=None)
     return {'dag_id':dag_id}
 
 

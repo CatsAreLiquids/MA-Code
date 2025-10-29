@@ -8,9 +8,13 @@ from langchain_community.retrievers import BM25Retriever
 from langchain_core.prompts import PromptTemplate
 
 from Backend import models
-from Backend.RAG.vector_db import get_docs
 
 load_dotenv()
+
+def get_docs(query, max: int, filter=None, collection=None):
+    vector_store = models.getVectorStore(collection)
+
+    return vector_store.similarity_search(query, k=max, filter=filter)
 
 def _init_bm25(config, collection):
     if config is not None:

@@ -1,7 +1,13 @@
+import re
+import requests
+import json
 from dotenv import load_dotenv
 from langchain_core.prompts import PromptTemplate
+from langchain.retrievers import EnsembleRetriever
+from langchain_community.document_transformers import LongContextReorder
 
 from Backend import models
+from Backend.RAG.retriever import _init_bm25
 
 load_dotenv()
 
@@ -22,7 +28,7 @@ def getEvaluationChainFunc( config, query, collection=None):
         retriever = vector_store.as_retriever(k=5)
 
 
-    config = {"filter": {"type": {"$eq": "function_name"}}}
+    config = {"filter": {"type": {"$eq": "function_NoManual2"}}}
     bm25_retriever = _init_bm25(config, collection)
 
     ensemble_retriever = EnsembleRetriever(k=5,
@@ -46,18 +52,16 @@ def getEvaluationChainFunc( config, query, collection=None):
     docs = [ helper(doc) if len(re.findall(pattern,doc))> 0 else doc for doc in docs ]
     reorder = LongContextReorder()
     fdocs = reorder.transform_documents(docs)
-    fdocs = "\n\n".join(doc for doc in fdocs)
+    fdocs = "\n\n".join(doc for doc in docs)
 
-    #query = rephrase_query(query)
     sys_prompt = PromptTemplate.from_template(sys_prompt).format(context=fdocs)
     messages = [
         ("system", sys_prompt),
         ("human", query),
     ]
-
     llm = models.get_structured_LLM()
 
-    return {"response": llm.invoke(messages)["function_name"], "docs": docs}
+    return {"response": llm.invoke(messages)["functions"], "docs": docs}
 
 
 def getMultiLevelEvaluation( prompt, config,query):
@@ -66,8 +70,8 @@ def getMultiLevelEvaluation( prompt, config,query):
 
     cot = True
     if cot:
-        collection_prompt = """Your task is to find the data collection that can answer a users query, in a valid json format return the collections name and why and how it can answer the query
-            your response should be a valid json with : 'collection_name': the name of the data collection,'reason': where reason should be a short explanation as to why it is the ocrrect dataset 
+        collection_prompt = """Your task is to find the data collection that can answer a users query, in a valid json format return the collection_name and why and how it can answer the query
+            your response should be a valid json with the paramerts 'collection_name' and reason. 'collection_name': as the name of the data collection,'reason': where reason should be a short explanation as to why it is the ocrrect dataset 
             Context: {context} 
             Answer:
         """
@@ -77,7 +81,6 @@ def getMultiLevelEvaluation( prompt, config,query):
                     Context: {context} 
                     Answer:
             """
-
     retriever = db_outer.as_retriever()
     docs = retriever.invoke(query)
     fdocs = [doc.page_content for doc in docs]
@@ -89,7 +92,11 @@ def getMultiLevelEvaluation( prompt, config,query):
         ("human", query),
     ]
     response = llm.invoke(messages)
-    collection = response["collection_name"]
+
+    if "collection_name" in response:
+        collection = response["collection_name"]
+    else:
+        collection = response["name"]
 
     if config is None:
         config = {"collection_name": {"$eq": collection}}
@@ -97,20 +104,20 @@ def getMultiLevelEvaluation( prompt, config,query):
         standard_retriever = vec.as_retriever()
     else:
         vec = models.getVectorStore()
-        standard_retriever = vec.as_retriever(config={"filter": {"type": {"$eq": "product"}}})
+        standard_retriever = vec.as_retriever(search_kwargs={"filter": {"type": {"$eq": "name_2"}}})
         config = {"filter": {"collection_name": {"$eq": collection}}}
-    collection_only_retriever = models.getVectorStore().as_retriever( config=config)
+
+    collection_only_retriever = models.getVectorStore().as_retriever(search_kwargs=config)
 
     ensemble_retriever = EnsembleRetriever(k=5,
                                            retrievers=[standard_retriever, collection_only_retriever],
                                            weights=[0.7, 0.3])
+
     reorder = LongContextReorder()
     docs = ensemble_retriever.invoke(query)
     docs = [doc.page_content for doc in docs]
-
     fdocs = reorder.transform_documents(docs)
     fdocs = "\n\n".join(doc for doc in fdocs)
-
 
     sys_prompt = PromptTemplate.from_template(prompt).format(context=fdocs)
     messages = [
@@ -132,12 +139,10 @@ def getEvaluationChain(sys_prompt, config, query,collection=None):
     bm25_retriever = _init_bm25(config, collection)
 
     ensemble_retriever = EnsembleRetriever(k=5,
-                                           retrievers=[bm25_retriever, retriever], weights=[0.3, 0.7]
+                                           retrievers=[bm25_retriever, retriever], weights=[0.7, 0.3]
                                            )
     reorder = LongContextReorder()
-
     docs = ensemble_retriever.invoke(query)
-
     docs = [doc.page_content for doc in docs]
     fdocs = reorder.transform_documents(docs)
     fdocs = "\n\n".join(doc for doc in fdocs)
@@ -165,7 +170,7 @@ def productRetriever_eval(query):
     return getEvaluationChain(sys_prompt, config,mod_query)
 
 def productRetriever_eval_both(query,step):
-    sys_prompt = """"Your task is to help find the best fitting data product. You are provided with a user query.
+    sys_prompt = """Your task is to help find the best fitting data product. You are provided with a user query.
                 Provide the most likely fitting data product, always provide the data products name and why it would fit this query.
                 Only provide one data product
         Context: {context} 
@@ -174,7 +179,7 @@ def productRetriever_eval_both(query,step):
     mod_query = f"I am looking for data products that can answer the query: '{query}', specifically the step:{step}"
     config = {"filter": {"type": {"$eq": "product"}}}
 
-    return getMultiLevelEvaluation(sys_prompt, config,mod_query)
+    return getEvaluationChain(sys_prompt, config,mod_query)
 
 
 def functionRetriever_eval(query,type):
@@ -186,7 +191,7 @@ def functionRetriever_eval(query,type):
 def functionRetriever_hybrid(query,type):
 
     mod_query = f"I am looking for a function that can solve the following problem for me :{query}"
-    config = {"filter": {"type": {"$eq": "function"}}}
+    config = {"filter": {"type": {"$eq": "function_NoManual2"}}}
     return getEvaluationChainFunc( config,mod_query)
 
 def multilevelRetriever(query):
@@ -198,4 +203,4 @@ def multilevelRetriever(query):
         """
     mod_query = f"I am looking for data products that can answer the query :{query}"
     config = {"filter": {"type": {"$eq": "product"}}}
-    return getMultiLevelEvaluation(mod_query,sys_prompt,config)
+    return getMultiLevelEvaluation(sys_prompt,config,mod_query)
