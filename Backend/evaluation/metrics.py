@@ -13,56 +13,49 @@ load_dotenv()
 llm = models.get_LLM()
 evaluator_llm = LangchainLLMWrapper(llm)
 
-
-def correctness_LLM(truth, response):
-    sys_prompt = """Your Task is to decide wether a response allings with an expected output. Return a valid json with output either True if the output describes the same Function as the given response and False otherwise"""
-    input_prompt = PromptTemplate.from_template("""expected output Function: {truth}\n response :{response}""")
-    input_prompt = input_prompt.format(truth=truth, response=response)
-    messages = [
-        ("system", sys_prompt),
-        ("human", input_prompt),
-    ]
-    llm_structured = models.get_structured_LLM()
-    model_out = llm_structured.invoke(messages)
-
-    if (model_out["output"] == "False") or (model_out["output"] == False):
-        return 0
-    elif (model_out["output"] == "True") or (model_out["output"] == True):
-        return 1
-
-
-def simple_match(generated_answer, collections):
-    score = 0
-    #print(collections)
-    for i in range(len(collections)):
-
-        if collections[i] in generated_answer:
-            score += 1 / len(collections)
-
-    return score
-
+# -------------------------------------------- generation metrics------------------------
 def exact_match(generated_answer, collections):
+
+    # all if statements account for diffrences between groundtruth and vectordb entry
     if generated_answer in ['constructors']:
         if 'constructor' in collections:
             return 1
-    if generated_answer in ['Attendance', 'Event', 'Income', 'Member', 'Budget', 'Expense', 'Major', 'Zip_Code']:
+    elif generated_answer in ['Attendance', 'Event', 'Income', 'Member', 'Budget', 'Expense', 'Major', 'Zip_Code']:
         if generated_answer.lower() in collections:
             return 1
-    if generated_answer == 'combineProducts' and collections[0] == 'combine':
+        else:
+            return 0
+    elif generated_answer == 'combineProducts' and collections[0] == 'combine':
         return 1
-    if generated_answer == 'applyFilter' and collections[0] == 'filter':
+    elif generated_answer == 'applyFilter' and collections[0] == 'filter':
         return 1
-    if generated_answer == 'retrieve' and collections[0] == 'returnResult':
+    elif generated_answer == 'retrieve' and collections[0] == 'returnResult':
         return 1
-    if generated_answer in collections:
+    elif generated_answer in collections:
         return 1
     else:
-        print(generated_answer, collections)
         return 0
+
+def exact_match_multiple(generated_answer, ground_truth):
+    # all if statements account for diffrences between groundtruth and vectordb entry
+    if ground_truth == 'combine' and 'combineProducts' in generated_answer:
+        return 1
+    elif ground_truth == 'filter' and 'applyFilter' in generated_answer :
+        return 1
+    elif ground_truth == 'retrieve' and 'returnResult' in generated_answer:
+        return 1
+    elif ground_truth in generated_answer:
+        return 1
+    else:
+        return 0
+
 # -------------------------------------------- retrieval metrics------------------------
 def _in_targets_product(context,targets):
     #(?:\s*|titled)\s*\"([a-z,A-Z]*)\"
+
+    # Diffrent regex to match specific patterns
     names = re.findall(r"The dataset\s*(?:titled)*\s*\"([a-z,A-Z,_,1-9]*)\"",context)
+    #names = re.findall(r"Dataset Name:\s*([a-z,A-Z,_,1-9]*)\s*(?:base_api)*", context)
 
     for name in names:
         if name.lower() in ['attendance', 'event', 'income', 'member','budget','expense','major','zip_code']:
@@ -80,43 +73,21 @@ def mmr(targets, contexts) -> float:
     return 0
 
 
-def precison(relevant, contexts):
-    rel = 0
-    for context in contexts:
-        if _in_targets_product(context,relevant):
-            rel += 1
-
-
-    return rel / len(contexts)
-
-
-def recall(relevant, contexts):
+def hit_rate(relevant, contexts):
 
     rel = 0
 
     for context in contexts:
-        if _in_targets_product(context,relevant):
-
+        if context in ['constructors']:
             return 1
-
-    print(relevant)
-    print(contexts)
+        if _in_targets_product(context,relevant):
+            return 1
     return 0
-
-
-def F1(precision, recall):
-    score = []
-    for p, r in zip(precision, recall):
-        try:
-            score.append(2 * ((p * r) / (p + r)))
-        except:
-            score.append(0)
-    return score
-
 
 # ----------------------------------------- Functions  -------------------------------------
 def _in_targets_function(context,targets):
 
+    #Diffrent regex to match specific patterns
     names = re.findall(r"function name:\s*([a-z,A-Z]*):\n",context)
     #names = re.findall(r"function name:([a-z,A-Z]*)", context)
 
@@ -131,28 +102,6 @@ def mmr_func(targets, contexts) -> float:
         if _in_targets_function(contexts[i],targets):
             return 1 / (i + 1)
 
-    return 0
-
-
-def precison_func(relevant, contexts):
-    rel = 0
-    for context in contexts:
-        #print(context)
-        if _in_targets_function(context,relevant):
-            rel += 1
-
-
-    return rel / len(contexts)
-
-
-def recall_func(relevant, contexts):
-    rel = 0
-    for context in contexts:
-        if _in_targets_function(context,relevant):
-            return 1
-
-    print(relevant)
-    print(contexts)
     return 0
 
 def hit_rate_func(targets, contexts) -> float:
